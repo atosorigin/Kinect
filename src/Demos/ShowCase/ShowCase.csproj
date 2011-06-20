@@ -156,7 +156,7 @@
       <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Framework\Core\Core.csproj">
-      <Project>{5515A0FD-7499-4266-8357-B882448EED5F}</Project>
+      <Project>{7D86DA3E-808E-47B1-B89B-F6CB76D249DE}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
