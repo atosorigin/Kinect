@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Kinect.XNA")]
-[assembly: AssemblyProduct("Kinect.XNA")]
+[assembly: AssemblyTitle("Kinect XNA")]
+[assembly: AssemblyProduct("Kinect XNA")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCompany("Atos Origin")]
+[assembly: AssemblyCopyright("Copyright © Atos Origin 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
