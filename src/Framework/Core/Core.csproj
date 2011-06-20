@@ -63,6 +63,9 @@
     <Reference Include="log4net">
       <HintPath>..\Lib\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Research.Kinect, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\lib\Third Party\Microsoft Kinect SDK\Microsoft.Research.Kinect.dll</HintPath>
+    </Reference>
     <Reference Include="OpenNI.net">
       <HintPath>..\Lib\OpenNI.net.dll</HintPath>
     </Reference>
@@ -137,9 +140,6 @@
     <Content Include="Configs\openniconfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Settings.StyleCop" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
