@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Accord.Statistics.Models.Markov.Training;
 using Accord.Statistics.Distributions.Multivariate;
 using Accord.Statistics.Models.Markov;
 using Accord.Statistics.Models.Markov.Topology;
 using Accord.Statistics.Models.Markov.Learning;
-using System.Collections;
 
-namespace Kinect.WPF.GestureDetection.Models
+namespace Kinect.GestureDetection.Models
 {
     class GestureDetection
     {

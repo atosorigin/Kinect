@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using Kinect.Core;
-using Common;
-using System.Windows;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     public partial class KinectForm : Form
     {

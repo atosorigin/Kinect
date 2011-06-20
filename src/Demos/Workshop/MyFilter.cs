@@ -1,11 +1,10 @@
 ﻿using Kinect.Core.Eventing;
 using Kinect.Core;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     public class MyFilter : Filter<IUserChangedEvent>
     {
-
         public override void Process(IUserChangedEvent evt)
         {
             var continueProcess = false;

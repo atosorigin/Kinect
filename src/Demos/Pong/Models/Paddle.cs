@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Media;
 using System.Drawing;
 
-namespace Kinect.WPF.nPong.Models
+namespace Kinect.Pong.Models
 {
     public class Paddle : INotifyPropertyChanged
     {

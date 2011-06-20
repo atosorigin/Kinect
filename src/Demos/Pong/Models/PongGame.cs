@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 
-namespace Kinect.WPF.nPong.Models
+namespace Kinect.Pong.Models
 {
     public class PongGame
     {
@@ -24,7 +22,7 @@ namespace Kinect.WPF.nPong.Models
         }
 
         public event EventHandler<ScoreEventArgs> Scored;
-        protected virtual void OnScored(Models.Paddle.Side side, Ball ball)
+        protected virtual void OnScored(Paddle.Side side, Ball ball)
         {
             var handler = this.Scored;
 

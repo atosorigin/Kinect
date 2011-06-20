@@ -1,10 +1,9 @@
 ﻿using System.Reflection;
 using GalaSoft.MvvmLight;
 
-
-namespace Kinect.WPF.GestureDetection.ViewModels
+namespace Kinect.GestureDetection.ViewModels
 {
-    class ResourcesViewModelBase : ViewModelBase
+    public class ResourcesViewModelBase : ViewModelBase
     {
         public string AppTitle { get; set; }
         public string About { get; set; }

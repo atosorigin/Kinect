@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     class KinectForm_CodeSnippets
     {

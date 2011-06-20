@@ -1,13 +1,11 @@
-﻿<Window x:Class="Kinect.WPF.GestureDetection.MainWindow"
+﻿<Window x:Class="Kinect.GestureDetection.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:k="clr-namespace:Kinect.WPF.GestureDetection.UserControls"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
-        Title="MainWindow" Height="350" Width="525" WindowState="Maximized" Loaded="Window_Loaded">
+        xmlns:k="clr-namespace:Kinect.GestureDetection.UserControls" Title="MainWindow" Height="350" Width="525" WindowState="Maximized" Loaded="Window_Loaded">
     <Window.Background>
         <ImageBrush ImageSource="{Binding CameraView, Mode=OneWay}" Stretch="None" />
     </Window.Background>

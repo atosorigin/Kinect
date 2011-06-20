@@ -2,7 +2,7 @@
 using Kinect.Core;
 using Kinect.Core.Gestures;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     public class MyGesture : GestureBase
     {

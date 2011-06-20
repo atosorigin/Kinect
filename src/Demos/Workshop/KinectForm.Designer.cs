@@ -1,4 +1,4 @@
-﻿namespace Kinect.Workshop.Winforms
+﻿namespace Kinect.Workshop
 {
     partial class KinectForm
     {

@@ -6,9 +6,9 @@ using System.Windows.Input;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Kinect.WPF.GestureDetection.ViewModels
+namespace Kinect.GestureDetection.ViewModels
 {
-    class MainViewModel : ResourcesViewModelBase
+    public class MainViewModel : ResourcesViewModelBase
     {
         private MyKinect _kinect;
 

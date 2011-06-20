@@ -85,6 +85,10 @@
       <Project>{E93F3A28-1EDC-4583-9A5A-5EB7DFCF80EE}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Framework\Core\Core.csproj">
+      <Project>{7D86DA3E-808E-47B1-B89B-F6CB76D249DE}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Calibration.xaml">

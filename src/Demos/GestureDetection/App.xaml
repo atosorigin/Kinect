@@ -1,12 +1,11 @@
-﻿<Application x:Class="Kinect.WPF.GestureDetection.App"
-             xmlns:Kinect_WPF_GestureDetection_ViewModels="clr-namespace:Kinect.WPF.GestureDetection.ViewModels"
+﻿<Application x:Class="Kinect.GestureDetection.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             StartupUri="MainWindow.xaml"
+             xmlns:ViewModels="clr-namespace:Kinect.GestureDetection.ViewModels" StartupUri="MainWindow.xaml"
              mc:Ignorable="d">
     <Application.Resources>
-        <Kinect_WPF_GestureDetection_ViewModels:MainViewModel x:Key="MainViewModelDataSource" d:IsDataSource="True" />
+        <ViewModels:MainViewModel x:Key="MainViewModelDataSource" d:IsDataSource="True" />
     </Application.Resources>
 </Application>

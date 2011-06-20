@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Command;
@@ -10,14 +8,12 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Kinect.Core;
 using Kinect.Core.Gestures;
-using Kinect.WPF.nPong.Models;
+using Kinect.Pong.Models;
+using Kinect.WPF.nPong;
 using System.Drawing;
-using System.Windows.Media.Media3D;
 using System.Windows;
 
-
-
-namespace Kinect.WPF.nPong.ViewModels
+namespace Kinect.Pong.ViewModels
 {
     class MainViewModel : ResourcesViewModelBase
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 
-namespace Kinect.WPF.nPong
+namespace Kinect.Pong
 {
     /// <summary>
     /// Interaction logic for App.xaml

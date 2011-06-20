@@ -13,9 +13,7 @@ using GalaSoft.MvvmLight.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows;
 using Kinect.Common;
-using Kinect.Core.Gestures;
 using System.Diagnostics;
-using Kinect.Core;
 using log4net;
 
 namespace Kinect.Plugins.Common.ViewModels

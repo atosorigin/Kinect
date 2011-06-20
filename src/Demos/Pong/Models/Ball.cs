@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.ComponentModel;
 
-namespace Kinect.WPF.nPong.Models
+namespace Kinect.Pong.Models
 {
     public class Ball : INotifyPropertyChanged
     {
-        public Point _position;
+        private Point _position;
         public Point Position
         {
             get
@@ -73,11 +70,11 @@ namespace Kinect.WPF.nPong.Models
         {
             if (Position.X + Radius >= Boundry.Width)
             {
-                OnScored(Models.Paddle.Side.Right, this);
+                OnScored(Paddle.Side.Right, this);
             }
             if (Position.X <= 0 + this.Radius)
             {
-                OnScored(Models.Paddle.Side.Left, this);
+                OnScored(Paddle.Side.Left, this);
             }
         }
 
@@ -145,7 +142,7 @@ namespace Kinect.WPF.nPong.Models
             }
         }
 
-        protected virtual void OnScored(Models.Paddle.Side _side, Ball ball)
+        protected virtual void OnScored(Paddle.Side _side, Ball ball)
         {
             var handler = this.Scored;
 

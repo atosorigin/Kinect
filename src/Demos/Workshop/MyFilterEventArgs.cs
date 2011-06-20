@@ -1,6 +1,6 @@
 ﻿using Kinect.Core.Eventing;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     public class MyFilterEventArgs : FilterEventArgs
     {

@@ -1,23 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using GalaSoft.MvvmLight;
 using System.Windows.Media.Media3D;
 using Kinect.Common;
 using Kinect.Core;
-using Common;
-using System.Windows.Threading;
 
-namespace Kinect.WPF.GestureDetection.ViewModels
+namespace Kinect.GestureDetection.ViewModels
 {
-    class TrackingViewModel : ViewModelBase
+    public class TrackingViewModel : ViewModelBase
     {
         LimitedObservations<double> _capturedSequence;
         private HiddenMarkovModel.Utils.MotionCalculator _motionCalculator;
         private Point3D _startValue;
         private readonly int timeBetweenCapture = 2;
-        private GestureDetection.Models.GestureDetection _gestureDetection;
+        private Kinect.GestureDetection.Models.GestureDetection _gestureDetection;
 
         int i = 0;
 
@@ -52,7 +48,7 @@ namespace Kinect.WPF.GestureDetection.ViewModels
             _user = user;
             _user.Updated += _user_Updated;
             _motionCalculator = new HiddenMarkovModel.Utils.MotionCalculator();
-            _gestureDetection = new Models.GestureDetection();
+            _gestureDetection = new Kinect.GestureDetection.Models.GestureDetection();
             _capturedSequence = new LimitedObservations<double>(_gestureDetection.ObservationLength);
         }
 

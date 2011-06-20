@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Kinect.Workshop.Winforms
+namespace Kinect.Workshop
 {
     static class Program
     {

@@ -6,7 +6,6 @@ using GalaSoft.MvvmLight.Threading;
 using System.Diagnostics;
 using GalaSoft.MvvmLight.Command;
 using System.Windows;
-using System.ComponentModel;
 
 namespace Kinect.Plugins.Common.ViewModels
 {
@@ -162,7 +161,7 @@ namespace Kinect.Plugins.Common.ViewModels
                 {
                     if (KinectManager.Instance.Kinect != null)
                     {
-                        CameraView = KinectManager.Instance.Kinect.GetCameraView(Kinect.Core.CameraView.ColoredDepth);
+                        CameraView = KinectManager.Instance.Kinect.GetCameraView(Core.CameraView.ColoredDepth);
                     }
                 });
             }

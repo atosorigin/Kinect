@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
 using GalaSoft.MvvmLight;
 
-
-namespace Kinect.WPF.nPong.ViewModels
+namespace Kinect.Pong.ViewModels
 {
     class ResourcesViewModelBase : ViewModelBase
     {
