@@ -1,7 +1,7 @@
 ﻿using System;
 using log4net;
 
-namespace Common
+namespace Kinect.Common
 {
     /// <summary>
     /// Extension methods for the log4net logging framework

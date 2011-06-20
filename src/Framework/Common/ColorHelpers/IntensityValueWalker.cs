@@ -1,5 +1,6 @@
-﻿
-namespace Common.ColorHelpers
+﻿using Common.ColorHelpers;
+
+namespace Kinect.Common.ColorHelpers
 {
     internal class IntensityValueWalker
     {

@@ -4,9 +4,10 @@ using System.Linq.Expressions;
 using System.Windows.Media.Media3D;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Common;
 using log4net;
 
-namespace Common
+namespace Kinect.Common
 {
     public static class ClassExtensions
     {

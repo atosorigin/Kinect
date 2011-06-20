@@ -1,4 +1,5 @@
 ﻿using Common;
+using Kinect.Common;
 
 namespace Kinect.Core.Gestures.Model
 {

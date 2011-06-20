@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Kinect.Common;
 using Kinect.Core.Gestures.Helper;
 using Kinect.Core.Eventing;
 using Kinect.Core.Filters.Helper;

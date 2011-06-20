@@ -1,4 +1,5 @@
 ﻿using System;
+using Kinect.Common.ColorHelpers;
 
 namespace Common.ColorHelpers
 {

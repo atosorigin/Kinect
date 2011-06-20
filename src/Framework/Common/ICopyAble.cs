@@ -1,5 +1,5 @@
 ﻿
-namespace Common
+namespace Kinect.Common
 {
     public interface ICopyAble<T>
     {

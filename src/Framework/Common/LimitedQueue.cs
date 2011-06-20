@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Common
+namespace Kinect.Common
 {
     public class LimitedQueue<T> : Queue<T>
     {

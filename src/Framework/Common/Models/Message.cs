@@ -1,5 +1,5 @@
 ﻿
-namespace Common.Models
+namespace Kinect.Common.Models
 {
     public class Message
     {

@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Media.Imaging;
-using Common;
+using Kinect.Common;
 using log4net;
 using xn;
 using ms = System.Windows.Media.Media3D;
@@ -507,7 +507,7 @@ namespace Kinect.Core
                 return new ms.Point3D(-999, -999, -999);
             }
 
-            SkeletonJointPosition pos = new SkeletonJointPosition();
+            var pos = new SkeletonJointPosition();
             _skeletonCapbility.GetSkeletonJointPosition(userId, skeletonJoint, ref pos);
             if (pos.position.Z == 0)
             {

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Common
+namespace Kinect.Common
 {
     /// <summary>
     /// Mouse buttons that can be pressed

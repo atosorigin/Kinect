@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="Kinect.WPF.App"
+             x:Class="Kinect.Semaphore.App"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <Kinect_WPF_ViewModels:MainViewModel x:Key="MainViewModelDataSource"

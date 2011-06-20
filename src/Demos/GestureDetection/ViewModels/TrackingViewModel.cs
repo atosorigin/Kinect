@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
 using System.Windows.Media.Media3D;
+using Kinect.Common;
 using Kinect.Core;
 using Common;
 using System.Windows.Threading;

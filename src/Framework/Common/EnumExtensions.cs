@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Common
+namespace Kinect.Common
 {
     public static class EnumExtensions
     {

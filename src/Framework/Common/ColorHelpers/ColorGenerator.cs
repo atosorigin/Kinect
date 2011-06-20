@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using System.Globalization;
 
-namespace Common.ColorHelpers
+namespace Kinect.Common.ColorHelpers
 {
     /// <summary>
     /// ColorGenerator

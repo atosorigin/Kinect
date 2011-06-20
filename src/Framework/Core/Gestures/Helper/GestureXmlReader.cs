@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Reflection;
 using System.Diagnostics;
+using Kinect.Common;
 using log4net;
 using Common;
 

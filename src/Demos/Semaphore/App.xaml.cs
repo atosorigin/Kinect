@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Windows;
-using Common;
+﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
+using Kinect.Common;
+using Kinect.WPF.Models;
 using log4net;
 
-namespace Kinect.WPF
+namespace Kinect.Semaphore
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -17,7 +13,7 @@ namespace Kinect.WPF
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(App));
 
-        private Models.SemaphoreGames _semaphoreGames;
+        private SemaphoreGames _semaphoreGames;
         static BindableTraceListener traceListener;
 
         public App()
@@ -40,7 +36,7 @@ namespace Kinect.WPF
         private void Initialize()
         {
             DispatcherHelper.Initialize();
-            _semaphoreGames = Models.SemaphoreGames.Instance;
+            _semaphoreGames = SemaphoreGames.Instance;
         }
     }
 }

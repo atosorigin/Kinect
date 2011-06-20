@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Kinect.Common;
 using Kinect.Core;
 using Common;
 using Kinect.Core.Gestures;

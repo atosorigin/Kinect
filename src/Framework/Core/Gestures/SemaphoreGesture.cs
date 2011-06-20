@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Kinect.Common;
 using Kinect.Core.Gestures.Helper;
 using Kinect.Core.Gestures.Model;
 using System.Windows.Media.Media3D;

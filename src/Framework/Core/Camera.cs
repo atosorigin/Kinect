@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Common.ColorHelpers;
+using Kinect.Common.ColorHelpers;
 using xn;
 using Kinect.Core.Exceptions;
 

@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using Common.Models;
+using Kinect.Common.Models;
 
-namespace Common
+namespace Kinect.Common
 {
     /// <summary>
     /// Tracelistener bindable to view

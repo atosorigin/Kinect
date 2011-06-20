@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common.ColorHelpers
+namespace Kinect.Common.ColorHelpers
 {
     internal class PatternGenerator
     {

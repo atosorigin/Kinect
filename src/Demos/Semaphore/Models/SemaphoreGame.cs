@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.ObjectModel;
+using Kinect.Common;
 using Kinect.Core.Gestures.Model;
 using Common;
 

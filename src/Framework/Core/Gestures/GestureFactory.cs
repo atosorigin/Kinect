@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Kinect.Common;
 using Kinect.Core.Eventing;
 using Kinect.Core.Filters;
-using System.Xml.Linq;
 using Common;
 using log4net;
 using System.Windows.Media.Media3D;
