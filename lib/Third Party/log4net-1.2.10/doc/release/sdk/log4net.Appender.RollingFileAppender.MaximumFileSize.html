@@ -1,0 +1,44 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>MaximumFileSize Property</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">log4net SDK Reference</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">RollingFileAppender.MaximumFileSize Property</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Gets or sets the maximum size that the output file is allowed to reach before being rolled over to backup files. </p>
+      <div class="syntax">
+        <span class="lang">[Visual Basic]</span>
+        <br />Public Property MaximumFileSize As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a></div>
+      <div class="syntax">
+        <span class="lang">[C#]</span>
+        <br />public <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> MaximumFileSize {get; set;}</div>
+      <p>
+      </p>
+      <h4 class="dtH4">Property Value</h4>
+      <p> The maximum size that the output file is allowed to reach before being rolled over to backup files. </p>
+      <h4 class="dtH4">Remarks</h4>
+            <p> This property allows you to specify the maximum size with the suffixes "KB", "MB" or "GB" so that the size is interpreted being expressed respectively in kilobytes, megabytes or gigabytes. </p>
+            <p> For example, the value "10KB" will be interpreted as 10240 bytes. </p>
+            <p> The default maximum file size is 10MB. </p>
+            <p> If you have the option to set the maximum file size programmatically consider using the <a href="log4net.Appender.RollingFileAppender.MaxFileSize.html">MaxFileSize</a> property instead as this allows you to set the size in bytes as a <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemInt64ClassTopic.asp">Int64</a>. </p>
+            <h4 class="dtH4">See Also</h4><p><a href="log4net.Appender.RollingFileAppender.html">RollingFileAppender Class</a> | <a href="log4net.Appender.html">log4net.Appender Namespace</a></p><hr /><div id="footer"><p><a href="http://logging.apache.org/log4net">Copyright 2001-2006 The Apache Software Foundation.</a></p><p>Generated from assembly log4net [1.2.10.0]</p></div></div>
+  </body>
+</html>

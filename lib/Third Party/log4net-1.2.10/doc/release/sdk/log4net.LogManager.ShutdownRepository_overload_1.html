@@ -1,0 +1,39 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>LogManager.ShutdownRepository Method ()</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">log4net SDK Reference</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">LogManager.ShutdownRepository Method ()</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Shuts down the default repository. </p>
+      <div class="syntax">
+        <span class="lang">[Visual Basic]</span>
+        <br />Overloads Public Shared Sub ShutdownRepository()</div>
+      <div class="syntax">
+        <span class="lang">[C#]</span>
+        <br />public static <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemVoidClassTopic.asp">void</a> ShutdownRepository();</div>
+      <h4 class="dtH4">Remarks</h4>
+            <p> Calling this method will <b>safely</b> close and remove all appenders in all the loggers including root contained in the default repository. </p>
+            <p>Some appenders need to be closed before the application exists. Otherwise, pending logging events might be lost. </p>
+            <p>The <code>shutdown</code> method is careful to close nested appenders before closing regular appenders. This is allows configurations where a regular appender is attached to a logger and again to a nested appender. </p>
+            <h4 class="dtH4">See Also</h4><p><a href="log4net.LogManager.html">LogManager Class</a> | <a href="log4net.html">log4net Namespace</a> | <a href="log4net.LogManager.ShutdownRepository_overloads.html">LogManager.ShutdownRepository Overload List</a></p><hr /><div id="footer"><p><a href="http://logging.apache.org/log4net">Copyright 2001-2006 The Apache Software Foundation.</a></p><p>Generated from assembly log4net [1.2.10.0]</p></div></div>
+  </body>
+</html>

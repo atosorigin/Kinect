@@ -1,0 +1,52 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>FileAppender.MinimalLock.OpenFile Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">log4net SDK Reference</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">FileAppender.MinimalLock.OpenFile Method </h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Prepares to open the file when the first message is logged. </p>
+      <div class="syntax">
+        <span class="lang">[Visual Basic]</span>
+        <br />Overrides Public Sub OpenFile( _<br />   ByVal <i>filename</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">String</a>, _<br />   ByVal <i>append</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">Boolean</a>, _<br />   ByVal <i>encoding</i> As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemTextEncodingClassTopic.asp">Encoding</a> _<br />)</div>
+      <div class="syntax">
+        <span class="lang">[C#]</span>
+        <br />public override <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemVoidClassTopic.asp">void</a> OpenFile(<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemStringClassTopic.asp">string</a> <i>filename</i>,<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">bool</a> <i>append</i>,<br />   <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemTextEncodingClassTopic.asp">Encoding</a> <i>encoding</i><br />);</div>
+      <h4 class="dtH4">Parameters</h4>
+      <dl>
+        <dt>
+          <i>filename</i>
+        </dt>
+        <dd>The filename to use</dd>
+        <dt>
+          <i>append</i>
+        </dt>
+        <dd>Whether to append to the file, or overwrite</dd>
+        <dt>
+          <i>encoding</i>
+        </dt>
+        <dd>The encoding to use</dd>
+      </dl>
+      <h4 class="dtH4">Remarks</h4>
+            <p> Open the file specified and prepare for logging. No writes will be made until <a href="log4net.Appender.FileAppender.MinimalLock.AcquireLock.html">AcquireLock</a> is called. Must be called before any calls to <b>AcquireLock</b>, <a href="log4net.Appender.FileAppender.MinimalLock.ReleaseLock.html">ReleaseLock</a> and <a href="log4net.Appender.FileAppender.MinimalLock.CloseFile.html">CloseFile</a>. </p>
+            <h4 class="dtH4">See Also</h4><p><a href="log4net.Appender.FileAppender.MinimalLock.html">FileAppender.MinimalLock Class</a> | <a href="log4net.Appender.html">log4net.Appender Namespace</a></p><hr /><div id="footer"><p><a href="http://logging.apache.org/log4net">Copyright 2001-2006 The Apache Software Foundation.</a></p><p>Generated from assembly log4net [1.2.10.0]</p></div></div>
+  </body>
+</html>

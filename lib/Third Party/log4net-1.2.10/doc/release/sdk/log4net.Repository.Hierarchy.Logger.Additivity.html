@@ -1,0 +1,42 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>Additivity Property</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">log4net SDK Reference</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">Logger.Additivity Property</h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Gets or sets a value indicating if child loggers inherit their parent's appenders. </p>
+      <div class="syntax">
+        <span class="lang">[Visual Basic]</span>
+        <br />Overridable Public Property Additivity As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">Boolean</a></div>
+      <div class="syntax">
+        <span class="lang">[C#]</span>
+        <br />public virtual <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemBooleanClassTopic.asp">bool</a> Additivity {get; set;}</div>
+      <p>
+      </p>
+      <h4 class="dtH4">Property Value</h4>
+      <p>
+            <code>true</code> if child loggers inherit their parent's appenders. </p>
+      <h4 class="dtH4">Remarks</h4>
+            <p> Additivity is set to <code>true</code> by default, that is children inherit the appenders of their ancestors by default. If this variable is set to <code>false</code> then the appenders found in the ancestors of this logger are not used. However, the children of this logger will inherit its appenders, unless the children have their additivity flag set to <code>false</code> too. See the user manual for more details. </p>
+            <h4 class="dtH4">See Also</h4><p><a href="log4net.Repository.Hierarchy.Logger.html">Logger Class</a> | <a href="log4net.Repository.Hierarchy.html">log4net.Repository.Hierarchy Namespace</a></p><hr /><div id="footer"><p><a href="http://logging.apache.org/log4net">Copyright 2001-2006 The Apache Software Foundation.</a></p><p>Generated from assembly log4net [1.2.10.0]</p></div></div>
+  </body>
+</html>

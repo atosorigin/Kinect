@@ -1,0 +1,39 @@
+<html dir="LTR">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" />
+    <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5" />
+    <title>FileAppender.LockingModelBase.AcquireLock Method</title>
+    <xml>
+    </xml>
+    <link rel="stylesheet" type="text/css" href="MSDN.css" />
+  </head>
+  <body id="bodyID" class="dtBODY">
+    <div id="nsbanner">
+      <div id="bannerrow1">
+        <table class="bannerparthead" cellspacing="0">
+          <tr id="hdr">
+            <td class="runninghead">log4net SDK Reference</td>
+            <td class="product">
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="TitleRow">
+        <h1 class="dtH1">FileAppender.LockingModelBase.AcquireLock Method </h1>
+      </div>
+    </div>
+    <div id="nstext">
+      <p> Acquire the lock on the file </p>
+      <div class="syntax">
+        <span class="lang">[Visual Basic]</span>
+        <br />MustOverride Public Function AcquireLock() As <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemIOStreamClassTopic.asp">Stream</a></div>
+      <div class="syntax">
+        <span class="lang">[C#]</span>
+        <br />public abstract <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/frlrfSystemIOStreamClassTopic.asp">Stream</a> AcquireLock();</div>
+      <h4 class="dtH4">Return Value</h4>
+      <p>A stream that is ready to be written to.</p>
+      <h4 class="dtH4">Remarks</h4>
+            <p> Acquire the lock on the file in preparation for writing to it. Return a stream pointing to the file. <a href="log4net.Appender.FileAppender.LockingModelBase.ReleaseLock.html">ReleaseLock</a> must be called to release the lock on the output file. </p>
+            <h4 class="dtH4">See Also</h4><p><a href="log4net.Appender.FileAppender.LockingModelBase.html">FileAppender.LockingModelBase Class</a> | <a href="log4net.Appender.html">log4net.Appender Namespace</a></p><hr /><div id="footer"><p><a href="http://logging.apache.org/log4net">Copyright 2001-2006 The Apache Software Foundation.</a></p><p>Generated from assembly log4net [1.2.10.0]</p></div></div>
+  </body>
+</html>
