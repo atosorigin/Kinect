@@ -1,0 +1,60 @@
+﻿<Window x:Class="Kinect.Plugins.Common.Views.Calibration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+        xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
+        xmlns:kvm="clr-namespace:Kinect.Plugins.Common.ViewModels"
+        mc:Ignorable="d"
+        Height="350"
+        Width="500"
+        Title="Kinect Calibration"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+    <Window.Resources>
+        <kvm:CalibrationViewModel x:Key="CalibrationViewModelDataSource"
+                                  d:IsDataSource="True" />
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Mode="OneWay"
+                 Source="{StaticResource CalibrationViewModelDataSource}" />
+    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Deactivated">
+            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding WindowDeactivated}"
+                                                       PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding WindowActivated}"
+                                                       PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Loaded">
+            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding WindowLoaded}"
+                                                       PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Label Content="{Binding CalibrationMessage}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top"
+               Name="lblCalibration"
+               FontSize="32"
+               FontWeight="Bold" />
+        <Label Content="{Binding CountDownMessage}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="0,-50,0,0"
+               Name="label1"
+               FontSize="72"
+               FontWeight="Bold" />
+        <Image Height="120"
+               HorizontalAlignment="Right"
+               Name="CameraImage"
+               Stretch="Fill"
+               VerticalAlignment="Bottom"
+               Source="{Binding CameraView}"
+               Width="160" />
+    </Grid>
+</Window>
