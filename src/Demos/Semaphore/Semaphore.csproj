@@ -8,8 +8,8 @@
     <ProjectGuid>{788B7BDA-A7C8-428B-9C21-B08659ED6452}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kinect.WPF</RootNamespace>
-    <AssemblyName>Kinect.WPF</AssemblyName>
+    <RootNamespace>Kinect.Semaphore</RootNamespace>
+    <AssemblyName>Kinect.Semaphore</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

@@ -8,8 +8,8 @@
     <ProjectGuid>{34238744-2856-409F-85CA-21F17D6830BE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kinect.WPF.GestureDetection</RootNamespace>
-    <AssemblyName>Kinect.WPF.GestureDetection</AssemblyName>
+    <RootNamespace>Kinect.GestureDetection</RootNamespace>
+    <AssemblyName>Kinect.GestureDetection</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

@@ -8,8 +8,8 @@
     <ProjectGuid>{45BDD548-5240-4997-9C95-F2332F6A1BA3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kinect.WPF.nPong</RootNamespace>
-    <AssemblyName>Kinect.WPF.nPong</AssemblyName>
+    <RootNamespace>Kinect.Pong</RootNamespace>
+    <AssemblyName>Kinect.Pong</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

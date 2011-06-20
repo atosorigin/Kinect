@@ -8,8 +8,8 @@
     <ProjectGuid>{AC1A6D0A-551F-4592-8E71-7DBEC178DE08}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kinect.Workshop.Winforms</RootNamespace>
-    <AssemblyName>Kinect.Workshop.Winforms</AssemblyName>
+    <RootNamespace>Kinect.Workshop</RootNamespace>
+    <AssemblyName>Kinect.Workshop</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
