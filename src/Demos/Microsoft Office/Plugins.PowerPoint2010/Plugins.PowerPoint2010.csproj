@@ -30,14 +30,6 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <DefineConstants>VSTO40</DefineConstants>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
@@ -261,7 +253,6 @@
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Settings.StyleCop" />
     <None Include="ThisAddIn.Designer.xml">
       <DependentUpon>ThisAddIn.cs</DependentUpon>
     </None>
@@ -273,7 +264,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Framework\Core\Core.csproj">
       <Project>{5515A0FD-7499-4266-8357-B882448EED5F}</Project>
-      <Name>Kinect.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj">
       <Project>{AB325698-080A-4C1F-A196-51F4F8D4D1F4}</Project>

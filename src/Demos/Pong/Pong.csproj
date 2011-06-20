@@ -16,14 +16,6 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -50,9 +42,6 @@
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.WPF4">
       <HintPath>..\Lib\MvvMLight\GalaSoft.MvvmLight.WPF4.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenNI.net, Version=1.0.0.25, Culture=neutral, PublicKeyToken=6b43d0c6cf74ee7f, processorArchitecture=x86">
-      <HintPath>..\Lib\OpenNI.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -129,7 +118,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Framework\Core\Core.csproj">
       <Project>{5515A0FD-7499-4266-8357-B882448EED5F}</Project>
-      <Name>Kinect.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

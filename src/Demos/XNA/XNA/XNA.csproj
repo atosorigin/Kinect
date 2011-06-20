@@ -19,14 +19,6 @@
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -102,9 +94,6 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenNI.net, Version=1.0.0.25, Culture=neutral, PublicKeyToken=6b43d0c6cf74ee7f, processorArchitecture=x86">
-      <HintPath>..\..\Lib\OpenNI.net.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System">
       <Private>False</Private>
@@ -141,7 +130,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Framework\Core\Core.csproj">
       <Project>{5515A0FD-7499-4266-8357-B882448EED5F}</Project>
-      <Name>Kinect.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\XNAContent\XNAContent.contentproj">
       <Name>XNAContent %28Content%29</Name>

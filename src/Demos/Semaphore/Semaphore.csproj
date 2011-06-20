@@ -18,14 +18,6 @@
     <WarningLevel>4</WarningLevel>
     <Utf8Output>true</Utf8Output>
     <ExpressionBlendVersion>4.0.20901.0</ExpressionBlendVersion>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -75,9 +67,6 @@
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\Lib\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenNI.net">
-      <HintPath>..\Lib\OpenNI.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -183,7 +172,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Framework\Core\Core.csproj">
       <Project>{5515A0FD-7499-4266-8357-B882448EED5F}</Project>
-      <Name>Kinect.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
