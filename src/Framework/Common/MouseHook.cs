@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using System.Drawing;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Kinect.Common
@@ -30,39 +30,23 @@ namespace Kinect.Common
     /// </summary>
     public static class MouseHook
     {
-        [DllImport("user32.dll")]
-        static extern int ShowCursor(bool show);
-
-        [DllImport("user32.dll")]
-        static extern void mouse_event(int flags, int dX, int dY, int buttons, int extraInfo);
-
-        [DllImportAttribute("user32.dll", EntryPoint = "SetCursorPos")]
-        [return: MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        static extern bool SetCursorPos(int X, int Y);
-
-        const int MOUSEEVENTF_MOVE = 0x1;
-        const int MOUSEEVENTF_LEFTDOWN = 0x2;
-        const int MOUSEEVENTF_LEFTUP = 0x4;
-        const int MOUSEEVENTF_RIGHTDOWN = 0x8;
-        const int MOUSEEVENTF_RIGHTUP = 0x10;
-        const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
-        const int MOUSEEVENTF_MIDDLEUP = 0x40;
-        const int MOUSEEVENTF_WHEEL = 0x800;
-        const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+        private const int MOUSEEVENTF_MOVE = 0x1;
+        private const int MOUSEEVENTF_LEFTDOWN = 0x2;
+        private const int MOUSEEVENTF_LEFTUP = 0x4;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x8;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        private const int MOUSEEVENTF_MIDDLEDOWN = 0x20;
+        private const int MOUSEEVENTF_MIDDLEUP = 0x40;
+        private const int MOUSEEVENTF_WHEEL = 0x800;
+        private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
 
         /// <summary>
         /// Gets or sets a structure that represents both X and Y mouse coordinates
         /// </summary>
         public static Point Position
         {
-            get
-            {
-                return new Point(Cursor.Position.X, Cursor.Position.Y);
-            }
-            set
-            {
-                Cursor.Position = value;
-            }
+            get { return new Point(Cursor.Position.X, Cursor.Position.Y); }
+            set { Cursor.Position = value; }
         }
 
         /// <summary>
@@ -70,30 +54,28 @@ namespace Kinect.Common
         /// </summary>
         public static int X
         {
-            get
-            {
-                return Cursor.Position.X;
-            }
-            set
-            {
-                Cursor.Position = new Point(value, Y);
-            }
+            get { return Cursor.Position.X; }
+            set { Cursor.Position = new Point(value, Y); }
         }
-        
+
         /// <summary>
         /// Gets or sets only the mouse's y coordinate
         /// </summary>
         public static int Y
         {
-            get
-            {
-                return Cursor.Position.Y;
-            }
-            set
-            {
-                Cursor.Position = new Point(X, value);
-            }
+            get { return Cursor.Position.Y; }
+            set { Cursor.Position = new Point(X, value); }
         }
+
+        [DllImport("user32.dll")]
+        private static extern int ShowCursor(bool show);
+
+        [DllImport("user32.dll")]
+        private static extern void mouse_event(int flags, int dX, int dY, int buttons, int extraInfo);
+
+        [DllImportAttribute("user32.dll", EntryPoint = "SetCursorPos")]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        private static extern bool SetCursorPos(int X, int Y);
 
         /// <summary>
         /// Press a mouse button down
@@ -101,7 +83,7 @@ namespace Kinect.Common
         /// <param name="button">The mousebutton</param>
         public static void MouseDown(MouseButton button)
         {
-            mouse_event(((int)button), 0, 0, 0, 0);
+            mouse_event(((int) button), 0, 0, 0, 0);
         }
 
         /// <summary>
@@ -130,7 +112,7 @@ namespace Kinect.Common
         /// <param name="button">The mousebutton</param>
         public static void MouseUp(MouseButton button)
         {
-            mouse_event(((int)button) * 2, 0, 0, 0, 0);
+            mouse_event(((int) button)*2, 0, 0, 0, 0);
         }
 
         /// <summary>

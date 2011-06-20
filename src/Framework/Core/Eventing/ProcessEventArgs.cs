@@ -13,9 +13,8 @@ namespace Kinect.Core.Eventing
         /// </summary>
         /// <param name="evt">The evt.</param>
         public ProcessEventArgs(T evt)
-            : base()
         {
-            this.Event = evt;
+            Event = evt;
         }
 
         /// <summary>

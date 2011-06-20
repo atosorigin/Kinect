@@ -2,8 +2,8 @@
 {
     internal class IntensityGenerator
     {
-        private IntensityValueWalker _walker;
         private int _current;
+        private IntensityValueWalker _walker;
 
         public string NextIntensity(int index)
         {
@@ -11,7 +11,7 @@
             {
                 _current = 255;
             }
-            else if (index % 7 == 0)
+            else if (index%7 == 0)
             {
                 if (_walker == null)
                 {
@@ -25,12 +25,12 @@
             }
 
             string currentText = _current.ToString("X");
-            
+
             if (currentText.Length == 1)
             {
                 currentText = "0" + currentText;
             }
-            
+
             return currentText;
         }
     }

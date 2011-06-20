@@ -13,23 +13,31 @@ namespace Kinect.Common.ColorHelpers
 
         public void MoveNext()
         {
-            if (Current.Parent == null) { Current = Current.ChildA; }
+            if (Current.Parent == null)
+            {
+                Current = Current.ChildA;
+            }
             else if (Current.Parent.ChildA == Current)
             {
                 Current = Current.Parent.ChildB;
             }
             else
             {
-                int levelsUp = 1; Current = Current.Parent;
+                int levelsUp = 1;
+                Current = Current.Parent;
                 while (Current.Parent != null && Current == Current.Parent.ChildB)
                 {
-                    Current = Current.Parent; levelsUp++;
+                    Current = Current.Parent;
+                    levelsUp++;
                 }
                 if (Current.Parent != null)
                 {
                     Current = Current.Parent.ChildB;
                 }
-                else { levelsUp++; }
+                else
+                {
+                    levelsUp++;
+                }
                 for (int i = 0; i < levelsUp; i++)
                 {
                     Current = Current.ChildA;

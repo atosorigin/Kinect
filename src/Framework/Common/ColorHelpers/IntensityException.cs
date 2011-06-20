@@ -12,9 +12,7 @@ namespace Kinect.Common.ColorHelpers
         /// Initializes a new instance of the <see cref="IntensityException"/> class.
         /// </summary>
         public IntensityException()
-            : base()
         {
-
         }
 
         /// <summary>
@@ -24,7 +22,6 @@ namespace Kinect.Common.ColorHelpers
         public IntensityException(string message)
             : base(message)
         {
-
         }
 
         /// <summary>
@@ -35,7 +32,6 @@ namespace Kinect.Common.ColorHelpers
         public IntensityException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
 
         /// <summary>
@@ -49,7 +45,6 @@ namespace Kinect.Common.ColorHelpers
         public IntensityException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
         }
     }
 }

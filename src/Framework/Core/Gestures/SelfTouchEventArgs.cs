@@ -1,22 +1,21 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using xn;
 
 namespace Kinect.Core.Gestures
 {
     public class SelfTouchEventArgs : GestureEventArgs
     {
-        public SkeletonJoint[] Joints { get; private set; }
-
         public SelfTouchEventArgs(uint userid, params SkeletonJoint[] joints) : base(userid)
         {
-            this.Joints = joints;
+            Joints = joints;
         }
+
+        public SkeletonJoint[] Joints { get; private set; }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
-            foreach (var joint in this.Joints)
+            var builder = new StringBuilder();
+            foreach (SkeletonJoint joint in Joints)
             {
                 builder.Append(joint);
                 builder.Append("+");

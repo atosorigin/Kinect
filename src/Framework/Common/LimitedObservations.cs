@@ -4,35 +4,33 @@ namespace Kinect.Common
 {
     public class LimitedObservations<T> : List<T>
     {
-        private static object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
 
         private int _limit = -1;
-
-        public int Limit
-        {
-            get { return this._limit; }
-            set { this._limit = value; }
-        }
 
 
         public LimitedObservations(int limit)
             : base(limit)
         {
-            this.Limit = limit;
+            Limit = limit;
         }
 
-        public new void InsertObservation(T item)
+        public int Limit
+        {
+            get { return _limit; }
+            set { _limit = value; }
+        }
+
+        public void InsertObservation(T item)
         {
             lock (_syncRoot)
             {
-                if (this.Count >= this.Limit)
+                if (Count >= Limit)
                 {
-                    this.RemoveAt(0);
-
+                    RemoveAt(0);
                 }
                 base.Add(item);
             }
         }
     }
-
 }

@@ -1,5 +1,5 @@
-﻿using System.Windows.Media;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Windows.Media;
 
 namespace Kinect.Common.ColorHelpers
 {
@@ -8,8 +8,8 @@ namespace Kinect.Common.ColorHelpers
     /// </summary>
     public class ColorGenerator
     {
-        private int _index = 0;
-        private IntensityGenerator _intensityGenerator = new IntensityGenerator();
+        private readonly IntensityGenerator _intensityGenerator = new IntensityGenerator();
+        private int _index;
 
         /// <summary>
         /// Nexts the color string.
@@ -30,10 +30,10 @@ namespace Kinect.Common.ColorHelpers
         {
             string colorString = NextColorString();
             Color color = Color.FromRgb(
-                (byte)int.Parse(colorString.Substring(0, 2), NumberStyles.HexNumber),
-                (byte)int.Parse(colorString.Substring(2, 2), NumberStyles.HexNumber),
-                (byte)int.Parse(colorString.Substring(4, 2), NumberStyles.HexNumber));
-            
+                (byte) int.Parse(colorString.Substring(0, 2), NumberStyles.HexNumber),
+                (byte) int.Parse(colorString.Substring(2, 2), NumberStyles.HexNumber),
+                (byte) int.Parse(colorString.Substring(4, 2), NumberStyles.HexNumber));
+
             return color;
         }
     }

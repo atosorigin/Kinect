@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Common;
 using Kinect.Common;
 using xn;
 
@@ -10,20 +9,30 @@ namespace Kinect.Core.Gestures
 {
     public class ClapGesture : GestureBase
     {
-        private LimitedQueue<Hands> _history;
+        public const string LogFile = @"c:\temp\LogFile.txt";
         internal static int PointCount = 20;
 
         internal static int MarginX = 8;
         internal static int MarginY = 20;
         internal static int MarginZ = 30;
+        private readonly LimitedQueue<Hands> _history;
         private int _doubleClapCheck = -1;
 
-        public const string LogFile = @"c:\temp\LogFile.txt";
+        public ClapGesture()
+        {
+            _history = new LimitedQueue<Hands>(PointCount);
+        }
+
+        protected override string GestureName
+        {
+            get { return "ClapGesture"; }
+        }
 
         public event EventHandler<KinectGestureEventArgs> SingleClap;
+
         protected virtual void OnSingleClap(IUserChangedEvent userEvent)
         {
-            var handler = this.SingleClap;
+            EventHandler<KinectGestureEventArgs> handler = SingleClap;
             if (handler != null)
             {
                 handler(this, new KinectGestureEventArgs(userEvent));
@@ -31,65 +40,60 @@ namespace Kinect.Core.Gestures
         }
 
         public event EventHandler<KinectGestureEventArgs> DoubleClap;
+
         protected virtual void OnDoubleClap(IUserChangedEvent userEvent)
         {
-            var handler = this.DoubleClap;
+            EventHandler<KinectGestureEventArgs> handler = DoubleClap;
             if (handler != null)
             {
                 handler(this, new KinectGestureEventArgs(userEvent));
             }
         }
 
-        public ClapGesture()
-            : base()
-        {
-            this._history = new LimitedQueue<Hands>(PointCount);
-        }
-
         public void AddPoints(Point3D left, Point3D right)
         {
-            this.AddPoints(new Hands(left, right));
+            AddPoints(new Hands(left, right));
         }
 
         public void AddPoints(Hands hand)
         {
-            if (this.DoubleClap != null)
+            if (DoubleClap != null)
             {
                 ////Do some work for double clap
-                this._history.Enqueue(hand);
+                _history.Enqueue(hand);
                 ////Do some work for single clap
                 bool clap = hand.DetectClap();
-                if (clap && this._doubleClapCheck < 0)
+                if (clap && _doubleClapCheck < 0)
                 {
-                    this._doubleClapCheck = PointCount;
+                    _doubleClapCheck = PointCount;
                 }
-                else if (this._doubleClapCheck == 0)
+                else if (_doubleClapCheck == 0)
                 {
                     ////TODO: remove call to camera and use OnSingleclap Camera.Instance.OnKinectEventHandlerEvent(SingleClap);
-                    this._doubleClapCheck--;
+                    _doubleClapCheck--;
                 }
-                else if (this._doubleClapCheck >= 0)
+                else if (_doubleClapCheck >= 0)
                 {
-                    if (this.CheckForDoubleClap())
+                    if (CheckForDoubleClap())
                     {
-                        this._doubleClapCheck = -1;
+                        _doubleClapCheck = -1;
                     }
                     else
                     {
-                        this._doubleClapCheck--;
+                        _doubleClapCheck--;
                     }
                 }
             }
             else
             {
                 ////Do some work for single clap
-                if (hand.DetectClap() && this._doubleClapCheck < 0)
+                if (hand.DetectClap() && _doubleClapCheck < 0)
                 {
-                    this._doubleClapCheck = 10;
+                    _doubleClapCheck = 10;
                 }
-                else if (this._doubleClapCheck >= 0)
+                else if (_doubleClapCheck >= 0)
                 {
-                    this._doubleClapCheck--;
+                    _doubleClapCheck--;
                 }
             }
         }
@@ -98,7 +102,7 @@ namespace Kinect.Core.Gestures
         {
             int nrOfClaps = 0;
             int wait = 0;
-            foreach (var hands in this._history)
+            foreach (Hands hands in _history)
             {
                 if (wait > 0)
                 {
@@ -113,7 +117,7 @@ namespace Kinect.Core.Gestures
 
             if (nrOfClaps >= 2)
             {
-                this._history.Clear();
+                _history.Clear();
                 return true;
             }
 
@@ -128,7 +132,7 @@ namespace Kinect.Core.Gestures
             //    list.RemoveAt(0);
             //}
         }
-        
+
         public void WriteToLogFile()
         {
             using (StreamWriter log = !File.Exists(LogFile) ? new StreamWriter(LogFile) : File.AppendText(LogFile))
@@ -139,14 +143,15 @@ namespace Kinect.Core.Gestures
 
         public string WriteToLogString()
         {
-            return this.WriteLog();
+            return WriteLog();
         }
 
         private string WriteLog()
         {
-            StringBuilder sb = new StringBuilder();
-            Hands[] array = new Hands[PointCount]; ;
-            this._history.CopyTo(array, 0);
+            var sb = new StringBuilder();
+            var array = new Hands[PointCount];
+            ;
+            _history.CopyTo(array, 0);
             foreach (Hands p in array)
             {
                 if (p != null)
@@ -155,11 +160,6 @@ namespace Kinect.Core.Gestures
                 }
             }
             return sb.ToString();
-        }
-
-        protected override string GestureName
-        {
-            get { return "ClapGesture"; }
         }
 
         public override void Process(IUserChangedEvent evt)

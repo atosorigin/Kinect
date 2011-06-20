@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Media.Media3D;
+﻿using System.Windows.Media.Media3D;
 
 namespace Kinect.Core
 {
@@ -24,7 +23,7 @@ namespace Kinect.Core
         /// Gets three dimensional coordinate of the users torso
         /// </summary>
         Point3D Torso { get; }
-        
+
         /// <summary>
         /// Gets three dimensional coordinate of the users left elbow
         /// </summary>

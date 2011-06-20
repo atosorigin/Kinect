@@ -4,29 +4,29 @@ namespace Kinect.Common
 {
     public class LimitedQueue<T> : Queue<T>
     {
-        private static object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
 
         private int _limit = -1;
-
-        public int Limit
-        {
-            get { return this._limit; }
-            set { this._limit = value; }
-        }
 
         public LimitedQueue(int limit)
             : base(limit)
         {
-            this.Limit = limit;
+            Limit = limit;
+        }
+
+        public int Limit
+        {
+            get { return _limit; }
+            set { _limit = value; }
         }
 
         public new void Enqueue(T item)
         {
             lock (_syncRoot)
             {
-                if (this.Count >= this.Limit)
+                if (Count >= Limit)
                 {
-                    this.Dequeue();
+                    Dequeue();
                 }
 
                 base.Enqueue(item);

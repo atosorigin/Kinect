@@ -14,17 +14,18 @@ namespace Kinect.Core.Gestures.Helper
             //// Calculate the angle
             if (resX == 0.0)
             {
-                if (resY == 0.0)  // was resY. i think 0,0 is seen as same as up... There is an error in http://www.carlosfemmer.com/post/2006/02/Calculate-Angle-between-2-points-using-C.aspx  :-)
+                if (resY == 0.0)
+                    // was resY. i think 0,0 is seen as same as up... There is an error in http://www.carlosfemmer.com/post/2006/02/Calculate-Angle-between-2-points-using-C.aspx  :-)
                 {
                     angle = 0.0;
                 }
                 else if (resY > 0.0)
                 {
-                    angle = System.Math.PI / 2.0;
+                    angle = Math.PI/2.0;
                 }
                 else
                 {
-                    angle = System.Math.PI * 3.0 / 2.0;
+                    angle = Math.PI*3.0/2.0;
                 }
             }
             else if (resY == 0.0)
@@ -35,26 +36,26 @@ namespace Kinect.Core.Gestures.Helper
                 }
                 else
                 {
-                    angle = System.Math.PI;
+                    angle = Math.PI;
                 }
             }
             else
             {
                 if (resX < 0.0)
                 {
-                    angle = System.Math.Atan(resY / resX) + System.Math.PI;
+                    angle = Math.Atan(resY/resX) + Math.PI;
                 }
                 else if (resY < 0.0)
                 {
-                    angle = System.Math.Atan(resY / resX) + (2 * System.Math.PI);
+                    angle = Math.Atan(resY/resX) + (2*Math.PI);
                 }
                 else
                 {
-                    angle = System.Math.Atan(resY / resX);
+                    angle = Math.Atan(resY/resX);
                 }
             }
 
-            angle = angle * 180 / System.Math.PI; //// Convert to degrees
+            angle = angle*180/Math.PI; //// Convert to degrees
             return angle;
         }
 

@@ -4,13 +4,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Media.Imaging;
 using Kinect.Common;
 using log4net;
 using xn;
 using ms = System.Windows.Media.Media3D;
+using Point3D = System.Windows.Media.Media3D.Point3D;
 
 namespace Kinect.Core
 {
@@ -51,29 +51,29 @@ namespace Kinect.Core
     /// </summary>
     public sealed class MyKinect : INotifyPropertyChanged
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(MyKinect));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (MyKinect));
 
-        private static object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
         private static readonly MyKinect _instance = new MyKinect();
+
+        private static bool _running;
+        private static Thread _cameraThread;
+        private readonly Camera _camera = new Camera();
+        private List<User> _activeUsers;
+
+        private string _calibrationPose;
+        private Context _context;
+        private KinectState _kinectstate;
+        private PoseDetectionCapability _poseDetectionCapability;
+
+        private int _singleUserDataSlot = -1;
+        private SkeletonCapability _skeletonCapbility;
+        private UserGenerator _userGenerator;
 
         private MyKinect()
         {
             SingleUserMode = false;
         }
-
-        private static bool _running = false;
-        private static Thread _cameraThread;
-
-        private Context _context;
-        private UserGenerator _userGenerator;
-        private SkeletonCapability _skeletonCapbility;
-        private PoseDetectionCapability _poseDetectionCapability;
-        private string _calibrationPose;
-        private KinectState _kinectstate;
-
-        private List<User> _activeUsers;
-        private int _singleUserDataSlot = -1;
-        private Camera _camera = new Camera();
 
         public static MyKinect Instance
         {
@@ -82,10 +82,7 @@ namespace Kinect.Core
 
         public KinectState KinectState
         {
-            get
-            {
-                return _kinectstate;
-            }
+            get { return _kinectstate; }
             private set
             {
                 if (_kinectstate != value)
@@ -107,6 +104,12 @@ namespace Kinect.Core
         }
 
         public bool SingleUserMode { get; set; }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
         public event EventHandler<KinectMessageEventArgs> CameraMessage;
 
@@ -130,8 +133,6 @@ namespace Kinect.Core
 
         public event EventHandler<KinectUserEventArgs> UserCalibrated;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public event EventHandler<KinectEventArgs> NewUser;
 
         public event EventHandler<KinectEventArgs> CalibrationStarted;
@@ -140,7 +141,7 @@ namespace Kinect.Core
 
         public void OnUserCalibrating(IUserChangedEvent user)
         {
-            var handler = this.UserCalibrating;
+            EventHandler<KinectUserEventArgs> handler = UserCalibrating;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(user));
@@ -149,7 +150,7 @@ namespace Kinect.Core
 
         public void OnUserCalibrated(IUserChangedEvent user)
         {
-            var handler = this.UserCalibrated;
+            EventHandler<KinectUserEventArgs> handler = UserCalibrated;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(user));
@@ -169,9 +170,9 @@ namespace Kinect.Core
                             _running = true;
                             try
                             {
-                                _context = new xn.Context(@".\Configs\openniconfig.xml");
+                                _context = new Context(@".\Configs\openniconfig.xml");
                                 _camera.Context = _context;
-                                _camera.PropertyChanged += new PropertyChangedEventHandler(_camera_PropertyChanged);
+                                _camera.PropertyChanged += _camera_PropertyChanged;
                                 _camera.Running = true;
 
                                 KinectState = KinectState.ContextOpen;
@@ -191,10 +192,10 @@ namespace Kinect.Core
 
                             KinectState = KinectState.Initializing;
 
-                            _userGenerator = new UserGenerator(this._context);
-                            _skeletonCapbility = new SkeletonCapability(this._userGenerator);
-                            _poseDetectionCapability = new PoseDetectionCapability(this._userGenerator);
-                            _calibrationPose = this._skeletonCapbility.GetCalibrationPose();
+                            _userGenerator = new UserGenerator(_context);
+                            _skeletonCapbility = new SkeletonCapability(_userGenerator);
+                            _poseDetectionCapability = new PoseDetectionCapability(_userGenerator);
+                            _calibrationPose = _skeletonCapbility.GetCalibrationPose();
 
                             _camera.Initialize(_userGenerator);
 
@@ -210,7 +211,7 @@ namespace Kinect.Core
 
                             _log.IfInfo("Start Kinect Thread.");
 
-                            _cameraThread = new Thread(new ThreadStart(Execute));
+                            _cameraThread = new Thread(Execute);
                             _cameraThread.Start();
                             OnKinectStarted();
                         }
@@ -240,10 +241,10 @@ namespace Kinect.Core
 
         private void OnCameraMessage(string message)
         {
-            var handler = this.CameraMessage;
+            EventHandler<KinectMessageEventArgs> handler = CameraMessage;
             if (handler != null)
             {
-                handler(this, new KinectMessageEventArgs { Message = message });
+                handler(this, new KinectMessageEventArgs {Message = message});
             }
         }
 
@@ -254,7 +255,7 @@ namespace Kinect.Core
 
         private void OnKinectStarted()
         {
-            var handler = this.KinectStarted;
+            EventHandler<KinectEventArgs> handler = KinectStarted;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -263,7 +264,7 @@ namespace Kinect.Core
 
         private void OnKinectStopped()
         {
-            var handler = this.KinectStopped;
+            EventHandler<KinectEventArgs> handler = KinectStopped;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -272,7 +273,7 @@ namespace Kinect.Core
 
         private void OnKinectCrashed()
         {
-            var handler = this.KinectCrashed;
+            EventHandler<KinectEventArgs> handler = KinectCrashed;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -281,7 +282,7 @@ namespace Kinect.Core
 
         private void OnCameraDataUpdated()
         {
-            var handler = this.CameraDataUpdated;
+            EventHandler<KinectEventArgs> handler = CameraDataUpdated;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -290,7 +291,7 @@ namespace Kinect.Core
 
         private void OnCameraStarted()
         {
-            var handler = this.CameraStarted;
+            EventHandler<KinectEventArgs> handler = CameraStarted;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -299,7 +300,7 @@ namespace Kinect.Core
 
         private void OnCameraStopped()
         {
-            var handler = this.CameraStopped;
+            EventHandler<KinectEventArgs> handler = CameraStopped;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -308,7 +309,7 @@ namespace Kinect.Core
 
         private void OnUserCreated(IUserChangedEvent userEvent)
         {
-            var handler = this.UserCreated;
+            EventHandler<KinectUserEventArgs> handler = UserCreated;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(userEvent));
@@ -317,7 +318,7 @@ namespace Kinect.Core
 
         private void OnUserRemoved(IUserChangedEvent userEvent)
         {
-            var handler = this.UserRemoved;
+            EventHandler<KinectUserEventArgs> handler = UserRemoved;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(userEvent));
@@ -326,7 +327,7 @@ namespace Kinect.Core
 
         private void OnPropertyChanged(string propertyName)
         {
-            var handler = this.PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -335,7 +336,7 @@ namespace Kinect.Core
 
         private void OnPropertyChanged(Expression<Func<object>> propertyExpression)
         {
-            var handler = this.PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler.Raise(propertyExpression);
@@ -344,7 +345,7 @@ namespace Kinect.Core
 
         private void OnNewUser()
         {
-            var handler = this.NewUser;
+            EventHandler<KinectEventArgs> handler = NewUser;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -353,7 +354,7 @@ namespace Kinect.Core
 
         private void OnCalibrationStarted()
         {
-            var handler = this.CalibrationStarted;
+            EventHandler<KinectEventArgs> handler = CalibrationStarted;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -362,7 +363,7 @@ namespace Kinect.Core
 
         private void OnCalibrationFailed()
         {
-            var handler = this.CalibrationFailed;
+            EventHandler<KinectEventArgs> handler = CalibrationFailed;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -371,65 +372,65 @@ namespace Kinect.Core
 
         private void UserGenerator_NewUser(ProductionNode node, uint id)
         {
-            this.OnCameraMessage("New User {0}", id);
+            OnCameraMessage("New User {0}", id);
             _log.IfInfoFormat("New user {0}", id);
-            if (this.SingleUserMode && this._singleUserDataSlot != -1)
+            if (SingleUserMode && _singleUserDataSlot != -1)
             {
                 //Here we know the frontend will work with OnUserCreated
                 lock (_syncRoot)
                 {
-                    if (this._singleUserDataSlot != -1)
+                    if (_singleUserDataSlot != -1)
                     {
-                        this.OnNewUser();
+                        OnNewUser();
                     }
 
-                    this._skeletonCapbility.LoadCalibrationData(id, (uint)_singleUserDataSlot);
-                    this._skeletonCapbility.StartTracking(id);
+                    _skeletonCapbility.LoadCalibrationData(id, (uint) _singleUserDataSlot);
+                    _skeletonCapbility.StartTracking(id);
                     var user = new User(id);
                     user.Color = _camera.GetUserColor(id);
                     _activeUsers.Add(user);
-                    this.OnUserCreated(user);
+                    OnUserCreated(user);
                 }
             }
             else
             {
-                this.OnNewUser();
+                OnNewUser();
                 _poseDetectionCapability.StartPoseDetection(_calibrationPose, id);
             }
         }
 
         private void UserGenerator_LostUser(ProductionNode node, uint id)
         {
-            var user = (from u in _activeUsers where u.ID == id select u).FirstOrDefault();
+            User user = (from u in _activeUsers where u.ID == id select u).FirstOrDefault();
             if (user != null)
             {
-                this._activeUsers.Remove(user);
+                _activeUsers.Remove(user);
             }
 
             _log.IfInfoFormat("User {0} lost", id);
 
-            this.OnCameraMessage("User {0} lost", id);
-            this.OnUserRemoved(user);
+            OnCameraMessage("User {0} lost", id);
+            OnUserRemoved(user);
         }
 
         private void PoseDetectionCapability_PoseDetected(ProductionNode node, string pose, uint id)
         {
-            this._poseDetectionCapability.StopPoseDetection(id);
-            this._skeletonCapbility.RequestCalibration(id, true);
+            _poseDetectionCapability.StopPoseDetection(id);
+            _skeletonCapbility.RequestCalibration(id, true);
 
             _log.IfInfoFormat("User {0} pose detected: {1}", id, pose);
 
-            this.OnCameraMessage("User {0} pose detected: {1}", id, pose);
+            OnCameraMessage("User {0} pose detected: {1}", id, pose);
         }
 
         private void SkeletonCapbility_CalibrationStart(ProductionNode node, uint id)
         {
-            this.OnCalibrationStarted();
-            this.OnUserCalibrating(new User(id));
+            OnCalibrationStarted();
+            OnUserCalibrating(new User(id));
 
             _log.IfInfoFormat("Start calibration for user: {0}", id);
 
-            this.OnCameraMessage("Start calibration for user: {0}", id);
+            OnCameraMessage("Start calibration for user: {0}", id);
         }
 
         private void SkeletonCapbility_CalibrationEnd(ProductionNode node, uint id, bool success)
@@ -438,23 +439,23 @@ namespace Kinect.Core
             {
                 lock (_syncRoot)
                 {
-                    this.OnUserCalibrated(new User(id));
+                    OnUserCalibrated(new User(id));
                     _log.IfInfoFormat("User {0} successfull calibrated.", id);
 
-                    this._skeletonCapbility.StartTracking(id);
+                    _skeletonCapbility.StartTracking(id);
                     if (SingleUserMode)
                     {
-                        this._singleUserDataSlot = (int)id;
-                        this._skeletonCapbility.SaveCalibrationData(id, (uint)_singleUserDataSlot);
+                        _singleUserDataSlot = (int) id;
+                        _skeletonCapbility.SaveCalibrationData(id, (uint) _singleUserDataSlot);
                     }
 
                     var user = new User(id);
                     user.Color = _camera.GetUserColor(id);
-                    this._activeUsers.Add(user);
-                    this.OnUserCreated(user);
+                    _activeUsers.Add(user);
+                    OnUserCreated(user);
                     if (_log.IsInfoEnabled)
                     {
-                        this.OnCameraMessage("Skeleton {0} calibrated {1}", id, success);
+                        OnCameraMessage("Skeleton {0} calibrated {1}", id, success);
                     }
                 }
             }
@@ -462,8 +463,8 @@ namespace Kinect.Core
             {
                 _log.IfInfoFormat("User not calibrated {0}., restart calibration", id);
                 OnCameraMessage("Calibration failed for user: {0}", id);
-                this._poseDetectionCapability.StartPoseDetection(_calibrationPose, id);
-                this.OnCalibrationFailed();
+                _poseDetectionCapability.StartPoseDetection(_calibrationPose, id);
+                OnCalibrationFailed();
             }
         }
 
@@ -471,40 +472,39 @@ namespace Kinect.Core
         {
             lock (_syncRoot)
             {
-
                 _log.IfInfo("Stopping Kinect");
 
                 _running = false;
                 _singleUserDataSlot = -1;
-                if (this._camera != null)
+                if (_camera != null)
                 {
-                    this._camera.Running = false;
+                    _camera.Running = false;
                 }
-                this.KinectState = KinectState.Stopped;
+                KinectState = KinectState.Stopped;
             }
-            this.OnKinectStopped();
+            OnKinectStopped();
         }
 
         public User GetUser(uint userId)
         {
-            return this._activeUsers.FirstOrDefault(u => u.ID == userId);
+            return _activeUsers.FirstOrDefault(u => u.ID == userId);
         }
 
         public BitmapSource GetCameraView(CameraView view)
         {
-            return this._camera.GetView(view);
+            return _camera.GetView(view);
         }
 
         public bool IsJointAvailable(SkeletonJoint skeletonJoint)
         {
-            return this._skeletonCapbility.IsJointAvailable(skeletonJoint);
+            return _skeletonCapbility.IsJointAvailable(skeletonJoint);
         }
 
-        public ms.Point3D GetSkeletonPoint(uint userId, SkeletonJoint skeletonJoint)
+        public Point3D GetSkeletonPoint(uint userId, SkeletonJoint skeletonJoint)
         {
-            if (!this.IsJointAvailable(skeletonJoint))
+            if (!IsJointAvailable(skeletonJoint))
             {
-                return new ms.Point3D(-999, -999, -999);
+                return new Point3D(-999, -999, -999);
             }
 
             var pos = new SkeletonJointPosition();
@@ -523,17 +523,17 @@ namespace Kinect.Core
 
         private void Execute()
         {
-            this.OnCameraMessage("Kinect running.");
+            OnCameraMessage("Kinect running.");
 
             _log.IfInfo("Kinect running.");
 
-            this.KinectState = KinectState.Running;
+            KinectState = KinectState.Running;
             bool firstUpdate = false;
             while (_running)
             {
                 try
                 {
-                    this._context.WaitAndUpdateAll();
+                    _context.WaitAndUpdateAll();
 
                     if (!firstUpdate)
                     {
@@ -541,32 +541,52 @@ namespace Kinect.Core
                         firstUpdate = true;
                     }
 
-                    this._activeUsers.AsParallel().ForAll(user =>
-                    {
-                        user.Head = GetSkeletonPoint(user.ID, SkeletonJoint.Head);
-                        user.Neck = GetSkeletonPoint(user.ID, SkeletonJoint.Neck);
-                        user.Torso = GetSkeletonPoint(user.ID, SkeletonJoint.Torso);
-                        user.LeftShoulder = GetSkeletonPoint(user.ID, SkeletonJoint.LeftShoulder);
-                        user.RightShoulder = GetSkeletonPoint(user.ID, SkeletonJoint.RightShoulder);
-                        user.LeftElbow = GetSkeletonPoint(user.ID, SkeletonJoint.LeftElbow);
-                        user.RightElbow = GetSkeletonPoint(user.ID, SkeletonJoint.RightElbow);
-                        user.LeftHand = GetSkeletonPoint(user.ID, SkeletonJoint.LeftHand);
-                        user.RightHand = GetSkeletonPoint(user.ID, SkeletonJoint.RightHand);
-                        user.LeftFingertip = GetSkeletonPoint(user.ID, SkeletonJoint.LeftFingertip);
-                        user.RightFingertip = GetSkeletonPoint(user.ID, SkeletonJoint.RightFingertip);
-                        user.LeftHip = GetSkeletonPoint(user.ID, SkeletonJoint.LeftHip);
-                        user.RightHip = GetSkeletonPoint(user.ID, SkeletonJoint.RightHip);
-                        user.LeftKnee = GetSkeletonPoint(user.ID, SkeletonJoint.LeftKnee);
-                        user.RightKnee = GetSkeletonPoint(user.ID, SkeletonJoint.RightKnee);
-                        user.LeftAnkle = GetSkeletonPoint(user.ID, SkeletonJoint.LeftAnkle);
-                        user.RightAnkle = GetSkeletonPoint(user.ID, SkeletonJoint.RightAnkle);
-                        user.LeftFoot = GetSkeletonPoint(user.ID, SkeletonJoint.LeftFoot);
-                        user.RightFoot = GetSkeletonPoint(user.ID, SkeletonJoint.RightFoot);
-                        user.Waist = GetSkeletonPoint(user.ID, SkeletonJoint.Waist);
-                        user.Update();
-                    });
+                    _activeUsers.AsParallel().ForAll(user =>
+                                                         {
+                                                             user.Head = GetSkeletonPoint(user.ID, SkeletonJoint.Head);
+                                                             user.Neck = GetSkeletonPoint(user.ID, SkeletonJoint.Neck);
+                                                             user.Torso = GetSkeletonPoint(user.ID, SkeletonJoint.Torso);
+                                                             user.LeftShoulder = GetSkeletonPoint(user.ID,
+                                                                                                  SkeletonJoint.
+                                                                                                      LeftShoulder);
+                                                             user.RightShoulder = GetSkeletonPoint(user.ID,
+                                                                                                   SkeletonJoint.
+                                                                                                       RightShoulder);
+                                                             user.LeftElbow = GetSkeletonPoint(user.ID,
+                                                                                               SkeletonJoint.LeftElbow);
+                                                             user.RightElbow = GetSkeletonPoint(user.ID,
+                                                                                                SkeletonJoint.RightElbow);
+                                                             user.LeftHand = GetSkeletonPoint(user.ID,
+                                                                                              SkeletonJoint.LeftHand);
+                                                             user.RightHand = GetSkeletonPoint(user.ID,
+                                                                                               SkeletonJoint.RightHand);
+                                                             user.LeftFingertip = GetSkeletonPoint(user.ID,
+                                                                                                   SkeletonJoint.
+                                                                                                       LeftFingertip);
+                                                             user.RightFingertip = GetSkeletonPoint(user.ID,
+                                                                                                    SkeletonJoint.
+                                                                                                        RightFingertip);
+                                                             user.LeftHip = GetSkeletonPoint(user.ID,
+                                                                                             SkeletonJoint.LeftHip);
+                                                             user.RightHip = GetSkeletonPoint(user.ID,
+                                                                                              SkeletonJoint.RightHip);
+                                                             user.LeftKnee = GetSkeletonPoint(user.ID,
+                                                                                              SkeletonJoint.LeftKnee);
+                                                             user.RightKnee = GetSkeletonPoint(user.ID,
+                                                                                               SkeletonJoint.RightKnee);
+                                                             user.LeftAnkle = GetSkeletonPoint(user.ID,
+                                                                                               SkeletonJoint.LeftAnkle);
+                                                             user.RightAnkle = GetSkeletonPoint(user.ID,
+                                                                                                SkeletonJoint.RightAnkle);
+                                                             user.LeftFoot = GetSkeletonPoint(user.ID,
+                                                                                              SkeletonJoint.LeftFoot);
+                                                             user.RightFoot = GetSkeletonPoint(user.ID,
+                                                                                               SkeletonJoint.RightFoot);
+                                                             user.Waist = GetSkeletonPoint(user.ID, SkeletonJoint.Waist);
+                                                             user.Update();
+                                                         });
 
-                    this._camera.CalculateFPS();
+                    _camera.CalculateFPS();
 
                     OnCameraDataUpdated();
                 }
@@ -574,19 +594,19 @@ namespace Kinect.Core
                 {
                     _log.IfFatalFormat("", ex);
 
-                    this.OnKinectCrashed();
-                    this.StopKinect();
+                    OnKinectCrashed();
+                    StopKinect();
                 }
             }
             _log.IfInfo("Kinect stopping.");
 
-            this._context.Shutdown();
-            this._context.Dispose();
+            _context.Shutdown();
+            _context.Dispose();
             OnCameraStopped();
 
             _log.IfInfo("Kinect stopped.");
 
-            this.StopKinect();
+            StopKinect();
         }
 
         private void _camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
