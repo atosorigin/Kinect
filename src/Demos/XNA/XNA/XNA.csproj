@@ -144,7 +144,7 @@
       <Name>Kinect.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\XNAContent\XNAContent.contentproj">
-      <Name>Kinect.XNAContent %28Content%29</Name>
+      <Name>XNAContent %28Content%29</Name>
       <XnaReferenceType>Content</XnaReferenceType>
       <Project>{A06B383D-4527-4491-916F-951FDF038361}</Project>
     </ProjectReference>

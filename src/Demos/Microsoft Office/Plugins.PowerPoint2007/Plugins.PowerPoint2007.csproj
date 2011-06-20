@@ -294,7 +294,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Plugins.Common\Plugins.Common.csproj">
       <Project>{AB325698-080A-4C1F-A196-51F4F8D4D1F4}</Project>
-      <Name>Kinect.Plugins.Common</Name>
+      <Name>Plugins.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
