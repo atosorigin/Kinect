@@ -20,19 +20,19 @@ Run the following code:
 $ git clone git@github.com:username/Kinect.git
 
 3. Configure remotes
-When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:
-`$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory
-`$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"
-`$ git fetch upstream`
+When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:\n
+`$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory\n
+`$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"\n
+`$ git fetch upstream`\n
 
 4. Pushing
-Pushing is always done to you fork
-`$ git push origin master`
+Pushing is always done to you fork\n
+`$ git push origin master`\n
 
 5. Fetch the upstream with your fork
-When you want to get the latest changes fetched from the upstream into your fork, you need to fetch the upstream.
-`$ git fetch upstream`
-`$ git merge upstream/master`
+When you want to get the latest changes fetched from the upstream into your fork, you need to fetch the upstream.\n
+`$ git fetch upstream`\n
+`$ git merge upstream/master`\n
 
 #Installation
 Need to add an installation manual here
