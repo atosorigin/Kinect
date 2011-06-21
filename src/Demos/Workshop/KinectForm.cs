@@ -27,8 +27,11 @@ namespace Kinect.Workshop
         {
             _kinect = MyKinect.Instance;
             _kinect.CameraMessage += _kinect_CameraMessage;
-            //_kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             //TODO: Workshop -> Stap 1:
+            //TODO: Haal de volgende regel uit commentaar om even te testen of de kinect werkt
+            //TODO: Zet hem daarna weer in commentaar ivm performance
+            //_kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
+            
             //TODO: Workshop -> Abonneren op de overige events die voor jou belangrijk zijn
             //TODO: Workshop -> En zorg er dan voor dat er een opmerking in de lbMessages wordt opgenomen
             //TODO: Workshop -> De functie _kinect_UserCreated is al beschikbaar 
