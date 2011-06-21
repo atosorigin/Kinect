@@ -1,6 +1,13 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Eventing;
+using Kinect.Core.Gestures;
+using Kinect.Workshop.Winforms;
 
 namespace Kinect.Workshop
 {
@@ -19,8 +26,8 @@ namespace Kinect.Workshop
         private void InitializeKinect()
         {
             _kinect = MyKinect.Instance;
-            _kinect.SingleUserMode = true;
-            _kinect.CameraMessage += KinectCameraMessage;
+            _kinect.CameraMessage += _kinect_CameraMessage;
+            //_kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             //TODO: Workshop -> Stap 1:
             //TODO: Workshop -> Abonneren op de overige events die voor jou belangrijk zijn
             //TODO: Workshop -> En zorg er dan voor dat er een opmerking in de lbMessages wordt opgenomen
@@ -51,8 +58,13 @@ namespace Kinect.Workshop
             if (_kinect != null)
             {
                 //Stop dan de kinect
-                _kinect.StopKinect();
-                AddItemToListbox(lbMessages, "Kinect stopped");
+                if (_kinect.KinectState == KinectState.Running)
+                {
+                    //_kinect.CameraDataUpdated -= _kinect_CameraDataUpdated;
+                    _kinect.CameraMessage -= _kinect_CameraMessage;
+                    _kinect.StopKinect();
+                    AddItemToListbox(lbMessages, "Kinect stopped");
+                }
             }
         }
 
@@ -76,10 +88,29 @@ namespace Kinect.Workshop
             //TODO: Workshop -> Abonneer je dan op het MyGestureDetected event
         }
 
-        private void KinectCameraMessage(object sender, KinectMessageEventArgs e)
+        private void GestureMyGestureDetected(object sender, GestureEventArgs e)
+        {
+            
+        }
+
+        private void UserUpdated(object sender, ProcessEventArgs<IUserChangedEvent> e)
+        {
+
+        }
+
+        private void _kinect_CameraMessage(object sender, KinectMessageEventArgs e)
         {
             //Alle camera messages worden weergegeven in de onderste listbox
             AddItemToListbox(lbCameraMessages, e.Message);
+        }
+
+        private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
+        {
+            var tiff = new TiffBitmapEncoder();
+            tiff.Frames.Add(BitmapFrame.Create(e.Image));
+            var ms = new System.IO.MemoryStream();
+            tiff.Save(ms);
+            pbCamera.Image = Image.FromStream(ms);
         }
 
         #endregion

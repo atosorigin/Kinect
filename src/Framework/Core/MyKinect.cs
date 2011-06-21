@@ -201,6 +201,8 @@ namespace Kinect.Core
 
                     Log.IfInfo("Kinect started");
 
+                    KinectState = KinectState.Running;
+
                     OnKinectStarted();
                 }
                 catch (Exception ex)

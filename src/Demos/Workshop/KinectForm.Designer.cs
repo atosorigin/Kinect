@@ -48,7 +48,9 @@
             this.lblRightFoot = new System.Windows.Forms.Label();
             this.lbCameraMessages = new System.Windows.Forms.ListBox();
             this.lbMessages = new System.Windows.Forms.ListBox();
+            this.pbCamera = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStart
@@ -65,7 +67,7 @@
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = global::Kinect.Workshop.Properties.Resources.skelet;
-            this.pictureBox1.Location = new System.Drawing.Point(263, 13);
+            this.pictureBox1.Location = new System.Drawing.Point(660, 13);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(407, 639);
             this.pictureBox1.TabIndex = 3;
@@ -85,7 +87,7 @@
             // 
             this.lblHead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblHead.AutoSize = true;
-            this.lblHead.Location = new System.Drawing.Point(425, 31);
+            this.lblHead.Location = new System.Drawing.Point(822, 31);
             this.lblHead.Name = "lblHead";
             this.lblHead.Size = new System.Drawing.Size(33, 13);
             this.lblHead.TabIndex = 5;
@@ -96,7 +98,7 @@
             // 
             this.lblNeck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblNeck.AutoSize = true;
-            this.lblNeck.Location = new System.Drawing.Point(425, 164);
+            this.lblNeck.Location = new System.Drawing.Point(822, 164);
             this.lblNeck.Name = "lblNeck";
             this.lblNeck.Size = new System.Drawing.Size(33, 13);
             this.lblNeck.TabIndex = 6;
@@ -106,7 +108,7 @@
             // 
             this.lblLeftShoulder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftShoulder.AutoSize = true;
-            this.lblLeftShoulder.Location = new System.Drawing.Point(335, 188);
+            this.lblLeftShoulder.Location = new System.Drawing.Point(732, 188);
             this.lblLeftShoulder.Name = "lblLeftShoulder";
             this.lblLeftShoulder.Size = new System.Drawing.Size(68, 13);
             this.lblLeftShoulder.TabIndex = 7;
@@ -116,7 +118,7 @@
             // 
             this.lblRightShoulder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightShoulder.AutoSize = true;
-            this.lblRightShoulder.Location = new System.Drawing.Point(487, 188);
+            this.lblRightShoulder.Location = new System.Drawing.Point(884, 188);
             this.lblRightShoulder.Name = "lblRightShoulder";
             this.lblRightShoulder.Size = new System.Drawing.Size(75, 13);
             this.lblRightShoulder.TabIndex = 8;
@@ -126,7 +128,7 @@
             // 
             this.lblLeftElbow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftElbow.AutoSize = true;
-            this.lblLeftElbow.Location = new System.Drawing.Point(269, 266);
+            this.lblLeftElbow.Location = new System.Drawing.Point(666, 266);
             this.lblLeftElbow.Name = "lblLeftElbow";
             this.lblLeftElbow.Size = new System.Drawing.Size(56, 13);
             this.lblLeftElbow.TabIndex = 9;
@@ -136,7 +138,7 @@
             // 
             this.lblRightElbow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightElbow.AutoSize = true;
-            this.lblRightElbow.Location = new System.Drawing.Point(537, 266);
+            this.lblRightElbow.Location = new System.Drawing.Point(934, 266);
             this.lblRightElbow.Name = "lblRightElbow";
             this.lblRightElbow.Size = new System.Drawing.Size(63, 13);
             this.lblRightElbow.TabIndex = 10;
@@ -146,7 +148,7 @@
             // 
             this.lblRightHand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightHand.AutoSize = true;
-            this.lblRightHand.Location = new System.Drawing.Point(576, 383);
+            this.lblRightHand.Location = new System.Drawing.Point(973, 383);
             this.lblRightHand.Name = "lblRightHand";
             this.lblRightHand.Size = new System.Drawing.Size(59, 13);
             this.lblRightHand.TabIndex = 11;
@@ -156,7 +158,7 @@
             // 
             this.lblLeftHand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftHand.AutoSize = true;
-            this.lblLeftHand.Location = new System.Drawing.Point(233, 383);
+            this.lblLeftHand.Location = new System.Drawing.Point(630, 383);
             this.lblLeftHand.Name = "lblLeftHand";
             this.lblLeftHand.Size = new System.Drawing.Size(52, 13);
             this.lblLeftHand.TabIndex = 12;
@@ -166,7 +168,7 @@
             // 
             this.lblTorso.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTorso.AutoSize = true;
-            this.lblTorso.Location = new System.Drawing.Point(425, 266);
+            this.lblTorso.Location = new System.Drawing.Point(822, 266);
             this.lblTorso.Name = "lblTorso";
             this.lblTorso.Size = new System.Drawing.Size(34, 13);
             this.lblTorso.TabIndex = 13;
@@ -176,7 +178,7 @@
             // 
             this.lblLeftHip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftHip.AutoSize = true;
-            this.lblLeftHip.Location = new System.Drawing.Point(383, 383);
+            this.lblLeftHip.Location = new System.Drawing.Point(780, 383);
             this.lblLeftHip.Name = "lblLeftHip";
             this.lblLeftHip.Size = new System.Drawing.Size(42, 13);
             this.lblLeftHip.TabIndex = 14;
@@ -186,7 +188,7 @@
             // 
             this.lblRightHip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightHip.AutoSize = true;
-            this.lblRightHip.Location = new System.Drawing.Point(456, 383);
+            this.lblRightHip.Location = new System.Drawing.Point(853, 383);
             this.lblRightHip.Name = "lblRightHip";
             this.lblRightHip.Size = new System.Drawing.Size(49, 13);
             this.lblRightHip.TabIndex = 15;
@@ -196,7 +198,7 @@
             // 
             this.lblRightKnee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightKnee.AutoSize = true;
-            this.lblRightKnee.Location = new System.Drawing.Point(452, 514);
+            this.lblRightKnee.Location = new System.Drawing.Point(849, 514);
             this.lblRightKnee.Name = "lblRightKnee";
             this.lblRightKnee.Size = new System.Drawing.Size(59, 13);
             this.lblRightKnee.TabIndex = 16;
@@ -206,7 +208,7 @@
             // 
             this.lblLeftKnee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftKnee.AutoSize = true;
-            this.lblLeftKnee.Location = new System.Drawing.Point(373, 514);
+            this.lblLeftKnee.Location = new System.Drawing.Point(770, 514);
             this.lblLeftKnee.Name = "lblLeftKnee";
             this.lblLeftKnee.Size = new System.Drawing.Size(52, 13);
             this.lblLeftKnee.TabIndex = 17;
@@ -216,7 +218,7 @@
             // 
             this.lblLeftFoot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblLeftFoot.AutoSize = true;
-            this.lblLeftFoot.Location = new System.Drawing.Point(357, 612);
+            this.lblLeftFoot.Location = new System.Drawing.Point(754, 612);
             this.lblLeftFoot.Name = "lblLeftFoot";
             this.lblLeftFoot.Size = new System.Drawing.Size(46, 13);
             this.lblLeftFoot.TabIndex = 18;
@@ -226,7 +228,7 @@
             // 
             this.lblRightFoot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRightFoot.AutoSize = true;
-            this.lblRightFoot.Location = new System.Drawing.Point(452, 612);
+            this.lblRightFoot.Location = new System.Drawing.Point(849, 612);
             this.lblRightFoot.Name = "lblRightFoot";
             this.lblRightFoot.Size = new System.Drawing.Size(53, 13);
             this.lblRightFoot.TabIndex = 19;
@@ -238,9 +240,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbCameraMessages.FormattingEnabled = true;
-            this.lbCameraMessages.Location = new System.Drawing.Point(13, 325);
+            this.lbCameraMessages.Location = new System.Drawing.Point(12, 182);
             this.lbCameraMessages.Name = "lbCameraMessages";
-            this.lbCameraMessages.Size = new System.Drawing.Size(244, 329);
+            this.lbCameraMessages.Size = new System.Drawing.Size(641, 121);
             this.lbCameraMessages.TabIndex = 20;
             // 
             // lbMessages
@@ -250,14 +252,23 @@
             this.lbMessages.FormattingEnabled = true;
             this.lbMessages.Location = new System.Drawing.Point(12, 42);
             this.lbMessages.Name = "lbMessages";
-            this.lbMessages.Size = new System.Drawing.Size(244, 277);
+            this.lbMessages.Size = new System.Drawing.Size(641, 134);
             this.lbMessages.TabIndex = 21;
+            // 
+            // pbCamera
+            // 
+            this.pbCamera.Location = new System.Drawing.Point(12, 309);
+            this.pbCamera.Name = "pbCamera";
+            this.pbCamera.Size = new System.Drawing.Size(640, 480);
+            this.pbCamera.TabIndex = 22;
+            this.pbCamera.TabStop = false;
             // 
             // KinectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(682, 663);
+            this.ClientSize = new System.Drawing.Size(1079, 808);
+            this.Controls.Add(this.pbCamera);
             this.Controls.Add(this.lbMessages);
             this.Controls.Add(this.lbCameraMessages);
             this.Controls.Add(this.lblRightFoot);
@@ -283,6 +294,7 @@
             this.Text = "Kinect Workshop";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.KinectForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCamera)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -310,6 +322,7 @@
         private System.Windows.Forms.Label lblRightFoot;
         private System.Windows.Forms.ListBox lbCameraMessages;
         private System.Windows.Forms.ListBox lbMessages;
+        private System.Windows.Forms.PictureBox pbCamera;
     }
 }
 
