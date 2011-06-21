@@ -7,10 +7,10 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Kinect.Common;
 using Kinect.Core;
 using Kinect.Common;
 using Kinect.Core.Gestures;
+using Microsoft.Research.Kinect.Nui;
 
 //using Kinect.Core.Gestures;
 
@@ -282,7 +282,7 @@ namespace Kinect.ShowCase
         {
             var user = _kinect.GetUser(e.User.ID);
             user.Updated += _kinectUser_Updated;
-            var gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), xn.SkeletonJoint.LeftHand, xn.SkeletonJoint.RightHand);
+            var gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft, JointID.HandRight);
             gesture.SelfTouchDetected += new EventHandler<SelfTouchEventArgs>(gesture_SelfTouchDetected);
             _kinectUsers.Add(user);
 
