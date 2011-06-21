@@ -140,7 +140,7 @@ namespace Kinect.Workshop
             }
         }
 
-        protected virtual void OnMyGestureDetected(uint userid)
+        protected virtual void OnMyGestureDetected(int userid)
         {
             //Dit is nodig ivm multi threading.
             //Het kan zijn dat jij je abonnement opheft en op hetzelfde moment
@@ -184,7 +184,7 @@ namespace Kinect.Workshop
             }
         }
 
-        protected virtual void OnMyGestureDetected(uint userid)
+        protected virtual void OnMyGestureDetected(int userid)
         {
             //Dit is nodig ivm multi threading.
             //Het kan zijn dat jij je abonnement opheft en op hetzelfde moment
