@@ -64,7 +64,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::Kinect.Workshop.KinectForm.Properties.Resources.skelet;
+            this.pictureBox1.Image = global::Kinect.Workshop.Properties.Resources.skelet;
             this.pictureBox1.Location = new System.Drawing.Point(263, 13);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(407, 639);
