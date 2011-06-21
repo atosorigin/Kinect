@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using System.Threading;
-using Common;
+using Kinect.Common;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using System.Windows.Media.Imaging;

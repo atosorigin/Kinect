@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Kinect.Common;
 using Kinect.Core;
-using Common;
+using Kinect.Common;
 using Kinect.Core.Gestures;
 
 //using Kinect.Core.Gestures;

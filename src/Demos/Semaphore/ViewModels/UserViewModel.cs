@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using Common;
+using Kinect.Common;
 using System.Windows.Media;
 using Kinect.Common;
 using Kinect.Core;

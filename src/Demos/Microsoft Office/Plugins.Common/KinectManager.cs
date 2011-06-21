@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using Common;
+using Kinect.Common;
 using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
 using Kinect.Core;
