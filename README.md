@@ -30,7 +30,7 @@ Pushing is always done to you fork<br />
 `$ git push origin master`<br />
 
 1. Fetch the upstream with your fork<br />
-When you want to get the latest changes fetched from the upstream into your fork, you need to fetch the upstream.\n<br />
+When you want to get the latest changes fetched from the upstream into your fork, you need to fetch the upstream.<br />
 `$ git fetch upstream`<br />
 `$ git merge upstream/master`<br />
 
