@@ -9,20 +9,16 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Common.ColorHelpers;
-using Kinect.Common;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using Kinect.Common.ColorHelpers;
 using Kinect.Common.Models;
 using Kinect.Core;
 using System.Windows;
-using Kinect.Semaphore;
-using Kinect.WPF.Models;
-using Kinect.Core.Gestures;
+using Kinect.Semaphore.Models;
 using log4net;
 
-namespace Kinect.WPF.ViewModels
+namespace Kinect.Semaphore.ViewModels
 {
     public class MainViewModel : ResourcesViewModelBase
     {
@@ -240,33 +236,7 @@ namespace Kinect.WPF.ViewModels
             _kinect.PropertyChanged += _kinect_PropertyChanged;
             _kinect.UserCreated += _kinect_UserCreated;
             _kinect.UserRemoved += _kinect_UserRemoved;
-            _kinect.UserCalibrating += _kinect_UserCalibrating;
-            _kinect.CalibrationFailed += _kinect_CalibrationFailed;
-            _kinect.NewUser += _kinect_NewUser;
             _kinect.StartKinect();
-        }
-
-        void _kinect_UserCalibrating(object sender, KinectUserEventArgs e)
-        {
-            if (Users.Count < 1)
-            //if(User == null)
-            {
-                ImageSource = "/Kinect.WPF;component/Images/Step2.png";
-            }
-        }
-
-        void _kinect_CalibrationFailed(object sender, KinectEventArgs e)
-        {
-            ImageSource = "/Kinect.WPF;component/Images/Step2Failed.png";
-        }
-
-        void _kinect_NewUser(object sender, KinectEventArgs e)
-        {
-            if (Users.Count < 1)
-            //if(User == null)
-            {
-                ImageSource = "/Kinect.WPF;component/Images/Step1.png";
-            }
         }
 
         private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
@@ -333,45 +303,39 @@ namespace Kinect.WPF.ViewModels
             }
         }
 
-        private void _kinect_CameraDataUpdated(object sender, KinectEventArgs e)
+        private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
-            SetCameraView();
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                if (_kinect != null)
+                {
+                    CameraView = e.Image;
+                }
+            });
         }
 
         private void SetCameraView()
         {
             if (_kinect != null)
             {
-                UpdateCameraView(_imageType);
-                switch (_imageType)
+                switch (_kinect.CameraViewType)
                 {
-                    case Kinect.Core.CameraView.Color:
+                    case Core.CameraView.Color:
                         CameraVisibility = Visibility.Visible;
                         break;
-                    case Kinect.Core.CameraView.Depth:
+                    case Core.CameraView.Depth:
                         CameraVisibility = Visibility.Visible;
                         break;
-                    case Kinect.Core.CameraView.ColoredDepth:
+                    case Core.CameraView.ColoredDepth:
                         CameraVisibility = Visibility.Visible;
                         break;
-                    case Kinect.Core.CameraView.None:
+                    case Core.CameraView.None:
                         CameraVisibility = Visibility.Collapsed;
                         break;
                     default:
                         break;
                 }
             }
-        }
-
-        private void UpdateCameraView(CameraView view)
-        {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if (_kinect != null)
-                {
-                    CameraView = _kinect.GetCameraView(view);
-                }
-            });
         }
 
         private void ToggleDebugInformation()
@@ -420,43 +384,43 @@ namespace Kinect.WPF.ViewModels
                 }
                 else if (e.Key == Key.C)
                 {
-                    SetCameraView();
-                    switch (_imageType)
+                    switch (_kinect.CameraViewType)
                     {
-                        case Kinect.Core.CameraView.Depth:
-                            _imageType = Kinect.Core.CameraView.ColoredDepth;
+                        case Core.CameraView.Depth:
+                            _kinect.CameraViewType = Core.CameraView.ColoredDepth;
                             break;
-                        case Kinect.Core.CameraView.ColoredDepth:
-                            _imageType = Kinect.Core.CameraView.Color;
+                        case Core.CameraView.ColoredDepth:
+                            _kinect.CameraViewType = Core.CameraView.Color;
                             break;
-                        case Kinect.Core.CameraView.Color:
-                            _imageType = Kinect.Core.CameraView.None;
+                        case Core.CameraView.Color:
+                            _kinect.CameraViewType = Core.CameraView.None;
                             break;
-                        case Kinect.Core.CameraView.None:
-                            _imageType = Kinect.Core.CameraView.Depth;
+                        case Core.CameraView.None:
+                            _kinect.CameraViewType = Core.CameraView.Depth;
                             break;
                         default:
                             break;
                     }
+                    SetCameraView();
                 }
                 else if (e.Key == Key.Z)
                 {
                     ResizeCameraImage();
                 }
-                //else if (e.Key == Key.Up)
-                //{
-                //    _kinect.MotorUp(100);
-                //}
-                //else if (e.Key == Key.Down)
-                //{
-                //    _kinect.MotorDown(100);
-                //}
+                else if (e.Key == Key.Up)
+                {
+                    _kinect.MotorUp(2);
+                }
+                else if (e.Key == Key.Down)
+                {
+                    _kinect.MotorDown(2);
+                }
             });
 
             Closing = new RelayCommand<CancelEventArgs>(e =>
             {
                 CloseKinect();
-                App.Current.Shutdown();
+                Application.Current.Shutdown();
             });
 
             SourceUpdated = new RelayCommand<DataTransferEventArgs>(e =>
@@ -476,7 +440,7 @@ namespace Kinect.WPF.ViewModels
             ColorGenerator generator = new ColorGenerator();
             Random rand = new Random((int)DateTime.Now.Ticks);
             //User = CreateUser(generator, rand, 1);
-            for (uint i = 1; i < 6; i++)
+            for (int i = 1; i < 6; i++)
             {
                 Users.Add(CreateUser(generator, rand, i));
             }
@@ -503,7 +467,7 @@ namespace Kinect.WPF.ViewModels
             };
         }
 
-        private UserViewModel CreateUser(ColorGenerator generator, Random rand, uint i)
+        private UserViewModel CreateUser(ColorGenerator generator, Random rand, int i)
         {
             string color = generator.NextColorString();
             var r = 1f / 255 * int.Parse(color.Substring(0, 2), NumberStyles.HexNumber);
@@ -533,7 +497,7 @@ namespace Kinect.WPF.ViewModels
             };
         }
 
-        private static Point3D GetPoint3DCoordinates(uint i, double x, double y, double z)
+        private static Point3D GetPoint3DCoordinates(int i, double x, double y, double z)
         {
             Point3D point = new Point3D();
             point.X = (i * (x + 25)) / x;

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Kinect.WPF.Utils
+namespace Kinect.Semaphore.Utils
 {
     /// <summary>
     /// ListBoxItem Behavior class

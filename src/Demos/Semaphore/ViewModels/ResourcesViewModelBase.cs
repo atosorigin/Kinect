@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using GalaSoft.MvvmLight;
 
-namespace Kinect.WPF.ViewModels
+namespace Kinect.Semaphore.ViewModels
 {
     public abstract class ResourcesViewModelBase : ViewModelBase
     {

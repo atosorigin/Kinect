@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using Kinect.Common;
 using System.Windows.Media;
 using Kinect.Common;
 using Kinect.Core;
@@ -14,8 +13,9 @@ using Kinect.Core.Gestures;
 using System.Diagnostics;
 using System.Windows.Threading;
 using Kinect.Core.Filters.Helper;
+using Microsoft.Research.Kinect.Nui;
 
-namespace Kinect.WPF.ViewModels
+namespace Kinect.Semaphore.ViewModels
 {
     public class UserViewModel : ViewModelBase
     {
@@ -27,7 +27,7 @@ namespace Kinect.WPF.ViewModels
         private DispatcherTimer _calibrationTimer;
         private int _counter = 0;
 
-        public uint ID
+        public int ID
         {
             get { return _user.ID; }
         }
@@ -411,7 +411,7 @@ namespace Kinect.WPF.ViewModels
             return false;
         }
 
-        public UserViewModel(uint id)
+        public UserViewModel(int id)
             : this(new User(id))
         {
         }
@@ -446,9 +446,9 @@ namespace Kinect.WPF.ViewModels
                 {
                     var propValue = pi.GetValue(e.Event, null);
                     object newValue = propValue;
-                    if (pi.PropertyType == typeof(xn.Point3D))
+                    if (pi.PropertyType == typeof(Point3D))
                     {
-                        newValue = ((xn.Point3D)propValue).GetMediaPoint3D();
+                        newValue = ((Point3D)propValue);
                     }
                     prop.SetValue(this, newValue, null);
                 }
@@ -517,7 +517,7 @@ namespace Kinect.WPF.ViewModels
 
         private void AddSelfTouchGesture(Point3D correction)
         {
-            _user.AddSelfTouchGesture(correction, xn.SkeletonJoint.LeftHand, xn.SkeletonJoint.RightShoulder).SelfTouchDetected += SelfTouch;
+            _user.AddSelfTouchGesture(correction, JointID.HandLeft, JointID.ShoulderRight).SelfTouchDetected += SelfTouch;
             Trace.Write(string.Format("Correction {0}", correction.GetDebugString()));
         }
 

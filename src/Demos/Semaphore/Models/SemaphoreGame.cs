@@ -2,10 +2,8 @@
 using System.Text;
 using System.Collections.ObjectModel;
 using Kinect.Common;
-using Kinect.Core.Gestures.Model;
-using Kinect.Common;
 
-namespace Kinect.WPF.Models
+namespace Kinect.Semaphore.Models
 {
     public class SemaphoreGame : ICopyAble<SemaphoreGame>
     {
@@ -50,7 +48,7 @@ namespace Kinect.WPF.Models
             this.Semaphores = new ObservableCollection<SemaphoreImage>();
         }
 
-        public void SemaphoreDetected(Semaphore detected)
+        public void SemaphoreDetected(Kinect.Core.Gestures.Model.Semaphore detected)
         {
             lock (_syncRoot)
             {

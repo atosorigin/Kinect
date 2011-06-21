@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace Kinect.WPF.Models
+namespace Kinect.Semaphore.Models
 {
     public sealed class SemaphoreGames
     {

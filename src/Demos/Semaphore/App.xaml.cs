@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
-using Kinect.WPF.Models;
+using Kinect.Semaphore.Models;
 using log4net;
 
 namespace Kinect.Semaphore

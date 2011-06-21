@@ -1,9 +1,8 @@
 ﻿using System;
 using GalaSoft.MvvmLight;
-using Kinect.WPF.Models;
-using Kinect.Core.Gestures.Model;
+using Kinect.Semaphore.Models;
 
-namespace Kinect.WPF.ViewModels
+namespace Kinect.Semaphore.ViewModels
 {
     public class SemaphoreViewModel : ViewModelBase
     {
@@ -81,7 +80,7 @@ namespace Kinect.WPF.ViewModels
             Winner = System.Windows.Visibility.Visible;
         }
 
-        public void SemaphoreDetected(Semaphore Semaphore)
+        public void SemaphoreDetected(Core.Gestures.Model.Semaphore Semaphore)
         {
             if (_game != null)
             {

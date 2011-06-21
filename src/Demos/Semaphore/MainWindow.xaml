@@ -1,14 +1,10 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:k="clr-namespace:Kinect.WPF.UserControls"
-        xmlns:kUtils="clr-namespace:Kinect.WPF.Utils"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
-        mc:Ignorable="d"
-        x:Class="Kinect.WPF.MainWindow"
+        xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4" xmlns:UserControls="clr-namespace:Kinect.Semaphore.UserControls" xmlns:kUtils="clr-namespace:Kinect.Semaphore.Utils" mc:Ignorable="d"
+        x:Class="Kinect.Semaphore.MainWindow"
         Title="{Binding AppTitle}"
         Height="453"
         Width="705"
@@ -18,7 +14,7 @@
         WindowStyle="None"
         >
     <Window.Background>
-        <ImageBrush ImageSource="/Kinect.WPF;component/Images/bg1.jpg"
+        <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bg1.jpg"
                     Stretch="UniformToFill"
                     TileMode="None" />
     </Window.Background>
@@ -47,7 +43,7 @@
         <ItemsControl DockPanel.Dock="Top"
                       ItemsSource="{Binding Users}">
             <ItemsControl.Background>
-                <ImageBrush ImageSource="/Kinect.WPF;component/Images/top.jpg" />
+                <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/top.jpg" />
             </ItemsControl.Background>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -78,7 +74,7 @@
         <ItemsControl DockPanel.Dock="Bottom"
                       ItemsSource="{Binding Users}">
             <ItemsControl.Background>
-                <ImageBrush ImageSource="/Kinect.WPF;component/Images/bottom.jpg" />
+                <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bottom.jpg" />
             </ItemsControl.Background>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -137,7 +133,7 @@
                       Height="200">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <k:MessageUserControl />
+                        <UserControls:MessageUserControl />
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.ItemsPanel>
@@ -212,7 +208,7 @@
         <ItemsControl ItemsSource="{Binding Users}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <k:UserUserControl />
+                    <UserControls:UserUserControl />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

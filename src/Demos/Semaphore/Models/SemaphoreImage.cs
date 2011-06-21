@@ -2,16 +2,15 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Kinect.Common;
-using Kinect.Common;
 using Kinect.Core.Gestures.Model;
 
-namespace Kinect.WPF.Models
+namespace Kinect.Semaphore.Models
 {
     public class SemaphoreImage : ICopyAble<SemaphoreImage>
     {
         public ImageSource ImageSource { get; private set; }
 
-        public Semaphore Semaphore { get; private set; }
+        public Kinect.Core.Gestures.Model.Semaphore Semaphore { get; private set; }
 
         private SemaphoreImage()
         {
@@ -41,7 +40,7 @@ namespace Kinect.WPF.Models
 
             BitmapImage image = new BitmapImage();
             image.BeginInit();
-            image.UriSource = new Uri(string.Format(@"/Kinect.WPF;component/Images/Semafoor/{0}.png", semaphore), UriKind.Relative);
+            image.UriSource = new Uri(string.Format(@"/Kinect.Semaphore;component/Images/Semafoor/{0}.png", semaphore), UriKind.Relative);
             image.EndInit();
 
             return image;
