@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight;
 
 namespace Kinect.GestureDetection.ViewModels
 {
-    public class ResourcesViewModelBase : ViewModelBase
+    class ResourcesViewModelBase : ViewModelBase
     {
         public string AppTitle { get; set; }
         public string About { get; set; }

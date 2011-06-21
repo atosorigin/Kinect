@@ -1,4 +1,5 @@
-﻿using Kinect.Core;
+﻿using System.Windows;
+using Kinect.Core;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Command;
@@ -8,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace Kinect.GestureDetection.ViewModels
 {
-    public class MainViewModel : ResourcesViewModelBase
+    class MainViewModel : ResourcesViewModelBase
     {
         private MyKinect _kinect;
 
@@ -82,9 +83,6 @@ namespace Kinect.GestureDetection.ViewModels
         {
             _kinect = Kinect.Core.MyKinect.Instance;
             _kinect.UserCreated += _kinect_UserCreated;
-            //_kinect.UserRemoved += _kinect_UserRemoved;
-            //_kinect.UserCalibrating += _kinect_UserCalibrating;
-            _kinect.NewUser += _kinect_NewUser;
             _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             _kinect.StartKinect();
         }
@@ -105,11 +103,6 @@ namespace Kinect.GestureDetection.ViewModels
             });
         }
 
-        void _kinect_NewUser(object sender, KinectEventArgs e)
-        {
-            DebugInformation = "New user in field of camera";
-        }
-
         void _kinect_CameraDataUpdated(object sender, KinectEventArgs e)
         {
             SetCameraView();
@@ -125,9 +118,6 @@ namespace Kinect.GestureDetection.ViewModels
                 }
             });
         }
-
-
-        
 
         private void SetCommands()
         {
@@ -153,16 +143,16 @@ namespace Kinect.GestureDetection.ViewModels
                     SetCameraView();
                     switch (_imageType)
                     {
-                        case Kinect.Core.CameraView.Depth:
-                            _imageType = Kinect.Core.CameraView.ColoredDepth;
+                        case Core.CameraView.Depth:
+                            _imageType = Core.CameraView.ColoredDepth;
                             DebugInformation = "Colored Depth";
                             break;
-                        case Kinect.Core.CameraView.ColoredDepth:
-                            _imageType = Kinect.Core.CameraView.Color;
+                        case Core.CameraView.ColoredDepth:
+                            _imageType = Core.CameraView.Color;
                             DebugInformation = "Color";
                             break;
-                        case Kinect.Core.CameraView.Color:
-                            _imageType = Kinect.Core.CameraView.Depth;
+                        case Core.CameraView.Color:
+                            _imageType = Core.CameraView.Depth;
                             DebugInformation = "Depth";
                             break;
                         default:
@@ -174,7 +164,7 @@ namespace Kinect.GestureDetection.ViewModels
             Closing = new RelayCommand<CancelEventArgs>(e =>
             {
                 CloseKinect();
-                App.Current.Shutdown();
+                Application.Current.Shutdown();
             });
         }
 

@@ -7,13 +7,13 @@ using Kinect.Core;
 
 namespace Kinect.GestureDetection.ViewModels
 {
-    public class TrackingViewModel : ViewModelBase
+    class TrackingViewModel : ViewModelBase
     {
         LimitedObservations<double> _capturedSequence;
         private HiddenMarkovModel.Utils.MotionCalculator _motionCalculator;
         private Point3D _startValue;
         private readonly int timeBetweenCapture = 2;
-        private Kinect.GestureDetection.Models.GestureDetection _gestureDetection;
+        private GestureDetection.Models.GestureDetection _gestureDetection;
 
         int i = 0;
 
@@ -21,7 +21,7 @@ namespace Kinect.GestureDetection.ViewModels
         private static object _syncRoot = new object();
         private User _user;
 
-        public uint ID
+        public int ID
         {
             get { return _user.ID; }
         }
@@ -38,7 +38,7 @@ namespace Kinect.GestureDetection.ViewModels
             return false;
         }
 
-        public TrackingViewModel(uint id)
+        public TrackingViewModel(int id)
             : this(new User(id))
         {
         }
@@ -48,7 +48,7 @@ namespace Kinect.GestureDetection.ViewModels
             _user = user;
             _user.Updated += _user_Updated;
             _motionCalculator = new HiddenMarkovModel.Utils.MotionCalculator();
-            _gestureDetection = new Kinect.GestureDetection.Models.GestureDetection();
+            _gestureDetection = new Models.GestureDetection();
             _capturedSequence = new LimitedObservations<double>(_gestureDetection.ObservationLength);
         }
 
@@ -63,9 +63,9 @@ namespace Kinect.GestureDetection.ViewModels
                 {
                     var propValue = pi.GetValue(e.Event, null);
                     object newValue = propValue;
-                    if (pi.PropertyType == typeof(xn.Point3D))
+                    if (pi.PropertyType == typeof(Point3D))
                     {
-                        newValue = ((xn.Point3D)propValue).GetMediaPoint3D();
+                        newValue = ((Point3D) propValue);
                     }
                     prop.SetValue(this, newValue, null);
                 }
