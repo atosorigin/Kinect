@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using Accord.Math;
-    using System;
-
     /// <summary>
     ///   Abstract class for Probability Distributions.
     /// </summary>
@@ -44,41 +44,17 @@ namespace Accord.Statistics.Distributions.Univariate
     [Serializable]
     public abstract class UnivariateContinuousDistribution : IDistribution, IUnivariateDistribution
     {
-
-        /// <summary>
-        ///   Constructs a new UnivariateDistribution class.
-        /// </summary>
-        protected UnivariateContinuousDistribution()
-        {
-        }
-
-        /// <summary>
-        ///   Gets the mean for this distribution.
-        /// </summary>
-        public abstract double Mean { get; }
-
-        /// <summary>
-        ///   Gets the variance for this distribution.
-        /// </summary>
-        public abstract double Variance { get; }
-
-        /// <summary>
-        ///   Gets the entropy for this distribution.
-        /// </summary>
-        public abstract double Entropy { get; }
-
-
         /// <summary>
         ///   Gets the Standard Deviation (the square root of
         ///   the variance) for the current distribution.
         /// </summary>
         public double StandardDeviation
         {
-            get { return System.Math.Sqrt(this.Variance); }
+            get { return System.Math.Sqrt(Variance); }
         }
 
-
         #region IDistribution explicit members
+
         /// <summary>
         ///   Gets the probability density function (pdf) for
         ///   this distribution evaluated at point <c>x</c>.
@@ -145,12 +121,12 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         IDistribution IDistribution.Fit(Array observations, double[] weights)
         {
-            double[] univariate = observations as double[];
+            var univariate = observations as double[];
             if (univariate != null) return Fit(univariate, weights);
 
-            double[][] multivariate = observations as double[][];
+            var multivariate = observations as double[][];
             if (multivariate != null) return Fit(Matrix.Combine(multivariate), weights);
-            
+
             throw new ArgumentException("Invalid input type.", "observations");
         }
 
@@ -173,16 +149,47 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         IDistribution IDistribution.Fit(Array observations)
         {
-            double[] weights = new double[observations.Length];
+            var weights = new double[observations.Length];
 
             // Create equal weights for the observations
             for (int i = 0; i < weights.Length; i++)
-                weights[i] = 1.0 / observations.Length;
+                weights[i] = 1.0/observations.Length;
 
             return (this as IDistribution).Fit(observations, weights);
         }
+
         #endregion
 
+        #region IDistribution Members
+
+        /// <summary>
+        ///   Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>
+        ///   A new object that is a copy of this instance.
+        /// </returns>
+        public abstract object Clone();
+
+        #endregion
+
+        #region IUnivariateDistribution Members
+
+        /// <summary>
+        ///   Gets the mean for this distribution.
+        /// </summary>
+        public abstract double Mean { get; }
+
+        /// <summary>
+        ///   Gets the variance for this distribution.
+        /// </summary>
+        public abstract double Variance { get; }
+
+        /// <summary>
+        ///   Gets the entropy for this distribution.
+        /// </summary>
+        public abstract double Entropy { get; }
+
+        #endregion
 
         /// <summary>
         ///   Gets the cumulative distribution function (cdf) for
@@ -237,23 +244,13 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         public virtual IDistribution Fit(double[] observations)
         {
-            double[] weights = new double[observations.Length];
+            var weights = new double[observations.Length];
 
             // Create equal weights for the observations
             for (int i = 0; i < weights.Length; i++)
-                weights[i] = 1.0 / observations.Length;
+                weights[i] = 1.0/observations.Length;
 
             return Fit(observations, weights);
         }
-
-        /// <summary>
-        ///   Creates a new object that is a copy of the current instance.
-        /// </summary>
-        /// <returns>
-        ///   A new object that is a copy of this instance.
-        /// </returns>
-        public abstract object Clone();
-
     }
-
 }

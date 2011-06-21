@@ -8,8 +8,6 @@
 
 namespace AForge
 {
-    using System;
-
     /// <summary>
     /// Represents a double range with minimum and maximum values.
     /// </summary>
@@ -45,7 +43,21 @@ namespace AForge
     /// 
     public class DoubleRange
     {
-        private double min, max;
+        private double max;
+        private double min;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoubleRange"/> class.
+        /// </summary>
+        /// 
+        /// <param name="min">Minimum value of the range.</param>
+        /// <param name="max">Maximum value of the range.</param>
+        /// 
+        public DoubleRange(double min, double max)
+        {
+            this.min = min;
+            this.max = max;
+        }
 
         /// <summary>
         /// Minimum value of the range.
@@ -81,19 +93,6 @@ namespace AForge
             get { return max - min; }
         }
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DoubleRange"/> class.
-        /// </summary>
-        /// 
-        /// <param name="min">Minimum value of the range.</param>
-        /// <param name="max">Maximum value of the range.</param>
-        /// 
-        public DoubleRange(double min, double max)
-        {
-            this.min = min;
-            this.max = max;
-        }
 
         /// <summary>
         /// Check if the specified value is inside of the range.
@@ -135,7 +134,7 @@ namespace AForge
         public bool IsOverlapping(DoubleRange range)
         {
             return ((IsInside(range.min)) || (IsInside(range.max)) ||
-                     (range.IsInside(min)) || (range.IsInside(max)));
+                    (range.IsInside(min)) || (range.IsInside(max)));
         }
     }
 }

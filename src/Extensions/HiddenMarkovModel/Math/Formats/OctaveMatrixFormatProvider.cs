@@ -7,17 +7,30 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Globalization;
+
 namespace Accord.Math.Formats
 {
-    using System;
-    using System.Globalization;
-
     /// <summary>
     ///   Format provider for the matrix format used by Octave (and MATLAB).
     /// </summary>
     /// 
     public sealed class OctaveMatrixFormatProvider : MatrixFormatProviderBase
     {
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
+        /// </summary>
+        /// 
+        public static readonly OctaveMatrixFormatProvider CurrentCulture =
+            new OctaveMatrixFormatProvider(CultureInfo.CurrentCulture);
+
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
+        /// </summary>
+        /// 
+        public static readonly OctaveMatrixFormatProvider InvariantCulture =
+            new OctaveMatrixFormatProvider(CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OctaveMatrixFormatProvider"/> class.
@@ -43,18 +56,5 @@ namespace Accord.Math.Formats
             ParseRowDelimiter = "; ";
             ParseColDelimiter = " ";
         }
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
-        /// </summary>
-        /// 
-        public static readonly OctaveMatrixFormatProvider CurrentCulture = new OctaveMatrixFormatProvider(CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
-        /// </summary>
-        /// 
-        public static readonly OctaveMatrixFormatProvider InvariantCulture = new OctaveMatrixFormatProvider(CultureInfo.InvariantCulture);
-
     }
 }

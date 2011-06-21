@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using GalaSoft.MvvmLight;
 
 namespace Kinect.Semaphore.ViewModels
@@ -9,7 +10,7 @@ namespace Kinect.Semaphore.ViewModels
         public string About { get; set; }
         public string CompanyUrl { get; set; }
         public string Copyright { get; set; }
-        public string AppVersion {get;set;}
+        public string AppVersion { get; set; }
 
         public string ApplicationVersion
         {
@@ -26,21 +27,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the AboutViewModel class.
-        /// </summary>
-        public ResourcesViewModelBase()
-        {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real": Connect to service, etc...
-            ////}
-        }
-
         ////public override void Cleanup()
         ////{
         ////    // Clean own resources if needed
@@ -50,11 +36,12 @@ namespace Kinect.Semaphore.ViewModels
 
         public void LoadValuesFromResource<T>()
         {
-            var targetType = GetType();
-            var sourceType = typeof(T);
-            foreach (var targetProperty in targetType.GetProperties())
+            Type targetType = GetType();
+            Type sourceType = typeof (T);
+            foreach (PropertyInfo targetProperty in targetType.GetProperties())
             {
-                var sourceProperty = sourceType.GetProperty(targetProperty.Name, BindingFlags.Static | BindingFlags.Public);
+                PropertyInfo sourceProperty = sourceType.GetProperty(targetProperty.Name,
+                                                                     BindingFlags.Static | BindingFlags.Public);
                 if (sourceProperty != null)
                 {
                     targetProperty.SetValue(this, sourceProperty.GetValue(null, null), null);

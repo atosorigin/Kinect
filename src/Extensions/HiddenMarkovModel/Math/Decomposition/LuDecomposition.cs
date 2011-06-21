@@ -10,11 +10,10 @@
 //  Adapted from Mapack for COM and Jama routines
 //
 
+using System;
+
 namespace Accord.Math.Decompositions
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///   LU decomposition of a rectangular matrix.
     /// </summary>
@@ -35,9 +34,9 @@ namespace Accord.Math.Decompositions
     /// 
     public sealed class LuDecomposition : ISolverDecomposition
     {
-        private double[,] lu;
-        private int pivotSign;
-        private int[] pivotVector;
+        private readonly double[,] lu;
+        private readonly int pivotSign;
+        private readonly int[] pivotVector;
 
         /// <summary>Construct a new LU decomposition.</summary>	
         /// <param name="value">The matrix A to be decomposed.</param>
@@ -77,23 +76,23 @@ namespace Accord.Math.Decompositions
 
             if (transpose)
             {
-                this.lu = value.Transpose(inPlace);
+                lu = value.Transpose(inPlace);
             }
             else
             {
-                this.lu = inPlace ? value : (double[,])value.Clone();
+                lu = inPlace ? value : (double[,]) value.Clone();
             }
 
             int rows = lu.GetLength(0);
             int cols = lu.GetLength(1);
 
-            this.pivotVector = new int[rows];
+            pivotVector = new int[rows];
 
             for (int i = 0; i < rows; i++)
                 pivotVector[i] = i;
 
             pivotSign = 1;
-            double[] LUcolj = new double[rows];
+            var LUcolj = new double[rows];
 
 
             unsafe
@@ -116,7 +115,7 @@ namespace Accord.Math.Decompositions
                         fixed (double* LUrowi = &lu[i, 0])
                         {
                             for (int k = 0; k < kmax; k++)
-                                s += LUrowi[k] * LUcolj[k];
+                                s += LUrowi[k]*LUcolj[k];
 
                             LUrowi[j] = LUcolj[i] -= s;
                         }
@@ -177,7 +176,7 @@ namespace Accord.Math.Decompositions
                 if (lu.GetLength(0) != lu.GetLength(1))
                     throw new InvalidOperationException("Matrix must be square.");
 
-                double determinant = (double)pivotSign;
+                double determinant = pivotSign;
                 for (int j = 0; j < lu.GetLength(1); j++)
                     determinant *= lu[j, j];
 
@@ -192,7 +191,7 @@ namespace Accord.Math.Decompositions
             {
                 int rows = lu.GetLength(0);
                 int columns = lu.GetLength(1);
-                double[,] X = new double[rows, columns];
+                var X = new double[rows,columns];
 
                 for (int i = 0; i < rows; i++)
                 {
@@ -218,7 +217,7 @@ namespace Accord.Math.Decompositions
             {
                 int rows = lu.GetLength(0);
                 int columns = lu.GetLength(1);
-                double[,] X = new double[rows, columns];
+                var X = new double[rows,columns];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < columns; j++)
@@ -239,54 +238,16 @@ namespace Accord.Math.Decompositions
             get
             {
                 int rows = lu.GetLength(0);
-                double[] p = new double[rows];
+                var p = new double[rows];
 
                 for (int i = 0; i < rows; i++)
-                    p[i] = (double)this.pivotVector[i];
+                    p[i] = pivotVector[i];
 
                 return p;
             }
         }
 
-        /// <summary>Solves a set of equation systems of type <c>A * X = I</c>.</summary>
-        public double[,] Inverse()
-        {
-            if (!this.Nonsingular)
-            {
-                throw new InvalidOperationException("Matrix is singular");
-            }
-
-            int rows = lu.GetLength(1);
-            int columns = lu.GetLength(1);
-            int count = rows;
-
-            // Copy right hand side with pivoting
-            double[,] X = new double[rows, columns];
-            for (int i = 0; i < rows; i++)
-            {
-                int k = pivotVector[i];
-                X[i, k] = 1.0;
-            }
-
-            // Solve L*Y = B(piv,:)
-            for (int k = 0; k < columns; k++)
-                for (int i = k + 1; i < columns; i++)
-                    for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * lu[i, k];
-
-            // Solve U*X = I;
-            for (int k = columns - 1; k >= 0; k--)
-            {
-                for (int j = 0; j < count; j++)
-                    X[k, j] /= lu[k, k];
-
-                for (int i = 0; i < k; i++)
-                    for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * lu[i, k];
-            }
-
-            return X;
-        }
+        #region ISolverDecomposition Members
 
         /// <summary>Solves a set of equation systems of type <c>A * X = B</c>.</summary>
         /// <param name="value">Right hand side matrix with as many rows as <c>A</c> and any number of columns.</param>
@@ -298,12 +259,12 @@ namespace Accord.Math.Decompositions
                 throw new ArgumentNullException("value");
             }
 
-            if (value.GetLength(0) != this.lu.GetLength(0))
+            if (value.GetLength(0) != lu.GetLength(0))
             {
                 throw new ArgumentException("Invalid matrix dimensions.", "value");
             }
 
-            if (!this.Nonsingular)
+            if (!Nonsingular)
             {
                 throw new InvalidOperationException("Matrix is singular");
             }
@@ -318,7 +279,7 @@ namespace Accord.Math.Decompositions
             for (int k = 0; k < columns; k++)
                 for (int i = k + 1; i < columns; i++)
                     for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * lu[i, k];
+                        X[i, j] -= X[k, j]*lu[i, k];
 
             // Solve U*X = Y;
             for (int k = columns - 1; k >= 0; k--)
@@ -328,53 +289,7 @@ namespace Accord.Math.Decompositions
 
                 for (int i = 0; i < k; i++)
                     for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * lu[i, k];
-            }
-
-            return X;
-        }
-
-        /// <summary>Solves a set of equation systems of type <c>X * A = B</c>.</summary>
-        /// <param name="value">Right hand side matrix with as many columns as <c>A</c> and any number of rows.</param>
-        /// <returns>Matrix <c>X</c> so that <c>X * L * U = A</c>.</returns>
-        public double[,] SolveTranspose(double[,] value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException("value");
-            }
-
-            if (value.GetLength(0) != this.lu.GetLength(0))
-            {
-                throw new ArgumentException("Invalid matrix dimensions.", "value");
-            }
-
-            if (!this.Nonsingular)
-            {
-                throw new InvalidOperationException("Matrix is singular");
-            }
-
-            // Copy right hand side with pivoting
-            double[,] X = value.Submatrix(null, pivotVector);
-
-            int count = X.GetLength(1);
-            int columns = lu.GetLength(1);
-
-            // Solve L*Y = B(piv,:)
-            for (int k = 0; k < columns; k++)
-                for (int i = k + 1; i < columns; i++)
-                    for (int j = 0; j < count; j++)
-                        X[j, i] -= X[j, k] * lu[i, k];
-
-            // Solve U*X = Y;
-            for (int k = columns - 1; k >= 0; k--)
-            {
-                for (int j = 0; j < count; j++)
-                    X[j, k] /= lu[k, k];
-
-                for (int i = 0; i < k; i++)
-                    for (int j = 0; j < count; j++)
-                        X[j, i] -= X[j, k] * lu[i, k];
+                        X[i, j] -= X[k, j]*lu[i, k];
             }
 
             return X;
@@ -390,19 +305,19 @@ namespace Accord.Math.Decompositions
                 throw new ArgumentNullException("value");
             }
 
-            if (value.Length != this.lu.GetLength(0))
+            if (value.Length != lu.GetLength(0))
             {
                 throw new ArgumentException("Invalid matrix dimensions.", "value");
             }
 
-            if (!this.Nonsingular)
+            if (!Nonsingular)
             {
                 throw new InvalidOperationException("Matrix is singular");
             }
 
             // Copy right hand side with pivoting
             int count = value.Length;
-            double[] b = new double[count];
+            var b = new double[count];
             for (int i = 0; i < b.Length; i++)
                 b[i] = value[pivotVector[i]];
 
@@ -411,12 +326,12 @@ namespace Accord.Math.Decompositions
 
 
             // Solve L*Y = B
-            double[] X = new double[count];
+            var X = new double[count];
             for (int i = 0; i < rows; i++)
             {
                 X[i] = b[i];
                 for (int j = 0; j < i; j++)
-                    X[i] -= lu[i, j] * X[j];
+                    X[i] -= lu[i, j]*X[j];
             }
 
             // Solve U*X = Y;
@@ -424,12 +339,99 @@ namespace Accord.Math.Decompositions
             {
                 //double sum = 0.0;
                 for (int j = columns - 1; j > i; j--)
-                    X[i] -= lu[i, j] * X[j];
+                    X[i] -= lu[i, j]*X[j];
                 X[i] /= lu[i, i];
             }
 
             return X;
         }
 
+        #endregion
+
+        /// <summary>Solves a set of equation systems of type <c>A * X = I</c>.</summary>
+        public double[,] Inverse()
+        {
+            if (!Nonsingular)
+            {
+                throw new InvalidOperationException("Matrix is singular");
+            }
+
+            int rows = lu.GetLength(1);
+            int columns = lu.GetLength(1);
+            int count = rows;
+
+            // Copy right hand side with pivoting
+            var X = new double[rows,columns];
+            for (int i = 0; i < rows; i++)
+            {
+                int k = pivotVector[i];
+                X[i, k] = 1.0;
+            }
+
+            // Solve L*Y = B(piv,:)
+            for (int k = 0; k < columns; k++)
+                for (int i = k + 1; i < columns; i++)
+                    for (int j = 0; j < count; j++)
+                        X[i, j] -= X[k, j]*lu[i, k];
+
+            // Solve U*X = I;
+            for (int k = columns - 1; k >= 0; k--)
+            {
+                for (int j = 0; j < count; j++)
+                    X[k, j] /= lu[k, k];
+
+                for (int i = 0; i < k; i++)
+                    for (int j = 0; j < count; j++)
+                        X[i, j] -= X[k, j]*lu[i, k];
+            }
+
+            return X;
+        }
+
+        /// <summary>Solves a set of equation systems of type <c>X * A = B</c>.</summary>
+        /// <param name="value">Right hand side matrix with as many columns as <c>A</c> and any number of rows.</param>
+        /// <returns>Matrix <c>X</c> so that <c>X * L * U = A</c>.</returns>
+        public double[,] SolveTranspose(double[,] value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
+            if (value.GetLength(0) != lu.GetLength(0))
+            {
+                throw new ArgumentException("Invalid matrix dimensions.", "value");
+            }
+
+            if (!Nonsingular)
+            {
+                throw new InvalidOperationException("Matrix is singular");
+            }
+
+            // Copy right hand side with pivoting
+            double[,] X = value.Submatrix(null, pivotVector);
+
+            int count = X.GetLength(1);
+            int columns = lu.GetLength(1);
+
+            // Solve L*Y = B(piv,:)
+            for (int k = 0; k < columns; k++)
+                for (int i = k + 1; i < columns; i++)
+                    for (int j = 0; j < count; j++)
+                        X[j, i] -= X[j, k]*lu[i, k];
+
+            // Solve U*X = Y;
+            for (int k = columns - 1; k >= 0; k--)
+            {
+                for (int j = 0; j < count; j++)
+                    X[j, k] /= lu[k, k];
+
+                for (int i = 0; i < k; i++)
+                    for (int j = 0; j < count; j++)
+                        X[j, i] -= X[j, k]*lu[i, k];
+            }
+
+            return X;
+        }
     }
 }

@@ -1,13 +1,18 @@
-﻿using Kinect.Core.Eventing;
-using Kinect.Core;
+﻿using Kinect.Core;
+using Kinect.Core.Eventing;
 
 namespace Kinect.Workshop
 {
     public class MyFilter : Filter<IUserChangedEvent>
     {
+        public override string Name
+        {
+            get { return "FilterPipe"; }
+        }
+
         public override void Process(IUserChangedEvent evt)
         {
-            var continueProcess = false;
+            bool continueProcess = false;
             //TODO: Workshop -> Part 3:
             //TODO: Workshop -> Filter hier de frames uit die niet nodig zijn
 
@@ -24,11 +29,6 @@ namespace Kinect.Workshop
                 //laat ze dan weten dat deze data gefilterd is
                 OnFilteredEvent(new MyFilterEventArgs("Data is gefilterd"));
             }
-        }
-
-        public override string Name
-        {
-            get { return "FilterPipe"; }
         }
     }
 }

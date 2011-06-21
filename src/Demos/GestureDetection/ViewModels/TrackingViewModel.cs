@@ -1,42 +1,31 @@
 ﻿using System;
 using System.Linq;
-using GalaSoft.MvvmLight;
+using System.Reflection;
 using System.Windows.Media.Media3D;
+using GalaSoft.MvvmLight;
+using HiddenMarkovModel.Utils;
 using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Eventing;
 
 namespace Kinect.GestureDetection.ViewModels
 {
-    class TrackingViewModel : ViewModelBase
+    internal class TrackingViewModel : ViewModelBase
     {
-        LimitedObservations<double> _capturedSequence;
-        private HiddenMarkovModel.Utils.MotionCalculator _motionCalculator;
-        private Point3D _startValue;
-        private readonly int timeBetweenCapture = 2;
-        private GestureDetection.Models.GestureDetection _gestureDetection;
-
-        int i = 0;
+        private static object _syncRoot = new object();
+        private readonly LimitedObservations<double> _capturedSequence;
+        private readonly Models.GestureDetection _gestureDetection;
+        private readonly MotionCalculator _motionCalculator;
 
         private readonly double _updateMargin = 10;
-        private static object _syncRoot = new object();
-        private User _user;
-
-        public int ID
-        {
-            get { return _user.ID; }
-        }
-
-        private bool Changed(Point3D newValue, Point3D oldValue)
-        {
-            if (Math.Abs(newValue.X - oldValue.X) >= _updateMargin ||
-                Math.Abs(newValue.Y - oldValue.Y) >= _updateMargin //||
-               // Math.Abs(newValue.Z - oldValue.Z) >= _updateMargin
-                )
-            {
-                return true;
-            }
-            return false;
-        }
+        private readonly User _user;
+        private readonly int timeBetweenCapture = 2;
+        private string _classification;
+        private string _direction;
+        private Point3D _rightHand;
+        private string _sequence;
+        private Point3D _startValue;
+        private int i;
 
         public TrackingViewModel(int id)
             : this(new User(id))
@@ -47,32 +36,16 @@ namespace Kinect.GestureDetection.ViewModels
         {
             _user = user;
             _user.Updated += _user_Updated;
-            _motionCalculator = new HiddenMarkovModel.Utils.MotionCalculator();
+            _motionCalculator = new MotionCalculator();
             _gestureDetection = new Models.GestureDetection();
             _capturedSequence = new LimitedObservations<double>(_gestureDetection.ObservationLength);
         }
 
-        private void _user_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
+        public int ID
         {
-            var eventProperties = e.Event.GetType().GetProperties();
-            var thisType = this.GetType();
-            eventProperties.AsParallel().ForAll(pi =>
-            {
-                var prop = thisType.GetProperty(pi.Name);
-                if (prop != null && prop.CanWrite)
-                {
-                    var propValue = pi.GetValue(e.Event, null);
-                    object newValue = propValue;
-                    if (pi.PropertyType == typeof(Point3D))
-                    {
-                        newValue = ((Point3D) propValue);
-                    }
-                    prop.SetValue(this, newValue, null);
-                }
-            });
+            get { return _user.ID; }
         }
 
-        private string _direction;
         public string Direction
         {
             get { return _direction; }
@@ -86,7 +59,6 @@ namespace Kinect.GestureDetection.ViewModels
             }
         }
 
-        private string _classification;
         public string Classification
         {
             get { return _classification; }
@@ -101,7 +73,6 @@ namespace Kinect.GestureDetection.ViewModels
             }
         }
 
-        private string _sequence;
         public string Sequence
         {
             get { return _sequence; }
@@ -116,12 +87,6 @@ namespace Kinect.GestureDetection.ViewModels
         }
 
 
-        private string Classify()
-        {
-                return _gestureDetection.ProcessObservation(_capturedSequence.ToList());
-        }
-
-        private Point3D _rightHand;
         public Point3D RightHand
         {
             get { return _rightHand; }
@@ -138,20 +103,22 @@ namespace Kinect.GestureDetection.ViewModels
                     else if (i >= timeBetweenCapture && Changed(value, _startValue))
                     {
                         //Calculate direction and insert into observations
-                        var direction = _motionCalculator.CalculateMotion(_startValue, value);
+                        double direction = _motionCalculator.CalculateMotion(_startValue, value);
                         if (_capturedSequence.LastOrDefault() != direction)
                         {
                             _capturedSequence.InsertObservation(direction);
                             Sequence += direction.ToString();
                         }
-                        
+
                         if (_capturedSequence.Count == _gestureDetection.ObservationLength)
                         {
                             Classification = Classify();
                         }
                         if (Sequence != null && Sequence.Length > 50)
-                        { Sequence = string.Empty; }
-                        
+                        {
+                            Sequence = string.Empty;
+                        }
+
 
                         Direction = direction.ToString();
                         i = 0;
@@ -159,6 +126,43 @@ namespace Kinect.GestureDetection.ViewModels
                     i++;
                 }
             }
+        }
+
+        private bool Changed(Point3D newValue, Point3D oldValue)
+        {
+            if (Math.Abs(newValue.X - oldValue.X) >= _updateMargin ||
+                Math.Abs(newValue.Y - oldValue.Y) >= _updateMargin //||
+                // Math.Abs(newValue.Z - oldValue.Z) >= _updateMargin
+                )
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void _user_Updated(object sender, ProcessEventArgs<IUserChangedEvent> e)
+        {
+            PropertyInfo[] eventProperties = e.Event.GetType().GetProperties();
+            Type thisType = GetType();
+            eventProperties.AsParallel().ForAll(pi =>
+                                                    {
+                                                        PropertyInfo prop = thisType.GetProperty(pi.Name);
+                                                        if (prop != null && prop.CanWrite)
+                                                        {
+                                                            object propValue = pi.GetValue(e.Event, null);
+                                                            object newValue = propValue;
+                                                            if (pi.PropertyType == typeof (Point3D))
+                                                            {
+                                                                newValue = ((Point3D) propValue);
+                                                            }
+                                                            prop.SetValue(this, newValue, null);
+                                                        }
+                                                    });
+        }
+
+        private string Classify()
+        {
+            return _gestureDetection.ProcessObservation(_capturedSequence.ToList());
         }
     }
 }

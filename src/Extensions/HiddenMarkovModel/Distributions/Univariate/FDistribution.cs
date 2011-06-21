@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using Accord.Math;
-    using System;
-
     /// <summary>
     ///   F (Fisher-Snedecor) distribution.
     /// </summary>
@@ -19,13 +19,12 @@ namespace Accord.Statistics.Distributions.Univariate
     [Serializable]
     public class FDistribution : UnivariateContinuousDistribution
     {
-
         // distribution parameters
-        private int d1;
-        private int d2;
+        private readonly double b;
+        private readonly int d1;
+        private readonly int d2;
 
         // derived values
-        private double b;
 
 
         /// <summary>
@@ -36,10 +35,10 @@ namespace Accord.Statistics.Distributions.Univariate
         /// <param name="degrees2">The second degree of freedom.</param>
         public FDistribution(int degrees1, int degrees2)
         {
-            this.d1 = degrees1;
-            this.d2 = degrees2;
+            d1 = degrees1;
+            d2 = degrees2;
 
-            this.b = Special.Beta(degrees1 * 0.5, degrees2 * 0.5);
+            b = Special.Beta(degrees1*0.5, degrees2*0.5);
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace Accord.Statistics.Distributions.Univariate
             {
                 if (d2 <= 2) return Double.NaN;
 
-                return (double)d2 / (d2 - 2.0);
+                return d2/(d2 - 2.0);
             }
         }
 
@@ -79,9 +78,9 @@ namespace Accord.Statistics.Distributions.Univariate
             get
             {
                 if (d2 <= 4) return Double.NaN;
-                
-                return (2.0 * d2 * d2 * (d1 + d2 - 2)) /
-                    (d1 * (d2 - 2) * (d2 - 2) * (d2 - 4));
+
+                return (2.0*d2*d2*(d1 + d2 - 2))/
+                       (d1*(d2 - 2)*(d2 - 2)*(d2 - 4));
             }
         }
 
@@ -105,8 +104,8 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </remarks>
         public override double DistributionFunction(double x)
         {
-            double u = (d1 * x) / (d1 * x + d2);
-            return Special.Ibeta(d1 * 0.5, d2 * 0.5, u);
+            double u = (d1*x)/(d1*x + d2);
+            return Special.Ibeta(d1*0.5, d2*0.5, u);
         }
 
         /// <summary>
@@ -124,9 +123,9 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </remarks>
         public override double ProbabilityDensityFunction(double x)
         {
-            double u = Math.Pow(d1 * x, d1) * Math.Pow(d2, d2) / 
-                Math.Pow(d1 * x + d2, d1 + d2);
-            return Math.Sqrt(u) / (x * b);
+            double u = System.Math.Pow(d1*x, d1)*System.Math.Pow(d2, d2)/
+                       System.Math.Pow(d1*x + d2, d1 + d2);
+            return System.Math.Sqrt(u)/(x*b);
         }
 
         /// <summary>

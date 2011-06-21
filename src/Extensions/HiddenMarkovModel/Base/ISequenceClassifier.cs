@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov
 {
-    using System;
-
     /// <summary>
     ///   Common interface for sequence classifiers using <see cref="IHiddenMarkovModel">
     ///   hidden Markov models</see>.
@@ -18,13 +18,13 @@ namespace Accord.Statistics.Models.Markov
     public interface ISequenceClassifier
     {
         /// <summary>
-        ///   Computes the most likely class for a given sequence.
-        /// </summary>
-        int Compute(Array sequence, out double[] likelihoods);
-
-        /// <summary>
         ///   Gets the number of classes which can be recognized by this classifier.
         /// </summary>
         int Classes { get; }
+
+        /// <summary>
+        ///   Computes the most likely class for a given sequence.
+        /// </summary>
+        int Compute(Array sequence, out double[] likelihoods);
     }
 }

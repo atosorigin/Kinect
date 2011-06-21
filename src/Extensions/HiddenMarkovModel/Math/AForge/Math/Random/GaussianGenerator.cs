@@ -8,8 +8,6 @@
 
 namespace AForge.Math.Random
 {
-    using System;
-
     /// <summary>
     /// Gaussian random numbers generator.
     /// </summary>
@@ -32,38 +30,11 @@ namespace AForge.Math.Random
     public class GaussianGenerator : IRandomNumberGenerator
     {
         // standard numbers generator
-        private StandardGenerator rand = null;
         // mean value
-        private double mean;
+        private readonly double mean;
         // standard deviation value
-        private double stdDev;
-
-        /// <summary>
-        /// Mean value of the generator.
-        /// </summary>
-        ///
-        public double Mean
-        {
-            get { return mean;  }
-        }
-
-        /// <summary>
-        /// Variance value of the generator.
-        /// </summary>
-        ///
-        public double Variance
-        {
-            get { return stdDev * stdDev; }
-        }
-
-        /// <summary>
-        /// Standard deviation value.
-        /// </summary>
-        ///
-        public double StdDev
-        {
-            get { return stdDev; }
-        }
+        private readonly double stdDev;
+        private StandardGenerator rand;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GaussianGenerator"/> class.
@@ -72,8 +43,8 @@ namespace AForge.Math.Random
         /// <param name="mean">Mean value.</param>
         /// <param name="stdDev">Standard deviation value.</param>
         /// 
-        public GaussianGenerator( double mean, double stdDev ) :
-            this( mean, stdDev, 0 )
+        public GaussianGenerator(double mean, double stdDev) :
+            this(mean, stdDev, 0)
         {
         }
 
@@ -85,12 +56,41 @@ namespace AForge.Math.Random
         /// <param name="stdDev">Standard deviation value.</param>
         /// <param name="seed">Seed value to initialize random numbers generator.</param>
         /// 
-        public GaussianGenerator( double mean, double stdDev, int seed )
+        public GaussianGenerator(double mean, double stdDev, int seed)
         {
-            this.mean   = mean;
+            this.mean = mean;
             this.stdDev = stdDev;
 
-            rand = new StandardGenerator( seed );
+            rand = new StandardGenerator(seed);
+        }
+
+        /// <summary>
+        /// Standard deviation value.
+        /// </summary>
+        ///
+        public double StdDev
+        {
+            get { return stdDev; }
+        }
+
+        #region IRandomNumberGenerator Members
+
+        /// <summary>
+        /// Mean value of the generator.
+        /// </summary>
+        ///
+        public double Mean
+        {
+            get { return mean; }
+        }
+
+        /// <summary>
+        /// Variance value of the generator.
+        /// </summary>
+        ///
+        public double Variance
+        {
+            get { return stdDev*stdDev; }
         }
 
         /// <summary>
@@ -99,9 +99,9 @@ namespace AForge.Math.Random
         /// 
         /// <returns>Returns next random number.</returns>
         /// 
-        public double Next( )
+        public double Next()
         {
-            return rand.Next( ) * stdDev + mean;
+            return rand.Next()*stdDev + mean;
         }
 
         /// <summary>
@@ -113,9 +113,11 @@ namespace AForge.Math.Random
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>
         /// 
-        public void SetSeed( int seed )
+        public void SetSeed(int seed)
         {
-            rand = new StandardGenerator( seed );
+            rand = new StandardGenerator(seed);
         }
+
+        #endregion
     }
 }

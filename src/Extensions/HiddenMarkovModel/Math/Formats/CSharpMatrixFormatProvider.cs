@@ -7,16 +7,29 @@
 // http://www.crsouza.com
 //
 
+using System.Globalization;
+
 namespace Accord.Math.Formats
 {
-    using System.Globalization;
-
     /// <summary>
     ///   Gets the matrix representation used in C# multi-dimensional arrays.
     /// </summary>
     /// 
     public sealed class CSharpMatrixFormatProvider : MatrixFormatProviderBase
     {
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
+        /// </summary>
+        /// 
+        public static readonly CSharpMatrixFormatProvider CurrentCulture =
+            new CSharpMatrixFormatProvider(CultureInfo.CurrentCulture);
+
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
+        /// </summary>
+        /// 
+        public static readonly CSharpMatrixFormatProvider InvariantCulture =
+            new CSharpMatrixFormatProvider(CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpMatrixFormatProvider"/> class.
@@ -42,19 +55,5 @@ namespace Accord.Math.Formats
             ParseRowDelimiter = "},";
             ParseColDelimiter = ",";
         }
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
-        /// </summary>
-        /// 
-        public static readonly CSharpMatrixFormatProvider CurrentCulture = new CSharpMatrixFormatProvider(CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
-        /// </summary>
-        /// 
-        public static readonly CSharpMatrixFormatProvider InvariantCulture = new CSharpMatrixFormatProvider(CultureInfo.InvariantCulture);
-
-
     }
 }

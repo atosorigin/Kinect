@@ -7,19 +7,19 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math.Formats;
+
 namespace Accord.Math
 {
-    using System;
-    using Accord.Math.Formats;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
         #region ToString
+
         /// <summary>
         ///   Returns a <see cref="System.String"/> representing a matrix.
         /// </summary>
@@ -155,8 +155,8 @@ namespace Accord.Math
 
         #endregion
 
-
         #region Parse
+
         /// <summary>
         ///   Converts the string representation of a matrix to its
         ///   double-precision floating-point number matrix equivalent.
@@ -281,7 +281,7 @@ namespace Accord.Math
 
             return matrix != null;
         }
-        #endregion
 
+        #endregion
     }
 }

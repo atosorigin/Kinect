@@ -7,13 +7,14 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+using Accord.Statistics.Distributions;
+using Accord.Statistics.Distributions.Univariate;
+using Accord.Statistics.Models.Markov.Topology;
+
 namespace Accord.Statistics.Models.Markov
 {
-    using System;
-    using Accord.Statistics.Distributions;
-    using Accord.Statistics.Distributions.Univariate;
-    using Accord.Statistics.Models.Markov.Topology;
-
     /// <summary>
     ///   Continuous-density Hidden Markov Model.
     /// </summary>
@@ -123,16 +124,13 @@ namespace Accord.Statistics.Models.Markov
     [Serializable]
     public class ContinuousHiddenMarkovModel : HiddenMarkovModelBase, IHiddenMarkovModel
     {
-
-        private int dimension;
-
-
         // Model is defined as M = (A, B, pi)
         // Parameters (A, pi) are defined in base class
-        private IDistribution[] B; // emission probabilities
-
+        private readonly IDistribution[] B; // emission probabilities
+        private readonly int dimension;
 
         #region Constructors
+
         /// <summary>
         ///   Constructs a new Hidden Markov Model with discrete state probabilities.
         /// </summary>
@@ -155,10 +153,10 @@ namespace Accord.Statistics.Models.Markov
             B = new IDistribution[States];
 
             for (int i = 0; i < B.Length; i++)
-                B[i] = (IDistribution)emissions.Clone();
+                B[i] = (IDistribution) emissions.Clone();
 
             if (B[0] is IMultivariateDistribution)
-                dimension = ((IMultivariateDistribution)B[0]).Dimension;
+                dimension = ((IMultivariateDistribution) B[0]).Dimension;
             else dimension = 1;
         }
 
@@ -176,7 +174,7 @@ namespace Accord.Statistics.Models.Markov
             if (symbols <= 0)
             {
                 throw new ArgumentOutOfRangeException("symbols",
-                    "Number of symbols should be higher than zero.");
+                                                      "Number of symbols should be higher than zero.");
             }
 
             // Initialize B with a uniform discrete distribution
@@ -215,7 +213,7 @@ namespace Accord.Statistics.Models.Markov
             B = emissions;
 
             if (B[0] is IMultivariateDistribution)
-                dimension = ((IMultivariateDistribution)B[0]).Dimension;
+                dimension = ((IMultivariateDistribution) B[0]).Dimension;
             else dimension = 1;
         }
 
@@ -243,7 +241,7 @@ namespace Accord.Statistics.Models.Markov
             // Initialize B using a discrete distribution
             B = new GeneralDiscreteDistribution[States];
             for (int i = 0; i < B.Length; i++)
-                B[i] = new GeneralDiscreteDistribution(Accord.Math.Matrix.GetRow(emissions, i));
+                B[i] = new GeneralDiscreteDistribution(Matrix.GetRow(emissions, i));
 
             dimension = 1;
         }
@@ -265,7 +263,7 @@ namespace Accord.Statistics.Models.Markov
         /// <param name="states">The number of states for this model.</param>
         /// <param name="symbols">The number of output symbols used for this model.</param>
         public ContinuousHiddenMarkovModel(int states, int symbols)
-            : this(new Topology.Ergodic(states), symbols)
+            : this(new Ergodic(states), symbols)
         {
         }
 
@@ -275,23 +273,21 @@ namespace Accord.Statistics.Models.Markov
         /// <param name="states">The number of states for the model.</param>
         /// <param name="emissions">A initial distribution to be copied to all states in the model.</param>
         public ContinuousHiddenMarkovModel(int states, IDistribution emissions)
-            : this(new Topology.Ergodic(states), emissions)
+            : this(new Ergodic(states), emissions)
         {
         }
+
         #endregion
 
-
-        //---------------------------------------------
-
-
         #region Public Properties
+
         /// <summary>
         ///   Gets the number of dimensions in the
         ///   probability distributions for the states.
         /// </summary>
         public int Dimension
         {
-            get { return this.dimension; }
+            get { return dimension; }
         }
 
         /// <summary>
@@ -299,14 +295,10 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         public IDistribution[] Emissions
         {
-            get { return this.B; }
+            get { return B; }
         }
 
         #endregion
-
-
-        //---------------------------------------------
-
 
         #region Public Methods
 
@@ -356,8 +348,8 @@ namespace Accord.Statistics.Models.Markov
 
             if (!(observations is double[][] || observations is double[]))
                 throw new ArgumentException("Argument should be either of type " +
-                    "double[] (for univariate observation) or double[][] (for " +
-                    "multivariate observation).", "observations");
+                                            "double[] (for univariate observation) or double[][] (for " +
+                                            "multivariate observation).", "observations");
 
 
             double[][] x = convert(observations);
@@ -373,13 +365,13 @@ namespace Accord.Statistics.Models.Markov
             double[] pi = Probabilities;
             double[,] A = Transitions;
 
-            int[,] s = new int[states, T];
-            double[,] a = new double[states, T];
+            var s = new int[states,T];
+            var a = new double[states,T];
 
 
             // Base
             for (int i = 0; i < states; i++)
-                a[i, 0] = -Math.Log(pi[i]) - Math.Log(B[i].ProbabilityFunction(x[0]));
+                a[i, 0] = -System.Math.Log(pi[i]) - System.Math.Log(B[i].ProbabilityFunction(x[0]));
 
             // Induction
             for (int t = 1; t < T; t++)
@@ -389,11 +381,11 @@ namespace Accord.Statistics.Models.Markov
                 for (int j = 0; j < states; j++)
                 {
                     minState = 0;
-                    minWeight = a[0, t - 1] - Math.Log(A[0, j]);
+                    minWeight = a[0, t - 1] - System.Math.Log(A[0, j]);
 
                     for (int i = 1; i < states; i++)
                     {
-                        weight = a[i, t - 1] - Math.Log(A[i, j]);
+                        weight = a[i, t - 1] - System.Math.Log(A[i, j]);
 
                         if (weight < minWeight)
                         {
@@ -402,7 +394,7 @@ namespace Accord.Statistics.Models.Markov
                         }
                     }
 
-                    a[j, t] = minWeight - Math.Log(B[j].ProbabilityFunction(observation));
+                    a[j, t] = minWeight - System.Math.Log(B[j].ProbabilityFunction(observation));
                     s[j, t] = minState;
                 }
             }
@@ -422,7 +414,7 @@ namespace Accord.Statistics.Models.Markov
 
 
             // Trackback
-            int[] path = new int[T];
+            var path = new int[T];
             path[T - 1] = minState;
 
             for (int t = T - 2; t >= 0; t--)
@@ -430,7 +422,7 @@ namespace Accord.Statistics.Models.Markov
 
 
             // Returns the sequence probability as an out parameter
-            probability = logarithm ? -minWeight : Math.Exp(-minWeight);
+            probability = logarithm ? -minWeight : System.Math.Exp(-minWeight);
 
             // Returns the most likely (Viterbi path) for the given sequence
             return path;
@@ -485,8 +477,8 @@ namespace Accord.Statistics.Models.Markov
 
             if (!(observations is double[][] || observations is double[]))
                 throw new ArgumentException("Argument should be either of type " +
-                    "double[] (for univariate observation) or double[][] (for " +
-                    "multivariate observation).", "observations");
+                                            "double[] (for univariate observation) or double[][] (for " +
+                                            "multivariate observation).", "observations");
 
 
             double[][] obs = convert(observations);
@@ -498,32 +490,34 @@ namespace Accord.Statistics.Models.Markov
             ForwardBackwardAlgorithm.Forward(this, obs, out logLikelihood);
 
             // Return the sequence probability
-            return logarithm ? logLikelihood : Math.Exp(logLikelihood);
+            return logarithm ? logLikelihood : System.Math.Exp(logLikelihood);
         }
-
 
         #endregion
 
-
-        //---------------------------------------------
-
-
         #region Private Methods
+
         /// <summary>
         ///   Converts a univariate or multivariate array
         ///   of observations into a two-dimensional jagged array.
         /// </summary>
         private double[][] convert(Array array)
         {
-            double[][] multivariate = array as double[][];
+            var multivariate = array as double[][];
             if (multivariate != null) return multivariate;
 
-            double[] univariate = array as double[];
-            if (univariate != null) return Accord.Math.Matrix.Split(univariate, Dimension);
+            var univariate = array as double[];
+            if (univariate != null) return Matrix.Split(univariate, Dimension);
 
             throw new ArgumentException("Invalid array argument type.", "array");
         }
+
         #endregion
 
+        //---------------------------------------------
+
+        //---------------------------------------------
+
+        //---------------------------------------------
     }
 }

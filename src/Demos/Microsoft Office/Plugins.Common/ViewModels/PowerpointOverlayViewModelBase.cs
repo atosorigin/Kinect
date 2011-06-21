@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GalaSoft.MvvmLight;
-using System.Windows.Media.Media3D;
-using GalaSoft.MvvmLight.Command;
-using System.Windows.Input;
 using System.Threading;
-using Kinect.Common;
-using System.Windows.Media;
-using GalaSoft.MvvmLight.Threading;
-using System.Windows.Media.Imaging;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
-using System.Diagnostics;
 using Kinect.Core;
 using log4net;
 
@@ -21,24 +15,28 @@ namespace Kinect.Plugins.Common.ViewModels
 {
     public abstract class PowerpointOverlayViewModelBase : ViewModelBase
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(PowerpointOverlayViewModelBase));
-        private static object _syncRoot = new object();
+        private static readonly ILog _log = LogManager.GetLogger(typeof (PowerpointOverlayViewModelBase));
+        private static readonly object _syncRoot = new object();
 
-        private bool _mouseVisible = false;
-
+        private readonly KinectManager KinectManager = KinectManager.Instance;
         private Size ScreenResolution = new Size(1280, 1024);
+        private ImageSource _cameraView;
+        private string _debugMessage = string.Empty;
+        private CameraView _imageType = Core.CameraView.None;
 
-        private KinectManager KinectManager = KinectManager.Instance;
-
-        private int _laserOwner = -1;
         private Point3D _laser = new Point3D(0, 0, 0);
+        private int _laserOwner = -1;
+        private Visibility _laserVisible = Visibility.Hidden;
+        private bool _mouseVisible;
+        private bool _showMessage;
+
         public Point3D Laser
         {
             get { return _laser; }
             set
             {
-                if (Math.Abs(_laser.X - value.X) > (value.Z / 2) ||
-                    Math.Abs(_laser.Y - value.Y) > (value.Z / 2))
+                if (Math.Abs(_laser.X - value.X) > (value.Z/2) ||
+                    Math.Abs(_laser.Y - value.Y) > (value.Z/2))
                 {
                     _laser = value;
                     RaisePropertyChanged("Laser");
@@ -46,7 +44,6 @@ namespace Kinect.Plugins.Common.ViewModels
             }
         }
 
-        private string _debugMessage = string.Empty;
         public string DebugMessage
         {
             get { return _debugMessage; }
@@ -54,7 +51,7 @@ namespace Kinect.Plugins.Common.ViewModels
             {
                 if (!value.Equals(_debugMessage))
                 {
-                    var old = _debugMessage;
+                    string old = _debugMessage;
                     _debugMessage = value;
                     RaisePropertyChanged("DebugMessage", old, value, true);
                     ShowMessage = false;
@@ -63,7 +60,6 @@ namespace Kinect.Plugins.Common.ViewModels
             }
         }
 
-        private bool _showMessage = false;
         public bool ShowMessage
         {
             get { return _showMessage; }
@@ -74,7 +70,6 @@ namespace Kinect.Plugins.Common.ViewModels
             }
         }
 
-        private Visibility _laserVisible = Visibility.Hidden;
         public Visibility LaserVisible
         {
             get { return _laserVisible; }
@@ -88,8 +83,6 @@ namespace Kinect.Plugins.Common.ViewModels
             }
         }
 
-        private CameraView _imageType = Kinect.Core.CameraView.None;
-        private ImageSource _cameraView;
         public ImageSource CameraView
         {
             get { return _cameraView; }
@@ -110,12 +103,6 @@ namespace Kinect.Plugins.Common.ViewModels
 
         public RelayCommand<KeyEventArgs> KeyDownCommand { get; protected set; }
         public RelayCommand<RoutedEventArgs> WindowLoaded { get; protected set; }
-
-        public PowerpointOverlayViewModelBase()
-            : base()
-        {
-
-        }
 
         protected void InitializeKinect()
         {
@@ -145,7 +132,7 @@ namespace Kinect.Plugins.Common.ViewModels
 
         private void KinectManager_UserFound(object sender, UserEventArgs e)
         {
-            SetDebugMessage(string.Format("User {0} found",e.UserID));
+            SetDebugMessage(string.Format("User {0} found", e.UserID));
         }
 
         private void KinectManager_UserLost(object sender, UserEventArgs e)
@@ -154,12 +141,12 @@ namespace Kinect.Plugins.Common.ViewModels
             {
                 ToggleLaser(e.UserID);
             }
-            SetDebugMessage(string.Format("User {0} lost",e.UserID));
+            SetDebugMessage(string.Format("User {0} lost", e.UserID));
         }
 
         private void KinectManager_TogglePointer(object sender, UserEventArgs e)
         {
-            SetDebugMessage(string.Format("Toggle Laser ({0})",e.UserID));
+            SetDebugMessage(string.Format("Toggle Laser ({0})", e.UserID));
             ToggleLaser(e.UserID);
         }
 
@@ -182,10 +169,7 @@ namespace Kinect.Plugins.Common.ViewModels
 
         private void SetDebugMessage(string message)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                DebugMessage = message;
-            });
+            DispatcherHelper.CheckBeginInvokeOnUI(() => { DebugMessage = message; });
         }
 
         protected virtual bool CameraCommand(KeyEventArgs e)
@@ -194,23 +178,23 @@ namespace Kinect.Plugins.Common.ViewModels
             {
                 switch (_imageType)
                 {
-                    case Kinect.Core.CameraView.Depth:
-                        _imageType = Kinect.Core.CameraView.ColoredDepth;
+                    case Core.CameraView.Depth:
+                        _imageType = Core.CameraView.ColoredDepth;
                         break;
-                    case Kinect.Core.CameraView.ColoredDepth:
-                        _imageType = Kinect.Core.CameraView.Color;
+                    case Core.CameraView.ColoredDepth:
+                        _imageType = Core.CameraView.Color;
                         break;
-                    case Kinect.Core.CameraView.Color:
-                        _imageType = Kinect.Core.CameraView.None;
+                    case Core.CameraView.Color:
+                        _imageType = Core.CameraView.None;
                         break;
-                    case Kinect.Core.CameraView.None:
-                        _imageType = Kinect.Core.CameraView.Depth;
+                    case Core.CameraView.None:
+                        _imageType = Core.CameraView.Depth;
                         break;
                     default:
                         break;
                 }
 
-                if (_imageType == Kinect.Core.CameraView.None)
+                if (_imageType == Core.CameraView.None)
                 {
                     DissableCamera();
                 }
@@ -218,7 +202,7 @@ namespace Kinect.Plugins.Common.ViewModels
                 {
                     EnableCamera();
                 }
-                SetDebugMessage(string.Format("{0} Camera", _imageType.ToString()));
+                SetDebugMessage(string.Format("{0} Camera", _imageType));
             }
             return e.Key == Key.C || e.Key == Key.Up || e.Key == Key.Down;
         }
@@ -234,22 +218,21 @@ namespace Kinect.Plugins.Common.ViewModels
         private void UpdateCameraView(CameraView view)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if (KinectManager.Kinect != null)
-                {
-                    CameraView = KinectManager.Kinect.GetCameraView(view);
-                }
-            });
+                                                      {
+                                                          if (KinectManager.Kinect != null)
+                                                          {
+                                                              CameraView = KinectManager.Kinect.GetCameraView(view);
+                                                          }
+                                                      });
         }
 
         private void EnableCamera()
         {
-            if (KinectManager.Kinect != null && _imageType != Kinect.Core.CameraView.None)
+            if (KinectManager.Kinect != null && _imageType != Core.CameraView.None)
             {
                 KinectManager.Kinect.CameraDataUpdated -= Kinect_CameraDataUpdated;
                 KinectManager.Kinect.CameraDataUpdated += Kinect_CameraDataUpdated;
             }
-
         }
 
         private void DissableCamera()
@@ -263,10 +246,7 @@ namespace Kinect.Plugins.Common.ViewModels
 
         private void ÇlearCameraView()
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                CameraView = null;
-            });
+            DispatcherHelper.CheckBeginInvokeOnUI(() => { CameraView = null; });
         }
 
         private void ToggleLaser(int userId)
@@ -276,7 +256,7 @@ namespace Kinect.Plugins.Common.ViewModels
                 switch (LaserVisible)
                 {
                     case Visibility.Hidden:
-                        _laserOwner = (int)userId;
+                        _laserOwner = userId;
                         LaserVisible = Visibility.Visible;
                         break;
                     case Visibility.Visible:
@@ -284,7 +264,7 @@ namespace Kinect.Plugins.Common.ViewModels
                         LaserVisible = Visibility.Collapsed;
                         break;
                     case Visibility.Collapsed:
-                        _laserOwner = (int)userId;
+                        _laserOwner = userId;
                         LaserVisible = Visibility.Visible;
                         break;
                 }
@@ -298,7 +278,8 @@ namespace Kinect.Plugins.Common.ViewModels
         {
             if (LaserVisible == Visibility.Visible && _laserOwner == e.UserID)
             {
-                var point = e.Point.ToScreenPosition(new Size(640, 480), ScreenResolution, new Point(213, 160), new Size(213, 160));
+                Point3D point = e.Point.ToScreenPosition(new Size(640, 480), ScreenResolution, new Point(213, 160),
+                                                         new Size(213, 160));
                 Laser = point;
             }
         }
@@ -307,15 +288,15 @@ namespace Kinect.Plugins.Common.ViewModels
         {
             if (_mouseVisible)
             {
-                MouseHook.X = (int)e.Point.X;
-                MouseHook.Y = (int)e.Point.Y;
+                MouseHook.X = (int) e.Point.X;
+                MouseHook.Y = (int) e.Point.Y;
             }
         }
 
         #region Simulation
 
-        private Thread _mouseSimulationThread;
         private Thread _laserSimulationThread;
+        private Thread _mouseSimulationThread;
 
         protected void StartMouseAndLaserSimulation()
         {
@@ -356,7 +337,7 @@ namespace Kinect.Plugins.Common.ViewModels
             while (true)
             {
                 Thread.Sleep(50);
-                Laser = new Point3D(rand.NextDouble() * 400, rand.NextDouble() * 400, rand.NextDouble() * 30);
+                Laser = new Point3D(rand.NextDouble()*400, rand.NextDouble()*400, rand.NextDouble()*30);
             }
         }
 

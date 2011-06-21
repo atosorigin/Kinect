@@ -8,8 +8,6 @@
 
 namespace AForge.Math.Random
 {
-    using System;
-
     /// <summary>
     /// Uniform random numbers generator in the range of [0, 1).
     /// </summary>
@@ -34,7 +32,31 @@ namespace AForge.Math.Random
     public class UniformOneGenerator : IRandomNumberGenerator
     {
         // .NET random generator as a base
-        private Random rand = null;
+        private System.Random rand;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
+        /// </summary>
+        /// 
+        /// <remarks>Initializes random numbers generator with zero seed.</remarks>
+        /// 
+        public UniformOneGenerator()
+        {
+            rand = new System.Random(0);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
+        /// </summary>
+        /// 
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
+        /// 
+        public UniformOneGenerator(int seed)
+        {
+            rand = new System.Random(seed);
+        }
+
+        #region IRandomNumberGenerator Members
 
         /// <summary>
         /// Mean value of the generator.
@@ -51,29 +73,7 @@ namespace AForge.Math.Random
         ///
         public double Variance
         {
-            get { return 1 / 12; }
-        }
-
-        /// <summary>
-		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
-        /// </summary>
-        /// 
-        /// <remarks>Initializes random numbers generator with zero seed.</remarks>
-        /// 
-        public UniformOneGenerator( )
-        {
-            rand = new Random( 0 );
-        }
-
-        /// <summary>
-		/// Initializes a new instance of the <see cref="UniformOneGenerator"/> class.
-        /// </summary>
-        /// 
-        /// <param name="seed">Seed value to initialize random numbers generator.</param>
-        /// 
-        public UniformOneGenerator( int seed )
-        {
-            rand = new Random( seed );
+            get { return 1/12; }
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace AForge.Math.Random
         /// 
         /// <returns>Returns next random number.</returns>
         /// 
-        public double Next( )
+        public double Next()
         {
-            return rand.NextDouble( );
+            return rand.NextDouble();
         }
 
         /// <summary>
@@ -96,9 +96,11 @@ namespace AForge.Math.Random
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>
         /// 
-        public void SetSeed( int seed )
+        public void SetSeed(int seed)
         {
-            rand = new Random( seed );
+            rand = new System.Random(seed);
         }
+
+        #endregion
     }
 }

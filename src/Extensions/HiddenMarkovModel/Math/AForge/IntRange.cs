@@ -8,8 +8,6 @@
 
 namespace AForge
 {
-    using System;
-
     /// <summary>
     /// Represents an integer range with minimum and maximum values.
     /// </summary>
@@ -45,7 +43,21 @@ namespace AForge
     /// 
     public class IntRange
     {
-        private int min, max;
+        private int max;
+        private int min;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntRange"/> class.
+        /// </summary>
+        /// 
+        /// <param name="min">Minimum value of the range.</param>
+        /// <param name="max">Maximum value of the range.</param>
+        /// 
+        public IntRange(int min, int max)
+        {
+            this.min = min;
+            this.max = max;
+        }
 
         /// <summary>
         /// Minimum value of the range.
@@ -79,19 +91,6 @@ namespace AForge
         public int Length
         {
             get { return max - min; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IntRange"/> class.
-        /// </summary>
-        /// 
-        /// <param name="min">Minimum value of the range.</param>
-        /// <param name="max">Maximum value of the range.</param>
-        /// 
-        public IntRange(int min, int max)
-        {
-            this.min = min;
-            this.max = max;
         }
 
         /// <summary>
@@ -134,7 +133,7 @@ namespace AForge
         public bool IsOverlapping(IntRange range)
         {
             return ((IsInside(range.min)) || (IsInside(range.max)) ||
-                     (range.IsInside(min)) || (range.IsInside(max)));
+                    (range.IsInside(min)) || (range.IsInside(max)));
         }
     }
 }

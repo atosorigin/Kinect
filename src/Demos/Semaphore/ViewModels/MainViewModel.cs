@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -14,7 +16,6 @@ using GalaSoft.MvvmLight.Threading;
 using Kinect.Common.ColorHelpers;
 using Kinect.Common.Models;
 using Kinect.Core;
-using System.Windows;
 using Kinect.Semaphore.Models;
 using log4net;
 
@@ -22,21 +23,64 @@ namespace Kinect.Semaphore.ViewModels
 {
     public class MainViewModel : ResourcesViewModelBase
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(MainViewModel));
-        
-        private static object _syncRoot = new object();
+        private static readonly ILog _log = LogManager.GetLogger(typeof (MainViewModel));
 
-        private enum CameraImageSize { Large, Small }
+        private static readonly object _syncRoot = new object();
 
-        private CameraImageSize _imageSize = CameraImageSize.Large;
-
-        private MyKinect _kinect;
-
-        private ColorGenerator _generator = new ColorGenerator();
-
-        private CameraView _imageType = Kinect.Core.CameraView.Color;
+        private readonly ColorGenerator _generator = new ColorGenerator();
+        private double _cameraSize;
 
         private ImageSource _cameraView;
+
+        private Visibility _cameraVisibility;
+        private Visibility _debugInformation;
+        private int _fps;
+        private CameraImageSize _imageSize = CameraImageSize.Large;
+        private string _imageSource;
+        private CameraView _imageType = Core.CameraView.Color;
+        private MyKinect _kinect;
+        private string _marginData;
+
+        /// <summary>
+        /// Initializes a new instance of the MainViewModel class.
+        /// </summary>
+        public MainViewModel()
+        {
+            LoadValuesFromResource<AppResources>();
+            if (IsInDesignMode)
+            {
+                //Code runs in Blend --> create design time data.
+                Messages = new ObservableCollection<Message>();
+                Messages.Add(new Message {ImageUrl = "", Value = "Connecting to Kinect..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "Searching for user..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 1 found..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 1..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 2 found..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 2 is in calibration pose..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 2..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "Lost connection to user 1..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 2 waved at Kinect..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 1 found..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 1..."});
+                Messages.Add(new Message {ImageUrl = "", Value = "User 1 waved at Kinect..."});
+
+                CreateUsers();
+            }
+            else
+            {
+                SetCommands();
+                ResizeCameraImage();
+                Users = new ObservableCollection<UserViewModel>();
+                Trace.Listeners.Add(App.TraceListener);
+
+                //TODO: Tracelistener van het type collection maken zodat hij direct gebind kan worden
+                Messages = new ObservableCollection<Message>();
+                App.TraceListener.CollectionChanged += TraceListener_CollectionChanged;
+            }
+            MarginData = "X:10,Y:20,Z;30";
+        }
 
         public ImageSource CameraView
         {
@@ -56,7 +100,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Visibility _cameraVisibility;
         public Visibility CameraVisibility
         {
             get { return _cameraVisibility; }
@@ -70,7 +113,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private double _cameraSize;
         public double CameraSize
         {
             get { return _cameraSize; }
@@ -84,8 +126,7 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private System.Windows.Visibility _debugInformation;
-        public System.Windows.Visibility DebugInformation
+        public Visibility DebugInformation
         {
             get { return _debugInformation; }
             set
@@ -98,7 +139,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private string _imageSource;
         public string ImageSource
         {
             get { return _imageSource; }
@@ -112,29 +152,21 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private int _fps = 0;
         public int FPS
         {
             get
             {
                 if (_kinect != null)
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                    {
-                        _fps = _kinect.FPS;
-                    });
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => { _fps = _kinect.FPS; });
                 }
                 return _fps;
             }
         }
 
-        private string _marginData;
         public string MarginData
         {
-            get
-            {
-                return _marginData;
-            }
+            get { return _marginData; }
             set
             {
                 if (value != null && !value.Equals(_marginData))
@@ -142,7 +174,6 @@ namespace Kinect.Semaphore.ViewModels
                     _marginData = value;
                     RaisePropertyChanged("MarginData");
                 }
-                
             }
         }
 
@@ -173,57 +204,13 @@ namespace Kinect.Semaphore.ViewModels
 
         public RelayCommand<DataTransferEventArgs> SourceUpdated { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
-        public MainViewModel()
+        private void TraceListener_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            LoadValuesFromResource<AppResources>();
-            if (IsInDesignMode)
-            {
-                //Code runs in Blend --> create design time data.
-                Messages = new ObservableCollection<Message>();
-                Messages.Add(new Message { ImageUrl = "", Value = "Connecting to Kinect..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "Searching for user..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 1 found..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 1 is in calibration pose..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "Calibrating user 1..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 2 found..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 2 is in calibration pose..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "Calibrating user 2..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "Lost connection to user 1..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 2 waved at Kinect..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 1 found..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 1 is in calibration pose..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "Calibrating user 1..." });
-                Messages.Add(new Message { ImageUrl = "", Value = "User 1 waved at Kinect..." });
-
-                CreateUsers();
-            }
-            else
-            {
-                SetCommands();
-                ResizeCameraImage();
-                Users = new ObservableCollection<UserViewModel>();
-                Trace.Listeners.Add(App.TraceListener);
-
-                //TODO: Tracelistener van het type collection maken zodat hij direct gebind kan worden
-                Messages = new ObservableCollection<Message>();
-                App.TraceListener.CollectionChanged += TraceListener_CollectionChanged;
-            }
-            MarginData = "X:10,Y:20,Z;30";
-        }
-
-        private void TraceListener_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 foreach (Message item in e.NewItems)
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                    {
-                        Messages.Add(item);
-                    });
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => { Messages.Add(item); });
                 }
                 RaisePropertyChanged("LastMessage");
             }
@@ -231,7 +218,7 @@ namespace Kinect.Semaphore.ViewModels
 
         private void SetUpKinect()
         {
-            _kinect = Kinect.Core.MyKinect.Instance;
+            _kinect = MyKinect.Instance;
             _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             _kinect.PropertyChanged += _kinect_PropertyChanged;
             _kinect.UserCreated += _kinect_UserCreated;
@@ -242,43 +229,45 @@ namespace Kinect.Semaphore.ViewModels
         private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                lock (_syncRoot)
-                {
-                    if (e.User != null)
-                    {
-                        var user = Users.SingleOrDefault(ku => ku != null && ku.ID == e.User.ID);
-                        if (user != null)
-                        {
-                            Users.Remove(user);
-                        }
-                        //if(User.ID == e.User.ID)
-                        //{
-                        //    User = null;
-                        //}
-                    }
-                }
-            });
+                                                      {
+                                                          lock (_syncRoot)
+                                                          {
+                                                              if (e.User != null)
+                                                              {
+                                                                  UserViewModel user =
+                                                                      Users.SingleOrDefault(
+                                                                          ku => ku != null && ku.ID == e.User.ID);
+                                                                  if (user != null)
+                                                                  {
+                                                                      Users.Remove(user);
+                                                                  }
+                                                                  //if(User.ID == e.User.ID)
+                                                                  //{
+                                                                  //    User = null;
+                                                                  //}
+                                                              }
+                                                          }
+                                                      });
         }
 
         private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                lock (_syncRoot)
-                {
-                    var kuser = _kinect.GetUser(e.User.ID);
-                    if (kuser != null)
-                    {
-                        var user = CreateUser(kuser);
-                        user.AddSemaphoreTracking();
-                        
-                        Users.Add(user);
-                        //User = user;
-                        ImageSource = null;
-                    }
-                }
-            });
+                                                      {
+                                                          lock (_syncRoot)
+                                                          {
+                                                              User kuser = _kinect.GetUser(e.User.ID);
+                                                              if (kuser != null)
+                                                              {
+                                                                  UserViewModel user = CreateUser(kuser);
+                                                                  user.AddSemaphoreTracking();
+
+                                                                  Users.Add(user);
+                                                                  //User = user;
+                                                                  ImageSource = null;
+                                                              }
+                                                          }
+                                                      });
         }
 
         private void _kinect_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -306,12 +295,12 @@ namespace Kinect.Semaphore.ViewModels
         private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if (_kinect != null)
-                {
-                    CameraView = e.Image;
-                }
-            });
+                                                      {
+                                                          if (_kinect != null)
+                                                          {
+                                                              CameraView = e.Image;
+                                                          }
+                                                      });
         }
 
         private void SetCameraView()
@@ -367,78 +356,80 @@ namespace Kinect.Semaphore.ViewModels
         private void SetCommands()
         {
             KeyPress = new RelayCommand<KeyEventArgs>(e =>
-            {
-                _log.DebugFormat("Key pressed: {0}",e.Key);
-                if (e.Key == Key.S)
-                {
-                    SetUpKinect();
-                }
-                else if (e.Key == Key.D)
-                {
-                    ToggleDebugInformation();
-                }
-                else if (e.Key == Key.Q)
-                {
-                    CloseKinect();
-                    SemaphoreGames.Instance.ResetGameCounter();
-                }
-                else if (e.Key == Key.C)
-                {
-                    switch (_kinect.CameraViewType)
-                    {
-                        case Core.CameraView.Depth:
-                            _kinect.CameraViewType = Core.CameraView.ColoredDepth;
-                            break;
-                        case Core.CameraView.ColoredDepth:
-                            _kinect.CameraViewType = Core.CameraView.Color;
-                            break;
-                        case Core.CameraView.Color:
-                            _kinect.CameraViewType = Core.CameraView.None;
-                            break;
-                        case Core.CameraView.None:
-                            _kinect.CameraViewType = Core.CameraView.Depth;
-                            break;
-                        default:
-                            break;
-                    }
-                    SetCameraView();
-                }
-                else if (e.Key == Key.Z)
-                {
-                    ResizeCameraImage();
-                }
-                else if (e.Key == Key.Up)
-                {
-                    _kinect.MotorUp(2);
-                }
-                else if (e.Key == Key.Down)
-                {
-                    _kinect.MotorDown(2);
-                }
-            });
+                                                          {
+                                                              _log.DebugFormat("Key pressed: {0}", e.Key);
+                                                              if (e.Key == Key.S)
+                                                              {
+                                                                  SetUpKinect();
+                                                              }
+                                                              else if (e.Key == Key.D)
+                                                              {
+                                                                  ToggleDebugInformation();
+                                                              }
+                                                              else if (e.Key == Key.Q)
+                                                              {
+                                                                  CloseKinect();
+                                                                  SemaphoreGames.Instance.ResetGameCounter();
+                                                              }
+                                                              else if (e.Key == Key.C)
+                                                              {
+                                                                  switch (_kinect.CameraViewType)
+                                                                  {
+                                                                      case Core.CameraView.Depth:
+                                                                          _kinect.CameraViewType =
+                                                                              Core.CameraView.ColoredDepth;
+                                                                          break;
+                                                                      case Core.CameraView.ColoredDepth:
+                                                                          _kinect.CameraViewType = Core.CameraView.Color;
+                                                                          break;
+                                                                      case Core.CameraView.Color:
+                                                                          _kinect.CameraViewType = Core.CameraView.None;
+                                                                          break;
+                                                                      case Core.CameraView.None:
+                                                                          _kinect.CameraViewType = Core.CameraView.Depth;
+                                                                          break;
+                                                                      default:
+                                                                          break;
+                                                                  }
+                                                                  SetCameraView();
+                                                              }
+                                                              else if (e.Key == Key.Z)
+                                                              {
+                                                                  ResizeCameraImage();
+                                                              }
+                                                              else if (e.Key == Key.Up)
+                                                              {
+                                                                  _kinect.MotorUp(2);
+                                                              }
+                                                              else if (e.Key == Key.Down)
+                                                              {
+                                                                  _kinect.MotorDown(2);
+                                                              }
+                                                          });
 
             Closing = new RelayCommand<CancelEventArgs>(e =>
-            {
-                CloseKinect();
-                Application.Current.Shutdown();
-            });
+                                                            {
+                                                                CloseKinect();
+                                                                Application.Current.Shutdown();
+                                                            });
 
             SourceUpdated = new RelayCommand<DataTransferEventArgs>(e =>
-            {
-                if (e.TargetObject is ListView)
-                {
-                    var lv = e.TargetObject as ListView;
-                    lv.ScrollIntoView(lv.Items[lv.Items.Count - 1]);
-                }
-            });
+                                                                        {
+                                                                            if (e.TargetObject is ListView)
+                                                                            {
+                                                                                var lv = e.TargetObject as ListView;
+                                                                                lv.ScrollIntoView(
+                                                                                    lv.Items[lv.Items.Count - 1]);
+                                                                            }
+                                                                        });
         }
 
         private void CreateUsers()
         {
             //Users = new ObservableCollection<UserViewModel>();
-            
-            ColorGenerator generator = new ColorGenerator();
-            Random rand = new Random((int)DateTime.Now.Ticks);
+
+            var generator = new ColorGenerator();
+            var rand = new Random((int) DateTime.Now.Ticks);
             //User = CreateUser(generator, rand, 1);
             for (int i = 1; i < 6; i++)
             {
@@ -453,57 +444,71 @@ namespace Kinect.Semaphore.ViewModels
 
         private UserViewModel CreateUser(ColorGenerator generator, User user)
         {
-            var r = 1f / 255 * user.Color.R;
-            var g = 1f / 255 * user.Color.G;
-            var b = 1f / 255 * user.Color.B;
+            float r = 1f/255*user.Color.R;
+            float g = 1f/255*user.Color.G;
+            float b = 1f/255*user.Color.B;
 
-            var point = GetPoint3DCoordinates(user.ID, user.Torso.X, user.Torso.Y, user.Torso.Z);
+            Point3D point = GetPoint3DCoordinates(user.ID, user.Torso.X, user.Torso.Y, user.Torso.Z);
 
             return new UserViewModel(user)
-            {
-                Color = Color.FromArgb((byte)0.85f,(byte)r,(byte)g,(byte)b),
-                Brush = new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b), Color.FromScRgb(0.85f, r / 2, g / 2, b / 2)),
-                Torso = point
-            };
+                       {
+                           Color = Color.FromArgb((byte) 0.85f, (byte) r, (byte) g, (byte) b),
+                           Brush =
+                               new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b),
+                                                       Color.FromScRgb(0.85f, r/2, g/2, b/2)),
+                           Torso = point
+                       };
         }
 
         private UserViewModel CreateUser(ColorGenerator generator, Random rand, int i)
         {
             string color = generator.NextColorString();
-            var r = 1f / 255 * int.Parse(color.Substring(0, 2), NumberStyles.HexNumber);
-            var g = 1f / 255 * int.Parse(color.Substring(2, 2), NumberStyles.HexNumber);
-            var b = 1f / 255 * int.Parse(color.Substring(4, 2), NumberStyles.HexNumber);
+            float r = 1f/255*int.Parse(color.Substring(0, 2), NumberStyles.HexNumber);
+            float g = 1f/255*int.Parse(color.Substring(2, 2), NumberStyles.HexNumber);
+            float b = 1f/255*int.Parse(color.Substring(4, 2), NumberStyles.HexNumber);
 
-            var point = GetPoint3DCoordinates(i, rand.NextDouble(), rand.NextDouble(), rand.NextDouble());
+            Point3D point = GetPoint3DCoordinates(i, rand.NextDouble(), rand.NextDouble(), rand.NextDouble());
 
             return new UserViewModel(i)
-            {
-                Brush = new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b), Color.FromScRgb(0.85f, r / 2, g / 2, b / 2)),
-                Head = new Point3D(point.X, point.Y - 100, point.Z),
-                Neck = new Point3D(point.X, point.Y - 60, point.Z),
-                LeftShoulder = new Point3D(point.X - 35, point.Y - 60, point.Z),
-                RightShoulder = new Point3D(point.X + 35, point.Y - 60, point.Z),
-                LeftElbow = new Point3D(point.X - 55, point.Y, point.Z),
-                RightElbow = new Point3D(point.X + 55, point.Y, point.Z),
-                LeftHand = new Point3D(point.X - 50, point.Y + 65, point.Z),
-                RightHand = new Point3D(point.X + 50, point.Y + 65, point.Z),
-                Torso = point,
-                LeftHip = new Point3D(point.X - 30, point.Y + 50, point.Z),
-                RightHip = new Point3D(point.X + 30, point.Y + 50, point.Z),
-                LeftKnee = new Point3D(point.X - 35, point.Y + 130, point.Z),
-                RightKnee = new Point3D(point.X + 35, point.Y + 130, point.Z),
-                LeftFoot = new Point3D(point.X - 40, point.Y + 210, point.Z),
-                RightFoot = new Point3D(point.X + 40, point.Y + 210, point.Z),
-            };
+                       {
+                           Brush =
+                               new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b),
+                                                       Color.FromScRgb(0.85f, r/2, g/2, b/2)),
+                           Head = new Point3D(point.X, point.Y - 100, point.Z),
+                           Neck = new Point3D(point.X, point.Y - 60, point.Z),
+                           LeftShoulder = new Point3D(point.X - 35, point.Y - 60, point.Z),
+                           RightShoulder = new Point3D(point.X + 35, point.Y - 60, point.Z),
+                           LeftElbow = new Point3D(point.X - 55, point.Y, point.Z),
+                           RightElbow = new Point3D(point.X + 55, point.Y, point.Z),
+                           LeftHand = new Point3D(point.X - 50, point.Y + 65, point.Z),
+                           RightHand = new Point3D(point.X + 50, point.Y + 65, point.Z),
+                           Torso = point,
+                           LeftHip = new Point3D(point.X - 30, point.Y + 50, point.Z),
+                           RightHip = new Point3D(point.X + 30, point.Y + 50, point.Z),
+                           LeftKnee = new Point3D(point.X - 35, point.Y + 130, point.Z),
+                           RightKnee = new Point3D(point.X + 35, point.Y + 130, point.Z),
+                           LeftFoot = new Point3D(point.X - 40, point.Y + 210, point.Z),
+                           RightFoot = new Point3D(point.X + 40, point.Y + 210, point.Z),
+                       };
         }
 
         private static Point3D GetPoint3DCoordinates(int i, double x, double y, double z)
         {
-            Point3D point = new Point3D();
-            point.X = (i * (x + 25)) / x;
-            point.Y = (i * (y + 25)) / y;
-            point.Z = i * z;
+            var point = new Point3D();
+            point.X = (i*(x + 25))/x;
+            point.Y = (i*(y + 25))/y;
+            point.Z = i*z;
             return point;
         }
+
+        #region Nested type: CameraImageSize
+
+        private enum CameraImageSize
+        {
+            Large,
+            Small
+        }
+
+        #endregion
     }
 }

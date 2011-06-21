@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Globalization;
+
 namespace Accord.Math.Formats
 {
-    using System;
-    using System.Globalization;
-
     /// <summary>
     ///   Gets the default matrix representation, where each row
     ///   is separated by a new line, and columns are separated by spaces.
@@ -19,6 +19,19 @@ namespace Accord.Math.Formats
     /// 
     public sealed class DefaultMatrixFormatProvider : MatrixFormatProviderBase
     {
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
+        /// </summary>
+        /// 
+        public static readonly DefaultMatrixFormatProvider CurrentCulture =
+            new DefaultMatrixFormatProvider(CultureInfo.CurrentCulture);
+
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
+        /// </summary>
+        /// 
+        public static readonly DefaultMatrixFormatProvider InvariantCulture =
+            new DefaultMatrixFormatProvider(CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultMatrixFormatProvider"/> class.
@@ -44,19 +57,5 @@ namespace Accord.Math.Formats
             ParseRowDelimiter = "\n";
             ParseColDelimiter = " ";
         }
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
-        /// </summary>
-        /// 
-        public static readonly DefaultMatrixFormatProvider CurrentCulture = new DefaultMatrixFormatProvider(CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
-        /// </summary>
-        /// 
-        public static readonly DefaultMatrixFormatProvider InvariantCulture = new DefaultMatrixFormatProvider(CultureInfo.InvariantCulture);
-
-
     }
 }

@@ -10,11 +10,10 @@
 //  Adapted from Mapack for COM and Jama routines
 //
 
+using System;
+
 namespace Accord.Math.Decompositions
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///     Determines the eigenvalues and eigenvectors of a real square matrix.
     /// </summary>
@@ -38,12 +37,13 @@ namespace Accord.Math.Decompositions
     /// 
     public sealed class EigenvalueDecomposition
     {
-        private int n;           	// matrix dimension
-        private double[] d, e; 		// storage of eigenvalues.
-        private double[,] V; 	    // storage of eigenvectors.
-        private double[,] H;  		// storage of nonsymmetric Hessenberg form.
-        private double[] ort;    	// storage for nonsymmetric algorithm.
-        private bool symmetric;
+        private readonly double[,] H; // storage of nonsymmetric Hessenberg form.
+        private readonly double[,] V; // storage of eigenvectors.
+        private readonly double[] d; // storage of eigenvalues.
+        private readonly double[] e; // storage of eigenvalues.
+        private readonly int n; // matrix dimension
+        private readonly double[] ort; // storage for nonsymmetric algorithm.
+        private readonly bool symmetric;
 
         /// <summary>
         ///   Construct an eigenvalue decomposition.</summary>
@@ -90,34 +90,34 @@ namespace Accord.Math.Decompositions
             }
 
             n = value.GetLength(1);
-            V = new double[n, n];
+            V = new double[n,n];
             d = new double[n];
             e = new double[n];
 
 
-            this.symmetric = assumeSymmetric;
+            symmetric = assumeSymmetric;
 
-            if (this.symmetric)
+            if (symmetric)
             {
-                V = inPlace ? value : (double[,])value.Clone();
+                V = inPlace ? value : (double[,]) value.Clone();
 
                 // Tridiagonalize.
-                this.tred2();
+                tred2();
 
                 // Diagonalize.
-                this.tql2();
+                tql2();
             }
             else
             {
-                H = inPlace ? value : (double[,])value.Clone();
+                H = inPlace ? value : (double[,]) value.Clone();
 
                 ort = new double[n];
 
                 // Reduce to Hessenberg form.
-                this.orthes();
+                orthes();
 
                 // Reduce Hessenberg to real Schur form.
-                this.hqr2();
+                hqr2();
             }
         }
 
@@ -125,19 +125,19 @@ namespace Accord.Math.Decompositions
         /// <summary>Returns the real parts of the eigenvalues.</summary>
         public double[] RealEigenvalues
         {
-            get { return this.d; }
+            get { return d; }
         }
 
         /// <summary>Returns the imaginary parts of the eigenvalues.</summary>	
         public double[] ImaginaryEigenvalues
         {
-            get { return this.e; }
+            get { return e; }
         }
 
         /// <summary>Returns the eigenvector matrix.</summary>
         public double[,] Eigenvectors
         {
-            get { return this.V; }
+            get { return V; }
         }
 
         /// <summary>Returns the block diagonal eigenvalue matrix.</summary>
@@ -145,7 +145,7 @@ namespace Accord.Math.Decompositions
         {
             get
             {
-                double[,] x = new double[n, n];
+                var x = new double[n,n];
 
                 for (int i = 0; i < n; i++)
                 {
@@ -167,8 +167,8 @@ namespace Accord.Math.Decompositions
             }
         }
 
-
         #region Private methods
+
         private void tred2()
         {
             // Symmetric Householder reduction to tridiagonal form.
@@ -202,15 +202,15 @@ namespace Accord.Math.Decompositions
                     for (int k = 0; k < i; k++)
                     {
                         d[k] /= scale;
-                        h += d[k] * d[k];
+                        h += d[k]*d[k];
                     }
 
                     double f = d[i - 1];
                     double g = System.Math.Sqrt(h);
                     if (f > 0) g = -g;
 
-                    e[i] = scale * g;
-                    h = h - f * g;
+                    e[i] = scale*g;
+                    h = h - f*g;
                     d[i - 1] = f - g;
                     for (int j = 0; j < i; j++)
                         e[j] = 0.0;
@@ -220,11 +220,11 @@ namespace Accord.Math.Decompositions
                     {
                         f = d[j];
                         V[j, i] = f;
-                        g = e[j] + V[j, j] * f;
+                        g = e[j] + V[j, j]*f;
                         for (int k = j + 1; k <= i - 1; k++)
                         {
-                            g += V[k, j] * d[k];
-                            e[k] += V[k, j] * f;
+                            g += V[k, j]*d[k];
+                            e[k] += V[k, j]*f;
                         }
                         e[j] = g;
                     }
@@ -233,19 +233,19 @@ namespace Accord.Math.Decompositions
                     for (int j = 0; j < i; j++)
                     {
                         e[j] /= h;
-                        f += e[j] * d[j];
+                        f += e[j]*d[j];
                     }
 
-                    double hh = f / (h + h);
+                    double hh = f/(h + h);
                     for (int j = 0; j < i; j++)
-                        e[j] -= hh * d[j];
+                        e[j] -= hh*d[j];
 
                     for (int j = 0; j < i; j++)
                     {
                         f = d[j];
                         g = e[j];
                         for (int k = j; k <= i - 1; k++)
-                            V[k, j] -= (f * e[k] + g * d[k]);
+                            V[k, j] -= (f*e[k] + g*d[k]);
 
                         d[j] = V[i - 1, j];
                         V[i, j] = 0.0;
@@ -263,15 +263,15 @@ namespace Accord.Math.Decompositions
                 if (h != 0.0)
                 {
                     for (int k = 0; k <= i; k++)
-                        d[k] = V[k, i + 1] / h;
+                        d[k] = V[k, i + 1]/h;
 
                     for (int j = 0; j <= i; j++)
                     {
                         double g = 0.0;
                         for (int k = 0; k <= i; k++)
-                            g += V[k, i + 1] * V[k, j];
+                            g += V[k, i + 1]*V[k, j];
                         for (int k = 0; k <= i; k++)
-                            V[k, j] -= g * d[k];
+                            V[k, j] -= g*d[k];
                     }
                 }
 
@@ -310,7 +310,7 @@ namespace Accord.Math.Decompositions
                 int m = l;
                 while (m < n)
                 {
-                    if (System.Math.Abs(e[m]) <= eps * tst1)
+                    if (System.Math.Abs(e[m]) <= eps*tst1)
                         break;
                     m++;
                 }
@@ -321,19 +321,19 @@ namespace Accord.Math.Decompositions
                     int iter = 0;
                     do
                     {
-                        iter = iter + 1;  // (Could check iteration count here.)
+                        iter = iter + 1; // (Could check iteration count here.)
 
                         // Compute implicit shift
                         double g = d[l];
-                        double p = (d[l + 1] - g) / (2.0 * e[l]);
-                        double r = Accord.Math.Tools.Hypotenuse(p, 1.0);
+                        double p = (d[l + 1] - g)/(2.0*e[l]);
+                        double r = Tools.Hypotenuse(p, 1.0);
                         if (p < 0)
                         {
                             r = -r;
                         }
 
-                        d[l] = e[l] / (p + r);
-                        d[l + 1] = e[l] * (p + r);
+                        d[l] = e[l]/(p + r);
+                        d[l + 1] = e[l]*(p + r);
                         double dl1 = d[l + 1];
                         double h = g - d[l];
                         for (int i = l + 2; i < n; i++)
@@ -356,31 +356,30 @@ namespace Accord.Math.Decompositions
                             c3 = c2;
                             c2 = c;
                             s2 = s;
-                            g = c * e[i];
-                            h = c * p;
-                            r = Accord.Math.Tools.Hypotenuse(p, e[i]);
-                            e[i + 1] = s * r;
-                            s = e[i] / r;
-                            c = p / r;
-                            p = c * d[i] - s * g;
-                            d[i + 1] = h + s * (c * g + s * d[i]);
+                            g = c*e[i];
+                            h = c*p;
+                            r = Tools.Hypotenuse(p, e[i]);
+                            e[i + 1] = s*r;
+                            s = e[i]/r;
+                            c = p/r;
+                            p = c*d[i] - s*g;
+                            d[i + 1] = h + s*(c*g + s*d[i]);
 
                             // Accumulate transformation.
                             for (int k = 0; k < n; k++)
                             {
                                 h = V[k, i + 1];
-                                V[k, i + 1] = s * V[k, i] + c * h;
-                                V[k, i] = c * V[k, i] - s * h;
+                                V[k, i + 1] = s*V[k, i] + c*h;
+                                V[k, i] = c*V[k, i] - s*h;
                             }
                         }
 
-                        p = -s * s2 * c3 * el1 * e[l] / dl1;
-                        e[l] = s * p;
-                        d[l] = c * p;
+                        p = -s*s2*c3*el1*e[l]/dl1;
+                        e[l] = s*p;
+                        d[l] = c*p;
 
                         // Check for convergence.
-                    }
-                    while (System.Math.Abs(e[l]) > eps * tst1);
+                    } while (System.Math.Abs(e[l]) > eps*tst1);
                 }
                 d[l] = d[l] + f;
                 e[l] = 0.0;
@@ -436,14 +435,14 @@ namespace Accord.Math.Decompositions
                     double h = 0.0;
                     for (int i = high; i >= m; i--)
                     {
-                        ort[i] = H[i, m - 1] / scale;
-                        h += ort[i] * ort[i];
+                        ort[i] = H[i, m - 1]/scale;
+                        h += ort[i]*ort[i];
                     }
 
                     double g = System.Math.Sqrt(h);
                     if (ort[m] > 0) g = -g;
 
-                    h = h - ort[m] * g;
+                    h = h - ort[m]*g;
                     ort[m] = ort[m] - g;
 
                     // Apply Householder similarity transformation
@@ -452,26 +451,26 @@ namespace Accord.Math.Decompositions
                     {
                         double f = 0.0;
                         for (int i = high; i >= m; i--)
-                            f += ort[i] * H[i, j];
+                            f += ort[i]*H[i, j];
 
-                        f = f / h;
+                        f = f/h;
                         for (int i = m; i <= high; i++)
-                            H[i, j] -= f * ort[i];
+                            H[i, j] -= f*ort[i];
                     }
 
                     for (int i = 0; i <= high; i++)
                     {
                         double f = 0.0;
                         for (int j = high; j >= m; j--)
-                            f += ort[j] * H[i, j];
+                            f += ort[j]*H[i, j];
 
-                        f = f / h;
+                        f = f/h;
                         for (int j = m; j <= high; j++)
-                            H[i, j] -= f * ort[j];
+                            H[i, j] -= f*ort[j];
                     }
 
-                    ort[m] = scale * ort[m];
-                    H[m, m - 1] = scale * g;
+                    ort[m] = scale*ort[m];
+                    H[m, m - 1] = scale*g;
                 }
             }
 
@@ -491,36 +490,36 @@ namespace Accord.Math.Decompositions
                     {
                         double g = 0.0;
                         for (int i = m; i <= high; i++)
-                            g += ort[i] * V[i, j];
+                            g += ort[i]*V[i, j];
 
                         // Double division avoids possible underflow.
-                        g = (g / ort[m]) / H[m, m - 1];
+                        g = (g/ort[m])/H[m, m - 1];
                         for (int i = m; i <= high; i++)
-                            V[i, j] += g * ort[i];
+                            V[i, j] += g*ort[i];
                     }
                 }
             }
         }
 
         private static void cdiv(double xr, double xi, double yr, double yi,
-            out double cdivr, out double cdivi)
+                                 out double cdivr, out double cdivi)
         {
             // Complex scalar division.
             double r;
             double d;
             if (System.Math.Abs(yr) > System.Math.Abs(yi))
             {
-                r = yi / yr;
-                d = yr + r * yi;
-                cdivr = (xr + r * xi) / d;
-                cdivi = (xi - r * xr) / d;
+                r = yi/yr;
+                d = yr + r*yi;
+                cdivr = (xr + r*xi)/d;
+                cdivi = (xi - r*xr)/d;
             }
             else
             {
-                r = yr / yi;
-                d = yi + r * yr;
-                cdivr = (r * xr + xi) / d;
-                cdivi = (r * xi - xr) / d;
+                r = yr/yi;
+                d = yi + r*yr;
+                cdivr = (r*xr + xi)/d;
+                cdivi = (r*xi - xr)/d;
             }
         }
 
@@ -569,7 +568,7 @@ namespace Accord.Math.Decompositions
                 {
                     s = System.Math.Abs(H[l - 1, l - 1]) + System.Math.Abs(H[l, l]);
                     if (s == 0.0) s = norm;
-                    if (System.Math.Abs(H[l, l - 1]) < eps * s)
+                    if (System.Math.Abs(H[l, l - 1]) < eps*s)
                         break;
 
                     l--;
@@ -588,9 +587,9 @@ namespace Accord.Math.Decompositions
                 else if (l == n - 1)
                 {
                     // Two roots found
-                    w = H[n, n - 1] * H[n - 1, n];
-                    p = (H[n - 1, n - 1] - H[n, n]) / 2.0;
-                    q = p * p + w;
+                    w = H[n, n - 1]*H[n - 1, n];
+                    p = (H[n - 1, n - 1] - H[n, n])/2.0;
+                    q = p*p + w;
                     z = System.Math.Sqrt(System.Math.Abs(q));
                     H[n, n] = H[n, n] + exshift;
                     H[n - 1, n - 1] = H[n - 1, n - 1] + exshift;
@@ -603,39 +602,39 @@ namespace Accord.Math.Decompositions
                         d[n - 1] = x + z;
                         d[n] = d[n - 1];
                         if (z != 0.0)
-                            d[n] = x - w / z;
+                            d[n] = x - w/z;
                         e[n - 1] = 0.0;
                         e[n] = 0.0;
                         x = H[n, n - 1];
                         s = System.Math.Abs(x) + System.Math.Abs(z);
-                        p = x / s;
-                        q = z / s;
-                        r = System.Math.Sqrt(p * p + q * q);
-                        p = p / r;
-                        q = q / r;
+                        p = x/s;
+                        q = z/s;
+                        r = System.Math.Sqrt(p*p + q*q);
+                        p = p/r;
+                        q = q/r;
 
                         // Row modification
                         for (int j = n - 1; j < nn; j++)
                         {
                             z = H[n - 1, j];
-                            H[n - 1, j] = q * z + p * H[n, j];
-                            H[n, j] = q * H[n, j] - p * z;
+                            H[n - 1, j] = q*z + p*H[n, j];
+                            H[n, j] = q*H[n, j] - p*z;
                         }
 
                         // Column modification
                         for (int i = 0; i <= n; i++)
                         {
                             z = H[i, n - 1];
-                            H[i, n - 1] = q * z + p * H[i, n];
-                            H[i, n] = q * H[i, n] - p * z;
+                            H[i, n - 1] = q*z + p*H[i, n];
+                            H[i, n] = q*H[i, n] - p*z;
                         }
 
                         // Accumulate transformations
                         for (int i = low; i <= high; i++)
                         {
                             z = V[i, n - 1];
-                            V[i, n - 1] = q * z + p * V[i, n];
-                            V[i, n] = q * V[i, n] - p * z;
+                            V[i, n - 1] = q*z + p*V[i, n];
+                            V[i, n] = q*V[i, n] - p*z;
                         }
                     }
                     else
@@ -661,7 +660,7 @@ namespace Accord.Math.Decompositions
                     if (l < n)
                     {
                         y = H[n - 1, n - 1];
-                        w = H[n, n - 1] * H[n - 1, n];
+                        w = H[n, n - 1]*H[n - 1, n];
                     }
 
                     // Wilkinson's original ad hoc shift
@@ -672,20 +671,20 @@ namespace Accord.Math.Decompositions
                             H[i, i] -= x;
 
                         s = System.Math.Abs(H[n, n - 1]) + System.Math.Abs(H[n - 1, n - 2]);
-                        x = y = 0.75 * s;
-                        w = -0.4375 * s * s;
+                        x = y = 0.75*s;
+                        w = -0.4375*s*s;
                     }
 
                     // MATLAB's new ad hoc shift
                     if (iter == 30)
                     {
-                        s = (y - x) / 2.0;
-                        s = s * s + w;
+                        s = (y - x)/2.0;
+                        s = s*s + w;
                         if (s > 0)
                         {
                             s = System.Math.Sqrt(s);
                             if (y < x) s = -s;
-                            s = x - w / ((y - x) / 2.0 + s);
+                            s = x - w/((y - x)/2.0 + s);
                             for (int i = low; i <= n; i++)
                                 H[i, i] -= s;
                             exshift += s;
@@ -702,16 +701,19 @@ namespace Accord.Math.Decompositions
                         z = H[m, m];
                         r = x - z;
                         s = y - z;
-                        p = (r * s - w) / H[m + 1, m] + H[m, m + 1];
+                        p = (r*s - w)/H[m + 1, m] + H[m, m + 1];
                         q = H[m + 1, m + 1] - z - r - s;
                         r = H[m + 2, m + 1];
                         s = System.Math.Abs(p) + System.Math.Abs(q) + System.Math.Abs(r);
-                        p = p / s;
-                        q = q / s;
-                        r = r / s;
+                        p = p/s;
+                        q = q/s;
+                        r = r/s;
                         if (m == l)
                             break;
-                        if (System.Math.Abs(H[m, m - 1]) * (System.Math.Abs(q) + System.Math.Abs(r)) < eps * (System.Math.Abs(p) * (System.Math.Abs(H[m - 1, m - 1]) + System.Math.Abs(z) + System.Math.Abs(H[m + 1, m + 1]))))
+                        if (System.Math.Abs(H[m, m - 1])*(System.Math.Abs(q) + System.Math.Abs(r)) <
+                            eps*
+                            (System.Math.Abs(p)*
+                             (System.Math.Abs(H[m - 1, m - 1]) + System.Math.Abs(z) + System.Math.Abs(H[m + 1, m + 1]))))
                             break;
                         m--;
                     }
@@ -735,72 +737,71 @@ namespace Accord.Math.Decompositions
                             x = System.Math.Abs(p) + System.Math.Abs(q) + System.Math.Abs(r);
                             if (x != 0.0)
                             {
-                                p = p / x;
-                                q = q / x;
-                                r = r / x;
+                                p = p/x;
+                                q = q/x;
+                                r = r/x;
                             }
                         }
 
                         if (x == 0.0) break;
 
-                        s = System.Math.Sqrt(p * p + q * q + r * r);
+                        s = System.Math.Sqrt(p*p + q*q + r*r);
                         if (p < 0) s = -s;
 
                         if (s != 0)
                         {
                             if (k != m)
-                                H[k, k - 1] = -s * x;
-                            else
-                                if (l != m)
-                                    H[k, k - 1] = -H[k, k - 1];
+                                H[k, k - 1] = -s*x;
+                            else if (l != m)
+                                H[k, k - 1] = -H[k, k - 1];
 
                             p = p + s;
-                            x = p / s;
-                            y = q / s;
-                            z = r / s;
-                            q = q / p;
-                            r = r / p;
+                            x = p/s;
+                            y = q/s;
+                            z = r/s;
+                            q = q/p;
+                            r = r/p;
 
                             // Row modification
                             for (int j = k; j < nn; j++)
                             {
-                                p = H[k, j] + q * H[k + 1, j];
+                                p = H[k, j] + q*H[k + 1, j];
                                 if (notlast)
                                 {
-                                    p = p + r * H[k + 2, j];
-                                    H[k + 2, j] = H[k + 2, j] - p * z;
+                                    p = p + r*H[k + 2, j];
+                                    H[k + 2, j] = H[k + 2, j] - p*z;
                                 }
 
-                                H[k, j] = H[k, j] - p * x;
-                                H[k + 1, j] = H[k + 1, j] - p * y;
+                                H[k, j] = H[k, j] - p*x;
+                                H[k + 1, j] = H[k + 1, j] - p*y;
                             }
 
                             // Column modification
                             for (int i = 0; i <= System.Math.Min(n, k + 3); i++)
                             {
-                                p = x * H[i, k] + y * H[i, k + 1];
+                                p = x*H[i, k] + y*H[i, k + 1];
                                 if (notlast)
                                 {
-                                    p = p + z * H[i, k + 2];
-                                    H[i, k + 2] = H[i, k + 2] - p * r;
+                                    p = p + z*H[i, k + 2];
+                                    H[i, k + 2] = H[i, k + 2] - p*r;
                                 }
 
                                 H[i, k] = H[i, k] - p;
-                                H[i, k + 1] = H[i, k + 1] - p * q;
+                                H[i, k + 1] = H[i, k + 1] - p*q;
                             }
 
                             // Accumulate transformations
                             for (int i = low; i <= high; i++)
                             {
-                                p = x * V[i, k] + y * V[i, k + 1];
+                                p = x*V[i, k] + y*V[i, k + 1];
                                 if (notlast)
                                 {
-                                    p = p + z * V[i, k + 2];
-                                    V[i, k + 2] = V[i, k + 2] - p * r;
+                                    p = p + z*V[i, k + 2];
+                                    V[i, k + 2] = V[i, k + 2] - p*r;
                                 }
 
                                 V[i, k] = V[i, k] - p;
-                                V[i, k + 1] = V[i, k + 1] - p * q;
+                                V[i, k + 1] = V[i, k + 1] - p*q;
                             }
                         }
                     }
@@ -828,7 +829,7 @@ namespace Accord.Math.Decompositions
                         w = H[i, i] - p;
                         r = 0.0;
                         for (int j = l; j <= n; j++)
-                            r = r + H[i, j] * H[j, n];
+                            r = r + H[i, j]*H[j, n];
 
                         if (e[i] < 0.0)
                         {
@@ -840,24 +841,26 @@ namespace Accord.Math.Decompositions
                             l = i;
                             if (e[i] == 0.0)
                             {
-                                H[i, n] = (w != 0.0) ? (-r / w) : (-r / (eps * norm));
+                                H[i, n] = (w != 0.0) ? (-r/w) : (-r/(eps*norm));
                             }
                             else
                             {
                                 // Solve real equations
                                 x = H[i, i + 1];
                                 y = H[i + 1, i];
-                                q = (d[i] - p) * (d[i] - p) + e[i] * e[i];
-                                t = (x * s - z * r) / q;
+                                q = (d[i] - p)*(d[i] - p) + e[i]*e[i];
+                                t = (x*s - z*r)/q;
                                 H[i, n] = t;
-                                H[i + 1, n] = (System.Math.Abs(x) > System.Math.Abs(z)) ? ((-r - w * t) / x) : ((-s - y * t) / z);
+                                H[i + 1, n] = (System.Math.Abs(x) > System.Math.Abs(z))
+                                                  ? ((-r - w*t)/x)
+                                                  : ((-s - y*t)/z);
                             }
 
                             // Overflow control
                             t = System.Math.Abs(H[i, n]);
-                            if ((eps * t) * t > 1)
+                            if ((eps*t)*t > 1)
                                 for (int j = i; j <= n; j++)
-                                    H[j, n] = H[j, n] / t;
+                                    H[j, n] = H[j, n]/t;
                         }
                     }
                 }
@@ -869,8 +872,8 @@ namespace Accord.Math.Decompositions
                     // Last vector component imaginary so matrix is triangular
                     if (System.Math.Abs(H[n, n - 1]) > System.Math.Abs(H[n - 1, n]))
                     {
-                        H[n - 1, n - 1] = q / H[n, n - 1];
-                        H[n - 1, n] = -(H[n, n] - p) / H[n, n - 1];
+                        H[n - 1, n - 1] = q/H[n, n - 1];
+                        H[n - 1, n] = -(H[n, n] - p)/H[n, n - 1];
                     }
                     else
                     {
@@ -886,8 +889,8 @@ namespace Accord.Math.Decompositions
                         sa = 0.0;
                         for (int j = l; j <= n; j++)
                         {
-                            ra = ra + H[i, j] * H[j, n - 1];
-                            sa = sa + H[i, j] * H[j, n];
+                            ra = ra + H[i, j]*H[j, n - 1];
+                            sa = sa + H[i, j]*H[j, n];
                         }
 
                         w = H[i, i] - p;
@@ -910,30 +913,32 @@ namespace Accord.Math.Decompositions
                                 // Solve complex equations
                                 x = H[i, i + 1];
                                 y = H[i + 1, i];
-                                vr = (d[i] - p) * (d[i] - p) + e[i] * e[i] - q * q;
-                                vi = (d[i] - p) * 2.0 * q;
+                                vr = (d[i] - p)*(d[i] - p) + e[i]*e[i] - q*q;
+                                vi = (d[i] - p)*2.0*q;
                                 if (vr == 0.0 & vi == 0.0)
-                                    vr = eps * norm * (System.Math.Abs(w) + System.Math.Abs(q) + System.Math.Abs(x) + System.Math.Abs(y) + System.Math.Abs(z));
-                                cdiv(x * r - z * ra + q * sa, x * s - z * sa - q * ra, vr, vi, out H[i, n - 1], out H[i, n]);
+                                    vr = eps*norm*
+                                         (System.Math.Abs(w) + System.Math.Abs(q) + System.Math.Abs(x) +
+                                          System.Math.Abs(y) + System.Math.Abs(z));
+                                cdiv(x*r - z*ra + q*sa, x*s - z*sa - q*ra, vr, vi, out H[i, n - 1], out H[i, n]);
                                 if (System.Math.Abs(x) > (System.Math.Abs(z) + System.Math.Abs(q)))
                                 {
-                                    H[i + 1, n - 1] = (-ra - w * H[i, n - 1] + q * H[i, n]) / x;
-                                    H[i + 1, n] = (-sa - w * H[i, n] - q * H[i, n - 1]) / x;
+                                    H[i + 1, n - 1] = (-ra - w*H[i, n - 1] + q*H[i, n])/x;
+                                    H[i + 1, n] = (-sa - w*H[i, n] - q*H[i, n - 1])/x;
                                 }
                                 else
                                 {
-                                    cdiv(-r - y * H[i, n - 1], -s - y * H[i, n], z, q, out H[i + 1, n - 1], out H[i + 1, n]);
+                                    cdiv(-r - y*H[i, n - 1], -s - y*H[i, n], z, q, out H[i + 1, n - 1], out H[i + 1, n]);
                                 }
                             }
 
                             // Overflow control
                             t = System.Math.Max(System.Math.Abs(H[i, n - 1]), System.Math.Abs(H[i, n]));
-                            if ((eps * t) * t > 1)
+                            if ((eps*t)*t > 1)
                             {
                                 for (int j = i; j <= n; j++)
                                 {
-                                    H[j, n - 1] = H[j, n - 1] / t;
-                                    H[j, n] = H[j, n] / t;
+                                    H[j, n - 1] = H[j, n - 1]/t;
+                                    H[j, n] = H[j, n]/t;
                                 }
                             }
                         }
@@ -954,13 +959,12 @@ namespace Accord.Math.Decompositions
                 {
                     z = 0.0;
                     for (int k = low; k <= System.Math.Min(j, high); k++)
-                        z = z + V[i, k] * H[k, j];
+                        z = z + V[i, k]*H[k, j];
                     V[i, j] = z;
                 }
             }
         }
-        #endregion
 
+        #endregion
     }
 }
-

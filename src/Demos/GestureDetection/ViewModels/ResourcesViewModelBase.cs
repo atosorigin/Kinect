@@ -1,9 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using GalaSoft.MvvmLight;
 
 namespace Kinect.GestureDetection.ViewModels
 {
-    class ResourcesViewModelBase : ViewModelBase
+    internal class ResourcesViewModelBase : ViewModelBase
     {
         public string AppTitle { get; set; }
         public string About { get; set; }
@@ -28,11 +29,12 @@ namespace Kinect.GestureDetection.ViewModels
 
         public void LoadValuesFromResource<T>()
         {
-            var targetType = GetType();
-            var sourceType = typeof(T);
-            foreach (var targetProperty in targetType.GetProperties())
+            Type targetType = GetType();
+            Type sourceType = typeof (T);
+            foreach (PropertyInfo targetProperty in targetType.GetProperties())
             {
-                var sourceProperty = sourceType.GetProperty(targetProperty.Name, BindingFlags.Static | BindingFlags.Public);
+                PropertyInfo sourceProperty = sourceType.GetProperty(targetProperty.Name,
+                                                                     BindingFlags.Static | BindingFlags.Public);
                 if (sourceProperty != null)
                 {
                     targetProperty.SetValue(this, sourceProperty.GetValue(null, null), null);

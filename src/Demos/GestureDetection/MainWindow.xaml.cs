@@ -14,7 +14,6 @@ namespace Kinect.GestureDetection
 
         private void DockPanel_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

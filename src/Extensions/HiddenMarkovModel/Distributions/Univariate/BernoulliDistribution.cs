@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using System;
-
     /// <summary>
     ///   Bernoulli probability distribution.
     /// </summary>
@@ -36,15 +36,15 @@ namespace Accord.Statistics.Distributions.Univariate
     public class BernoulliDistribution : UnivariateDiscreteDistribution
     {
         // distribution parameters
-        double probability;
 
         // derived parameter values
-        double complement;
+        private readonly double complement;
 
         // distribution measures
-        double variance;
-        double entropy;
-        
+        private readonly double entropy;
+        private readonly double probability;
+        private readonly double variance;
+
 
         /// <summary>
         ///   Creates a new <see cref="BernoulliDistribution">Bernoulli</see> distribution.
@@ -52,12 +52,12 @@ namespace Accord.Statistics.Distributions.Univariate
         /// <param name="mean">The probability of an observation being equal to 1.</param>
         public BernoulliDistribution(double mean)
         {
-            this.probability = mean;
-            this.complement = 1.0 - mean;
+            probability = mean;
+            complement = 1.0 - mean;
 
-            this.variance = mean * (1.0 - mean);
-            this.entropy = -mean * System.Math.Log(mean) -
-                (complement) * System.Math.Log(complement);
+            variance = mean*(1.0 - mean);
+            entropy = -mean*System.Math.Log(mean) -
+                      (complement)*System.Math.Log(complement);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </remarks>
         public override double DistributionFunction(int x)
         {
-            if (x < 0)  return 0;
+            if (x < 0) return 0;
             if (x >= 1) return 1;
             return complement;
         }
@@ -131,7 +131,7 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         public override IDistribution Fit(double[] observations, double[] weights)
         {
-            double mean = Statistics.Tools.Mean(observations, weights);
+            double mean = observations.Mean(weights);
             return new BernoulliDistribution(mean);
         }
 

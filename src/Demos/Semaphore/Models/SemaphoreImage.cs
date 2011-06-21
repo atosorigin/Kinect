@@ -8,10 +8,6 @@ namespace Kinect.Semaphore.Models
 {
     public class SemaphoreImage : ICopyAble<SemaphoreImage>
     {
-        public ImageSource ImageSource { get; private set; }
-
-        public Kinect.Core.Gestures.Model.Semaphore Semaphore { get; private set; }
-
         private SemaphoreImage()
         {
             ////Needed for the copyable function
@@ -19,9 +15,15 @@ namespace Kinect.Semaphore.Models
 
         public SemaphoreImage(char semaphore)
         {
-            this.Semaphore = Semaphores.GetSemaphore(semaphore);
-            this.ImageSource = Get(Semaphore.Name);
+            Semaphore = Semaphores.GetSemaphore(semaphore);
+            ImageSource = Get(Semaphore.Name);
         }
+
+        public ImageSource ImageSource { get; private set; }
+
+        public Core.Gestures.Model.Semaphore Semaphore { get; private set; }
+
+        #region ICopyAble<SemaphoreImage> Members
 
         public SemaphoreImage CreateCopy()
         {
@@ -31,6 +33,8 @@ namespace Kinect.Semaphore.Models
             return semimage;
         }
 
+        #endregion
+
         private ImageSource Get(string semaphore)
         {
             if (string.IsNullOrEmpty(semaphore))
@@ -38,9 +42,10 @@ namespace Kinect.Semaphore.Models
                 return null;
             }
 
-            BitmapImage image = new BitmapImage();
+            var image = new BitmapImage();
             image.BeginInit();
-            image.UriSource = new Uri(string.Format(@"/Kinect.Semaphore;component/Images/Semafoor/{0}.png", semaphore), UriKind.Relative);
+            image.UriSource = new Uri(string.Format(@"/Kinect.Semaphore;component/Images/Semafoor/{0}.png", semaphore),
+                                      UriKind.Relative);
             image.EndInit();
 
             return image;

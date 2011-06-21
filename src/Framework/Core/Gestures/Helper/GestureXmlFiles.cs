@@ -1,5 +1,4 @@
-﻿
-namespace Kinect.Core.Gestures.Helper
+﻿namespace Kinect.Core.Gestures.Helper
 {
     public static class GestureXmlFiles
     {

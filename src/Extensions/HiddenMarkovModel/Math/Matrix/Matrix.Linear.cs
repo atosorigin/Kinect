@@ -7,18 +7,17 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math.Decompositions;
+
 namespace Accord.Math
 {
-    using System;
-    using Accord.Math.Decompositions;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
         /// <summary>
         ///   Returns the LHS solution matrix if the matrix is square or the least squares solution otherwise.
         /// </summary>
@@ -47,7 +46,7 @@ namespace Accord.Math
         /// </remarks>
         public static double[] Solve(this double[,] matrix, double[] rightSide)
         {
-            if (matrix == null) 
+            if (matrix == null)
                 throw new ArgumentNullException("matrix");
 
             if (rightSide == null)
@@ -84,6 +83,5 @@ namespace Accord.Math
         {
             return new SingularValueDecomposition(matrix, true, true, true).Inverse();
         }
-
     }
 }

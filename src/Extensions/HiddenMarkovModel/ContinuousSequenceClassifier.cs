@@ -7,14 +7,12 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Statistics.Distributions;
+using Accord.Statistics.Models.Markov.Topology;
+
 namespace Accord.Statistics.Models.Markov
 {
-    using System;
-    using Accord.Math;
-    using Accord.Statistics.Distributions;
-    using Accord.Statistics.Models.Markov.Learning;
-    using Accord.Statistics.Models.Markov.Topology;
-
     /// <summary>
     ///   Continuous-density Hidden Markov Model Set for Sequence Classification.
     /// </summary>
@@ -72,9 +70,8 @@ namespace Accord.Statistics.Models.Markov
     /// 
     [Serializable]
     public class ContinuousSequenceClassifier : SequenceClassifierBase<ContinuousHiddenMarkovModel>,
-        ISequenceClassifier
+                                                ISequenceClassifier
     {
-
         /// <summary>
         ///   Creates a new Sequence Classifier with the given number of classes.
         /// </summary>
@@ -92,7 +89,7 @@ namespace Accord.Statistics.Models.Markov
             : base(classes)
         {
             for (int i = 0; i < classes; i++)
-                Models[i] = new ContinuousHiddenMarkovModel(topology, initial) { Tag = names[i] };
+                Models[i] = new ContinuousHiddenMarkovModel(topology, initial) {Tag = names[i]};
         }
 
         /// <summary>
@@ -102,7 +99,7 @@ namespace Accord.Statistics.Models.Markov
             : base(classes)
         {
             for (int i = 0; i < classes; i++)
-                Models[i] = new ContinuousHiddenMarkovModel(topology[i], initial[i]) { Tag = names[i] };
+                Models[i] = new ContinuousHiddenMarkovModel(topology[i], initial[i]) {Tag = names[i]};
         }
 
         /// <summary>
@@ -113,6 +110,17 @@ namespace Accord.Statistics.Models.Markov
         {
         }
 
+        #region ISequenceClassifier Members
+
+        /// <summary>
+        ///   Computes the most likely class for a given sequence.
+        /// </summary>
+        public new int Compute(Array sequence, out double[] likelihoods)
+        {
+            return base.Compute(sequence, out likelihoods);
+        }
+
+        #endregion
 
         /// <summary>
         ///   Computes the most likely class for a given sequence.
@@ -129,14 +137,5 @@ namespace Accord.Statistics.Models.Markov
         {
             return base.Compute(sequence, out likelihood);
         }
-
-        /// <summary>
-        ///   Computes the most likely class for a given sequence.
-        /// </summary>
-        public new int Compute(Array sequence, out double[] likelihoods)
-        {
-            return base.Compute(sequence, out likelihoods);
-        }
-
     }
 }

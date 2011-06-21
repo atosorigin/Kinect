@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Common.ColorHelpers;
 using Kinect.Common.ColorHelpers;
 using Microsoft.Research.Kinect.Nui;
 
@@ -14,37 +13,34 @@ namespace Kinect.Core
     /// </summary>
     public class Camera : INotifyPropertyChanged
     {
+        private const int RED_IDX = 2;
+        private const int GREEN_IDX = 1;
+        private const int BLUE_IDX = 0;
+
         /// <summary>
         /// Colors for colored depthview
         /// </summary>
-        private readonly Color[] _colors = { Colors.Red, Colors.Blue, Colors.ForestGreen, Colors.Yellow, Colors.Orange, Colors.Purple };
+        private readonly Color[] _colors = {
+                                               Colors.Red, Colors.Blue, Colors.ForestGreen, Colors.Yellow, Colors.Orange,
+                                               Colors.Purple
+                                           };
 
-        /// <summary>
-        /// Holds last frames log time
-        /// </summary>
-        private int _lastFPSlog = 0;
-
-        /// <summary>
-        /// Holds the framecount
-        /// </summary>
-        private int _frames = 0;
+        private readonly byte[] _depthFrame32 = new byte[320*240*4];
 
         /// <summary>
         /// Frames per second
         /// </summary>
-        private int _fps = 0;
+        private int _fps;
 
         /// <summary>
-        /// Instance of imagegenerator
+        /// Holds the framecount
         /// </summary>
-        //private ImageGenerator _image;
+        private int _frames;
 
         /// <summary>
-        /// Event for notifying if a property changes
+        /// Holds last frames log time
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public event EventHandler<KinectCameraEventArgs> CameraUpdated;
+        private int _lastFPSlog;
 
         /// <summary>
         /// Gets or sets The Kinect context
@@ -71,24 +67,31 @@ namespace Kinect.Core
         /// </summary>
         public int Fps
         {
-            get
-            {
-                return this._fps;
-            }
+            get { return _fps; }
             private set
             {
-                if (value != this._fps)
+                if (value != _fps)
                 {
-                    this._fps = value;
-                    this.OnPropertyChanged("Fps");
+                    _fps = value;
+                    OnPropertyChanged("Fps");
                 }
             }
         }
 
-        private const int RED_IDX = 2;
-        private const int GREEN_IDX = 1;
-        private const int BLUE_IDX = 0;
-        private readonly byte[] _depthFrame32 = new byte[320 * 240 * 4];
+        #region INotifyPropertyChanged Members
+
+        /// <summary>
+        /// Instance of imagegenerator
+        /// </summary>
+        //private ImageGenerator _image;
+        /// <summary>
+        /// Event for notifying if a property changes
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        public event EventHandler<KinectCameraEventArgs> CameraUpdated;
 
         /// <summary>
         /// Initializes the specified usergenerator.
@@ -96,13 +99,13 @@ namespace Kinect.Core
         internal void Initialize()
         {
             var generator = new ColorGenerator();
-            for (int i = 0; i < this._colors.Length; i++)
+            for (int i = 0; i < _colors.Length; i++)
             {
-                this._colors[i] = generator.NextColor();
+                _colors[i] = generator.NextColor();
             }
 
             Context.DepthFrameReady += Context_DepthFrameReady;
-            Context.VideoFrameReady += new EventHandler<ImageFrameReadyEventArgs>(Context_VideoFrameReady);
+            Context.VideoFrameReady += Context_VideoFrameReady;
         }
 
         private void Context_VideoFrameReady(object sender, ImageFrameReadyEventArgs e)
@@ -113,9 +116,9 @@ namespace Kinect.Core
             }
             // 32-bit per pixel, RGBA image
             PlanarImage image = e.ImageFrame.Image;
-            var bitmap = BitmapSource.Create(
-                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, image.Bits, image.Width * image.BytesPerPixel);
-            OnCameraUpdated(bitmap,CameraView.Color);
+            BitmapSource bitmap = BitmapSource.Create(
+                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, image.Bits, image.Width*image.BytesPerPixel);
+            OnCameraUpdated(bitmap, CameraView.Color);
         }
 
         private void Context_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
@@ -128,9 +131,9 @@ namespace Kinect.Core
             //TODO: Depth view beter uitwerken
             //Aan de hand van de examples
             PlanarImage image = e.ImageFrame.Image;
-            byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth)); 
-            var bitmap = BitmapSource.Create(
-                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width * 4);
+            byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth));
+            BitmapSource bitmap = BitmapSource.Create(
+                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width*4);
             OnCameraUpdated(bitmap, ViewType);
         }
 
@@ -141,7 +144,7 @@ namespace Kinect.Core
         /// <param name="color">The color.</param>
         internal void SetUserColor(int id, Color color)
         {
-            this._colors[id % this._colors.Length] = color;
+            _colors[id%_colors.Length] = color;
         }
 
         /// <summary>
@@ -151,7 +154,7 @@ namespace Kinect.Core
         /// <returns></returns>
         internal Color GetUserColor(int id)
         {
-            return this._colors[id % this._colors.Length];
+            return _colors[id%_colors.Length];
         }
 
         /// <summary>
@@ -159,13 +162,13 @@ namespace Kinect.Core
         /// </summary>
         internal void CalculateFPS()
         {
-            this._frames++;
-            int time = System.Environment.TickCount;
-            if (time > this._lastFPSlog + 1000)
+            _frames++;
+            int time = Environment.TickCount;
+            if (time > _lastFPSlog + 1000)
             {
-                this.Fps = this._frames;
-                this._frames = 0;
-                this._lastFPSlog = time;
+                Fps = _frames;
+                _frames = 0;
+                _lastFPSlog = time;
             }
         }
 
@@ -175,7 +178,7 @@ namespace Kinect.Core
         /// <param name="propertyName">Name of the property.</param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = this.PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -187,10 +190,10 @@ namespace Kinect.Core
         /// </summary>
         protected virtual void OnCameraUpdated(BitmapSource source, CameraView view)
         {
-            var handler = this.CameraUpdated;
+            EventHandler<KinectCameraEventArgs> handler = CameraUpdated;
             if (handler != null)
             {
-                handler(this, new KinectCameraEventArgs(source,view));
+                handler(this, new KinectCameraEventArgs(source, view));
             }
         }
 
@@ -263,11 +266,11 @@ namespace Kinect.Core
         {
             for (int i16 = 0, i32 = 0; i16 < depthFrame16.Count && i32 < _depthFrame32.Length; i16 += 2, i32 += 4)
             {
-                var player = depthFrame16[i16] & 0x07;
-                var realDepth = (depthFrame16[i16 + 1] << 5) | (depthFrame16[i16] >> 3);
+                int player = depthFrame16[i16] & 0x07;
+                int realDepth = (depthFrame16[i16 + 1] << 5) | (depthFrame16[i16] >> 3);
                 // transform 13-bit depth information into an 8-bit intensity appropriate
                 // for display (we disregard information in most significant bit)
-                var intensity = (byte)(255 - (255 * realDepth / 0x0fff));
+                var intensity = (byte) (255 - (255*realDepth/0x0fff));
 
                 _depthFrame32[i32 + RED_IDX] = 0;
                 _depthFrame32[i32 + GREEN_IDX] = 0;
@@ -283,9 +286,9 @@ namespace Kinect.Core
                 switch (player)
                 {
                     case 0:
-                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 2);
-                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 2);
-                        _depthFrame32[i32 + BLUE_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + RED_IDX] = (byte) (intensity/2);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte) (intensity/2);
+                        _depthFrame32[i32 + BLUE_IDX] = (byte) (intensity/2);
                         break;
                     case 1:
                         _depthFrame32[i32 + RED_IDX] = intensity;
@@ -294,29 +297,29 @@ namespace Kinect.Core
                         _depthFrame32[i32 + GREEN_IDX] = intensity;
                         break;
                     case 3:
-                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 4);
+                        _depthFrame32[i32 + RED_IDX] = (byte) (intensity/4);
                         _depthFrame32[i32 + GREEN_IDX] = intensity;
                         _depthFrame32[i32 + BLUE_IDX] = intensity;
                         break;
                     case 4:
                         _depthFrame32[i32 + RED_IDX] = intensity;
                         _depthFrame32[i32 + GREEN_IDX] = intensity;
-                        _depthFrame32[i32 + BLUE_IDX] = (byte)(intensity / 4);
+                        _depthFrame32[i32 + BLUE_IDX] = (byte) (intensity/4);
                         break;
                     case 5:
                         _depthFrame32[i32 + RED_IDX] = intensity;
-                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 4);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte) (intensity/4);
                         _depthFrame32[i32 + BLUE_IDX] = intensity;
                         break;
                     case 6:
-                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 2);
-                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + RED_IDX] = (byte) (intensity/2);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte) (intensity/2);
                         _depthFrame32[i32 + BLUE_IDX] = intensity;
                         break;
                     case 7:
-                        _depthFrame32[i32 + RED_IDX] = (byte)(255 - intensity);
-                        _depthFrame32[i32 + GREEN_IDX] = (byte)(255 - intensity);
-                        _depthFrame32[i32 + BLUE_IDX] = (byte)(255 - intensity);
+                        _depthFrame32[i32 + RED_IDX] = (byte) (255 - intensity);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte) (255 - intensity);
+                        _depthFrame32[i32 + BLUE_IDX] = (byte) (255 - intensity);
                         break;
                 }
             }
@@ -361,7 +364,7 @@ namespace Kinect.Core
 
         //    return BitmapSource.Create(metadata.XRes, metadata.YRes, 96, 96, PixelFormats.Rgb24, null, imageMapPtr, totalPixels * BytesPerPixel, metadata.XRes * BytesPerPixel);
         //}
-        
+
         ///// <summary>
         ///// Gets the depths.
         ///// </summary>

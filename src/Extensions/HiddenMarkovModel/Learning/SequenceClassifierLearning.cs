@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Models.Markov.Learning
 {
-    using Accord.Math;
-    using System;
-
     /// <summary>
     ///   Configuration function delegate for Sequence Classifier Learning algorithms.
     /// </summary>
@@ -68,10 +68,21 @@ namespace Accord.Statistics.Models.Markov.Learning
     /// </example>
     public class SequenceClassifierLearning
     {
-
-        private ISequenceClassifier classifier;
+        private readonly ISequenceClassifier classifier;
         private SequenceClassifierLearningAlgorithmConfiguration algorithm;
 
+
+        /// <summary>
+        ///   Creates a new instance of the learning algorithm for a given 
+        ///   Markov sequence classifier using the specified configuration
+        ///   function.
+        /// </summary>
+        public SequenceClassifierLearning(ISequenceClassifier classifier,
+                                          SequenceClassifierLearningAlgorithmConfiguration algorithm)
+        {
+            this.classifier = classifier;
+            this.algorithm = algorithm;
+        }
 
         /// <summary>
         ///   Gets or sets the configuration function specifying which
@@ -82,19 +93,6 @@ namespace Accord.Statistics.Models.Markov.Learning
         {
             get { return algorithm; }
             set { algorithm = value; }
-        }
-
-
-        /// <summary>
-        ///   Creates a new instance of the learning algorithm for a given 
-        ///   Markov sequence classifier using the specified configuration
-        ///   function.
-        /// </summary>
-        public SequenceClassifierLearning(ISequenceClassifier classifier, 
-            SequenceClassifierLearningAlgorithmConfiguration algorithm)
-        {
-            this.classifier = classifier;
-            this.algorithm = algorithm;
         }
 
 
@@ -135,6 +133,5 @@ namespace Accord.Statistics.Models.Markov.Learning
             // Returns the sum log-likelihood for all models.
             return sum;
         }
-
     }
 }

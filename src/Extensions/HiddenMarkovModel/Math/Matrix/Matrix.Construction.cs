@@ -7,20 +7,20 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using AForge.Math.Random;
+
 namespace Accord.Math
 {
-    using System;
-    using System.Collections.Generic;
-    using AForge.Math.Random;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
         #region Generic matrices
+
         /// <summary>
         ///   Returns a matrix with all elements set to a given value.
         /// </summary>
@@ -29,7 +29,7 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            T[,] matrix = new T[rows, cols];
+            var matrix = new T[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -47,9 +47,11 @@ namespace Accord.Math
 
             return Create(size, size, value);
         }
+
         #endregion
 
         #region Diagonal matrices
+
         /// <summary>
         ///   Returns a square diagonal matrix of the given size.
         /// </summary>
@@ -57,7 +59,7 @@ namespace Accord.Math
         {
             if (size < 0) throw new ArgumentException("size");
 
-            T[,] matrix = new T[size, size];
+            var matrix = new T[size,size];
 
             for (int i = 0; i < size; i++)
                 matrix[i, i] = value;
@@ -73,9 +75,9 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            T[,] matrix = new T[rows, cols];
+            var matrix = new T[rows,cols];
 
-            int min = Math.Min(rows, cols);
+            int min = System.Math.Min(rows, cols);
 
             for (int i = 0; i < min; i++)
                 matrix[i, i] = value;
@@ -90,7 +92,7 @@ namespace Accord.Math
         {
             if (values == null) throw new ArgumentNullException("values");
 
-            T[,] matrix = new T[values.Length, values.Length];
+            var matrix = new T[values.Length,values.Length];
 
             for (int i = 0; i < values.Length; i++)
                 matrix[i, i] = values[i];
@@ -117,16 +119,18 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            T[,] matrix = new T[rows, cols];
+            var matrix = new T[rows,cols];
 
             for (int i = 0; i < values.Length; i++)
                 matrix[i, i] = values[i];
 
             return matrix;
         }
+
         #endregion
 
         #region Special matrices
+
         /// <summary>
         ///   Returns the Identity matrix of the given size.
         /// </summary>
@@ -143,39 +147,39 @@ namespace Accord.Math
             if (size < 3)
                 throw new ArgumentException("The square size must be greater or equal to 3.", "size");
 
-            double[,] matrix = new double[size, size];
+            var matrix = new double[size,size];
 
 
             // First algorithm: Odd order
-            if ((size % 2) == 1)
+            if ((size%2) == 1)
             {
-                int a = (size + 1) / 2;
+                int a = (size + 1)/2;
                 int b = (size + 1);
 
                 for (int j = 0; j < size; j++)
                     for (int i = 0; i < size; i++)
-                        matrix[i, j] = size * ((i + j + a) % size) + ((i + 2 * j + b) % size) + 1;
+                        matrix[i, j] = size*((i + j + a)%size) + ((i + 2*j + b)%size) + 1;
             }
 
-            // Second algorithm: Even order (double)
-            else if ((size % 4) == 0)
+                // Second algorithm: Even order (double)
+            else if ((size%4) == 0)
             {
                 for (int j = 0; j < size; j++)
                     for (int i = 0; i < size; i++)
-                        if (((i + 1) / 2) % 2 == ((j + 1) / 2) % 2)
-                            matrix[i, j] = size * size - size * i - j;
+                        if (((i + 1)/2)%2 == ((j + 1)/2)%2)
+                            matrix[i, j] = size*size - size*i - j;
                         else
-                            matrix[i, j] = size * i + j + 1;
+                            matrix[i, j] = size*i + j + 1;
             }
 
-            // Third algorithm: Even order (single)
+                // Third algorithm: Even order (single)
             else
             {
-                int n = size / 2;
-                int p = (size - 2) / 4;
+                int n = size/2;
+                int p = (size - 2)/4;
                 double t;
 
-                double[,] block = Matrix.Magic(n);
+                double[,] block = Magic(n);
 
                 for (int j = 0; j < n; j++)
                 {
@@ -183,9 +187,9 @@ namespace Accord.Math
                     {
                         double e = block[i, j];
                         matrix[i, j] = e;
-                        matrix[i, j + n] = e + 2 * n * n;
-                        matrix[i + n, j] = e + 3 * n * n;
-                        matrix[i + n, j + n] = e + n * n;
+                        matrix[i, j + n] = e + 2*n*n;
+                        matrix[i + n, j] = e + 3*n*n;
+                        matrix[i + n, j + n] = e + n*n;
                     }
                 }
 
@@ -228,16 +232,18 @@ namespace Accord.Math
         {
             if (size < 0) throw new ArgumentException("size");
 
-            double[,] C = Matrix.Create(size, -1.0 / size);
+            double[,] C = Create(size, -1.0/size);
 
             for (int i = 0; i < size; i++)
-                C[i, i] = 1.0 - 1.0 / size;
+                C[i, i] = 1.0 - 1.0/size;
 
             return C;
         }
+
         #endregion
 
         #region Random matrices
+
         /// <summary>
         ///   Creates a rows-by-cols matrix with uniformly distributed random data.
         /// </summary>
@@ -256,13 +262,13 @@ namespace Accord.Math
         {
             if (size < 0) throw new ArgumentException("size");
 
-            double[,] matrix = new double[size, size];
+            var matrix = new double[size,size];
 
             if (!symmetric)
             {
                 for (int i = 0; i < size; i++)
                     for (int j = 0; j < size; j++)
-                        matrix[i, j] = Accord.Math.Tools.Random.NextDouble() * (maxValue - minValue) + minValue;
+                        matrix[i, j] = Tools.Random.NextDouble()*(maxValue - minValue) + minValue;
             }
             else
             {
@@ -270,7 +276,7 @@ namespace Accord.Math
                 {
                     for (int j = i; j < size; j++)
                     {
-                        matrix[i, j] = Accord.Math.Tools.Random.NextDouble() * (maxValue - minValue) + minValue;
+                        matrix[i, j] = Tools.Random.NextDouble()*(maxValue - minValue) + minValue;
                         matrix[j, i] = matrix[i, j];
                     }
                 }
@@ -287,10 +293,10 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            double[,] matrix = new double[rows, cols];
+            var matrix = new double[rows,cols];
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
-                    matrix[i, j] = Accord.Math.Tools.Random.NextDouble() * (maxValue - minValue) + minValue;
+                    matrix[i, j] = Tools.Random.NextDouble()*(maxValue - minValue) + minValue;
 
             return matrix;
         }
@@ -304,7 +310,7 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            double[,] matrix = new double[rows, cols];
+            var matrix = new double[rows,cols];
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
                     matrix[i, j] = generator.Next();
@@ -319,9 +325,9 @@ namespace Accord.Math
         {
             if (size < 0) throw new ArgumentException("size");
 
-            double[] vector = new double[size];
+            var vector = new double[size];
             for (int i = 0; i < size; i++)
-                vector[i] = Accord.Math.Tools.Random.NextDouble() * (maxValue - minValue) + minValue;
+                vector[i] = Tools.Random.NextDouble()*(maxValue - minValue) + minValue;
 
             return vector;
         }
@@ -334,16 +340,17 @@ namespace Accord.Math
             if (generator == null) throw new ArgumentNullException("generator");
             if (size < 0) throw new ArgumentException("size");
 
-            double[] vector = new double[size];
+            var vector = new double[size];
             for (int i = 0; i < size; i++)
                 vector[i] = generator.Next();
 
             return vector;
         }
+
         #endregion
 
-
         #region Vector creation
+
         /// <summary>
         ///   Creates a matrix with a single row vector.
         /// </summary>
@@ -351,7 +358,7 @@ namespace Accord.Math
         {
             if (values == null) throw new ArgumentNullException("values");
 
-            T[,] matrix = new T[1, values.Length];
+            var matrix = new T[1,values.Length];
 
             for (int i = 0; i < values.Length; i++)
                 matrix[0, i] = values[i];
@@ -366,7 +373,7 @@ namespace Accord.Math
         {
             if (values == null) throw new ArgumentNullException("values");
 
-            T[,] matrix = new T[values.Length, 1];
+            var matrix = new T[values.Length,1];
 
             for (int i = 0; i < values.Length; i++)
                 matrix[i, 0] = values[i];
@@ -379,7 +386,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] Vector<T>(int n, T[] values)
         {
-            T[] vector = new T[n];
+            var vector = new T[n];
 
             if (values != null)
             {
@@ -395,22 +402,24 @@ namespace Accord.Math
         /// </summary>
         public static T[] Vector<T>(int n, T value)
         {
-            T[] vector = new T[n];
+            var vector = new T[n];
 
             for (int i = 0; i < n; i++)
                 vector[i] = value;
 
             return vector;
         }
+
         #endregion
 
         #region Special vectors
+
         /// <summary>
         ///   Creates a index vector.
         /// </summary>
         public static int[] Indexes(int from, int to)
         {
-            int[] vector = new int[to - from];
+            var vector = new int[to - from];
             for (int i = 0; i < vector.Length; i++)
                 vector[i] = from++;
             return vector;
@@ -421,7 +430,7 @@ namespace Accord.Math
         /// </summary>
         public static int[] Interval(int from, int to)
         {
-            int[] vector = new int[to - from + 1];
+            var vector = new int[to - from + 1];
             for (int i = 0; i < vector.Length; i++)
                 vector[i] = from++;
             return vector;
@@ -433,11 +442,11 @@ namespace Accord.Math
         public static double[] Interval(double from, double to, double stepSize)
         {
             double range = to - from;
-            int steps = (int)Math.Ceiling(range / stepSize) + 1;
+            int steps = (int) System.Math.Ceiling(range/stepSize) + 1;
 
-            double[] r = new double[steps];
+            var r = new double[steps];
             for (int i = 0; i < r.Length; i++)
-                r[i] = from + i * stepSize;
+                r[i] = from + i*stepSize;
 
             return r;
         }
@@ -448,29 +457,30 @@ namespace Accord.Math
         public static double[] Interval(double from, double to, int steps)
         {
             double range = to - from;
-            double stepSize = range / steps;
+            double stepSize = range/steps;
 
             if (steps == Int32.MaxValue)
                 throw new ArgumentOutOfRangeException("steps",
-                    "input must be lesser than Int32.MaxValue");
+                                                      "input must be lesser than Int32.MaxValue");
 
 
-            double[] r = new double[steps + 1];
+            var r = new double[steps + 1];
             for (int i = 0; i < r.Length; i++)
-                r[i] = i * stepSize;
+                r[i] = i*stepSize;
 
             return r;
         }
+
         #endregion
 
-
         #region Combine
+
         /// <summary>
         ///   Combines two vectors horizontally.
         /// </summary>
         public static T[] Combine<T>(this T[] a, T[] b)
         {
-            T[] r = new T[a.Length + b.Length];
+            var r = new T[a.Length + b.Length];
             for (int i = 0; i < a.Length; i++)
                 r[i] = a[i];
             for (int i = 0; i < b.Length; i++)
@@ -484,7 +494,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] Combine<T>(this T[] vector, T element)
         {
-            T[] r = new T[vector.Length + 1];
+            var r = new T[vector.Length + 1];
             for (int i = 0; i < vector.Length; i++)
                 r[i] = vector[i];
 
@@ -502,7 +512,7 @@ namespace Accord.Math
             for (int i = 0; i < vectors.Length; i++)
                 size += vectors[i].Length;
 
-            T[] r = new T[size];
+            var r = new T[size];
 
             int c = 0;
             for (int i = 0; i < vectors.Length; i++)
@@ -529,7 +539,7 @@ namespace Accord.Math
                     cols = matrices[i].GetLength(1);
             }
 
-            T[,] r = new T[rows, cols];
+            var r = new T[rows,cols];
 
             int c = 0;
             for (int i = 0; i < matrices.Length; i++)
@@ -562,7 +572,7 @@ namespace Accord.Math
                     cols = matrices[i][0].Length;
             }
 
-            T[][] r = new T[rows][];
+            var r = new T[rows][];
             for (int i = 0; i < rows; i++)
                 r[i] = new T[cols];
 
@@ -579,9 +589,11 @@ namespace Accord.Math
 
             return r;
         }
+
         #endregion
 
         #region Expand
+
         /// <summary>
         ///   Expands a data vector given in summary form.
         /// </summary>
@@ -613,9 +625,11 @@ namespace Accord.Math
 
             return expansion.ToArray().ToMatrix();
         }
+
         #endregion
 
         #region Split
+
         /// <summary>
         ///   Splits a given vector into a smaller vectors of the given size.
         /// </summary>
@@ -624,17 +638,17 @@ namespace Accord.Math
         /// <returns>An array of vectors containing the subdivisions of the given vector.</returns>
         public static T[][] Split<T>(this T[] vector, int size)
         {
-            int n = vector.Length / size;
-            T[][] r = new T[n][];
+            int n = vector.Length/size;
+            var r = new T[n][];
             for (int i = 0; i < n; i++)
             {
                 T[] ri = r[i] = new T[size];
                 for (int j = 0; j < size; j++)
-                    ri[j] = vector[j * n + i];
+                    ri[j] = vector[j*n + i];
             }
             return r;
         }
-        #endregion
 
+        #endregion
     }
 }

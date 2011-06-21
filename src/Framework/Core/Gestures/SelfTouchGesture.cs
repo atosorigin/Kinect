@@ -5,14 +5,7 @@ namespace Kinect.Core.Gestures
 {
     public class SelfTouchGesture : GestureBase
     {
-        private int _selfTouchCount = 0;
-
-        public SelfTouchGesture()
-            : base()
-        {
-        }
-
-        public event EventHandler<SelfTouchEventArgs> SelfTouchDetected;
+        private int _selfTouchCount;
 
         internal JointID[] Joints { get; set; }
 
@@ -21,19 +14,21 @@ namespace Kinect.Core.Gestures
             get { return "SelfTouchGesture"; }
         }
 
+        public event EventHandler<SelfTouchEventArgs> SelfTouchDetected;
+
         public override void Process(IUserChangedEvent evt)
         {
-            this._selfTouchCount++;
-            if (this._selfTouchCount > this.HistoryCount)
+            _selfTouchCount++;
+            if (_selfTouchCount > HistoryCount)
             {
-                this.OnSelfTouchDetected(evt.ID,this.Joints);
-                this._selfTouchCount = 0;
+                OnSelfTouchDetected(evt.ID, Joints);
+                _selfTouchCount = 0;
             }
         }
 
         protected virtual void OnSelfTouchDetected(int userid, JointID[] joints)
         {
-            var handler = this.SelfTouchDetected;
+            EventHandler<SelfTouchEventArgs> handler = SelfTouchDetected;
             if (handler != null)
             {
                 handler(this, new SelfTouchEventArgs(userid, joints));

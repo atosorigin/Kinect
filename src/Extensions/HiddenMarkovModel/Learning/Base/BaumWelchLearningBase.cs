@@ -7,20 +7,27 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Learning
 {
-    using System;
-
     /// <summary>
     ///   Base class for implementations of the Baum-Welch learning algorithm.
     /// </summary>
     /// 
     public abstract class BaumWelchLearningBase
     {
-
-        private IHiddenMarkovModel model;
+        private readonly IHiddenMarkovModel model;
         private int maxIterations = 100;
-        private double tolerance = 0.00;
+        private double tolerance;
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="BaumWelchLearningBase"/> class.
+        /// </summary>
+        protected BaumWelchLearningBase(IHiddenMarkovModel model)
+        {
+            this.model = model;
+        }
 
 
         /// <summary>
@@ -34,17 +41,6 @@ namespace Accord.Statistics.Models.Markov.Learning
         ///   last iteration of the Baum-Welch learning algorithm.
         /// </summary>
         public double[][,] Gamma { get; protected set; }
-
-
-
-
-        /// <summary>
-        ///   Initializes a new instance of the <see cref="BaumWelchLearningBase"/> class.
-        /// </summary>
-        protected BaumWelchLearningBase(IHiddenMarkovModel model)
-        {
-            this.model = model;
-        }
 
 
         /// <summary>
@@ -85,7 +81,8 @@ namespace Accord.Statistics.Models.Markov.Learning
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException("value", "The maximum number of iterations should be positive.");
+                    throw new ArgumentOutOfRangeException("value",
+                                                          "The maximum number of iterations should be positive.");
 
                 maxIterations = value;
             }
@@ -102,7 +99,7 @@ namespace Accord.Statistics.Models.Markov.Learning
             if (tolerance > 0)
             {
                 // Stopping criteria is likelihood convergence
-                if (Math.Abs(oldLikelihood - newLikelihood) <= tolerance)
+                if (System.Math.Abs(oldLikelihood - newLikelihood) <= tolerance)
                     return true;
 
                 if (maxIterations > 0)
@@ -147,7 +144,6 @@ namespace Accord.Statistics.Models.Markov.Learning
         /// </returns>
         protected double Run(Array[] observations)
         {
-
             // Baum-Welch algorithm.
 
             // The Baum–Welch algorithm is a particular case of a generalized expectation-maximization
@@ -166,8 +162,8 @@ namespace Accord.Statistics.Models.Markov.Learning
 
             // Grab model information
             int states = model.States;
-            var A = model.Transitions;
-            var pi = model.Probabilities;
+            double[,] A = model.Transitions;
+            double[] pi = model.Probabilities;
 
 
             // Initialize the algorithm
@@ -180,10 +176,10 @@ namespace Accord.Statistics.Models.Markov.Learning
                 int T = observations[i].Length;
 
                 Ksi[i] = new double[T][,];
-                Gamma[i] = new double[T, states];
+                Gamma[i] = new double[T,states];
 
                 for (int t = 0; t < T; t++)
-                    Ksi[i][t] = new double[states, states];
+                    Ksi[i][t] = new double[states,states];
             }
 
             int iteration = 1;
@@ -202,11 +198,11 @@ namespace Accord.Statistics.Models.Markov.Learning
                 {
                     int T = observations[i].Length;
 
-                    var gamma = Gamma[i];
+                    double[,] gamma = Gamma[i];
 
                     double[,] fwd, bwd;
                     double[] scaling;
-                    
+
 
                     // 1st step - Calculating the forward probability and the
                     //            backward probability for each HMM state.
@@ -222,7 +218,7 @@ namespace Accord.Statistics.Models.Markov.Learning
                         double s = 0;
 
                         for (int k = 0; k < states; k++)
-                            s += gamma[t, k] = fwd[t, k] * bwd[t, k];
+                            s += gamma[t, k] = fwd[t, k]*bwd[t, k];
 
                         if (s != 0) // Scaling
                         {
@@ -236,7 +232,7 @@ namespace Accord.Statistics.Models.Markov.Learning
 
                     // Compute log-likelihood for the given sequence
                     for (int t = 0; t < scaling.Length; t++)
-                        newLikelihood += Math.Log(scaling[t]);
+                        newLikelihood += System.Math.Log(scaling[t]);
                 }
 
 
@@ -260,7 +256,7 @@ namespace Accord.Statistics.Models.Markov.Learning
                         double sum = 0;
                         for (int i = 0; i < Gamma.Length; i++)
                             sum += Gamma[i][0, k];
-                        pi[k] = sum / N;
+                        pi[k] = sum/N;
                     }
 
                     // 3.2 Re-estimation of transition probabilities 
@@ -274,8 +270,8 @@ namespace Accord.Statistics.Models.Markov.Learning
                             {
                                 int T = observations[k].Length;
 
-                                var gammak = Gamma[k];
-                                var ksik = Ksi[k];
+                                double[,] gammak = Gamma[k];
+                                double[][,] ksik = Ksi[k];
 
                                 for (int l = 0; l < T - 1; l++)
                                 {
@@ -284,7 +280,7 @@ namespace Accord.Statistics.Models.Markov.Learning
                                 }
                             }
 
-                            A[i, j] = (den != 0) ? num / den : 0.0;
+                            A[i, j] = (den != 0) ? num/den : 0.0;
                         }
                     }
 
@@ -295,7 +291,6 @@ namespace Accord.Statistics.Models.Markov.Learning
                 {
                     stop = true; // The model has converged.
                 }
-
             } while (!stop);
 
 
@@ -312,7 +307,8 @@ namespace Accord.Statistics.Models.Markov.Learning
         /// <param name="fwd">Returns the computed forward probabilities matrix.</param>
         /// <param name="bwd">Returns the computed backward probabilities matrix.</param>
         /// <param name="scaling">Returns the scaling parameters used during calculations.</param>
-        protected abstract void ComputeForwardBackward(int index, out double[,] fwd, out double[,] bwd, out double[] scaling);
+        protected abstract void ComputeForwardBackward(int index, out double[,] fwd, out double[,] bwd,
+                                                       out double[] scaling);
 
         /// <summary>
         ///   Computes the ksi matrix of probabilities for a given observation
@@ -333,7 +329,5 @@ namespace Accord.Statistics.Models.Markov.Learning
         ///   update the probability distributions of symbol emissions.
         /// </remarks>
         protected abstract void UpdateEmissions();
-
     }
-
 }

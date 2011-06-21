@@ -7,30 +7,38 @@ namespace Kinect.Core.Gestures
 {
     public class ClickGesture : GestureBase
     {
-        private List<Point3D> list;
+        #region Delegates
+
+        public delegate void MouseClickHandler();
+
+        #endregion
+
+        public const string LogFile = @"c:\temp\LogFile.txt";
+
         private static int PointCount = 50;
         private static float MarginX = 200;
         private static float MarginY = 200;
         private static float MaxDepth = 175;
         private static float MinDepth = -175;
         private static int SingleClickWaitCount = 100;
-        private int clickWait = 0;
+        private readonly List<Point3D> list;
+        private int clickWait;
 
-        public const string LogFile = @"c:\temp\LogFile.txt";
+        public ClickGesture()
+        {
+            list = new List<Point3D>();
+        }
 
-        public delegate void MouseClickHandler();
+        public int LastCheck { get; private set; }
+
+        protected override string GestureName
+        {
+            get { return "ClickGesture"; }
+        }
 
         public event MouseClickHandler LeftClick;
 
         public event MouseClickHandler RightClick;
-
-        public int LastCheck{ get; private set; }
-
-        public ClickGesture()
-            : base()
-        {
-            list = new List<Point3D>();
-        }
 
         public void AddPoint(int coordinateX, int coordinateY, int coordinateZ)
         {
@@ -65,7 +73,7 @@ namespace Kinect.Core.Gestures
                 Point3D lowest = list[0];
 
                 bool clicked = false;
-                foreach (var point in list)
+                foreach (Point3D point in list)
                 {
                     double isLowest = CheckPoint(point, highest);
                     double backHigh = CheckPoint(point, lowest);
@@ -87,7 +95,7 @@ namespace Kinect.Core.Gestures
                         down = 0;
                         continue;
                     }
-                    
+
                     if (isLowest < 0 && isLowest < down)
                     {
                         down = isLowest;
@@ -124,7 +132,7 @@ namespace Kinect.Core.Gestures
                 Point3D lowest = list[0];
 
                 bool clicked = false;
-                foreach (var point in list)
+                foreach (Point3D point in list)
                 {
                     double isLowest = CheckPoint(point, highest);
                     double backHigh = CheckPoint(point, lowest);
@@ -202,7 +210,7 @@ namespace Kinect.Core.Gestures
 
             if (!File.Exists(LogFile))
             {
-                log = new StreamWriter(LogFile); 
+                log = new StreamWriter(LogFile);
             }
             else
             {
@@ -221,11 +229,6 @@ namespace Kinect.Core.Gestures
 
             // TODO: Use flush and use Try / finally. Can you use Using? This method smell expensive...
             log.Close();
-        }
-
-        protected override string GestureName
-        {
-            get { return "ClickGesture"; }
         }
 
         public override void Process(IUserChangedEvent evt)

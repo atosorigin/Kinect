@@ -1,10 +1,11 @@
-﻿
-namespace Kinect.Core.Eventing
+﻿namespace Kinect.Core.Eventing
 {
     /// <summary>
     /// Interface for the eventpublisher pipeline component
     /// </summary>
-    public interface IEventPublisher : IEventPublisher<object> { }
+    public interface IEventPublisher : IEventPublisher<object>
+    {
+    }
 
     /// <summary>
     /// Interface for the eventpublisher pipeline component

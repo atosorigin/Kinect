@@ -1,5 +1,4 @@
-﻿
-namespace Kinect.Core
+﻿namespace Kinect.Core
 {
     public class KinectGestureEventArgs : KinectUserEventArgs
     {

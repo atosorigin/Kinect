@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Topology
 {
-    using System;
-
     /// <summary>
     ///   Forward Topology for Hidden Markov Models.
     /// </summary>
@@ -68,48 +68,10 @@ namespace Accord.Statistics.Models.Markov.Topology
     [Serializable]
     public class Forward : ITopology
     {
-        private int states;
+        private readonly double[] pi;
+        private readonly int states;
         private int deepness;
         private bool random;
-        private double[] pi;
-
-
-        /// <summary>
-        ///   Gets the number of states in this topology.
-        /// </summary>
-        public int States
-        {
-            get { return states; }
-        }
-
-        /// <summary>
-        ///   Gets or sets the maximum deepness level allowed
-        ///   for the forward state transition chains.
-        /// </summary>
-        public int Deepness
-        {
-            get { return deepness; }
-            set { deepness = value; }
-        }
-
-        /// <summary>
-        ///   Gets or sets whether the transition matrix
-        ///   should be initialized with random probabilities
-        ///   or not. Default is false.
-        /// </summary>
-        public bool Random
-        {
-            get { return random; }
-            set { random = value; }
-        }
-
-        /// <summary>
-        ///   Gets the initial state probabilities.
-        /// </summary>
-        public double[] Initial
-        {
-            get { return pi; }
-        }
 
         /// <summary>
         ///   Creates a new Forward topology for a given number of states.
@@ -157,8 +119,47 @@ namespace Accord.Statistics.Models.Markov.Topology
             this.deepness = deepness;
             this.random = random;
 
-            this.pi = new double[states];
-            this.pi[0] = 1.0;
+            pi = new double[states];
+            pi[0] = 1.0;
+        }
+
+        /// <summary>
+        ///   Gets or sets the maximum deepness level allowed
+        ///   for the forward state transition chains.
+        /// </summary>
+        public int Deepness
+        {
+            get { return deepness; }
+            set { deepness = value; }
+        }
+
+        /// <summary>
+        ///   Gets or sets whether the transition matrix
+        ///   should be initialized with random probabilities
+        ///   or not. Default is false.
+        /// </summary>
+        public bool Random
+        {
+            get { return random; }
+            set { random = value; }
+        }
+
+        /// <summary>
+        ///   Gets the initial state probabilities.
+        /// </summary>
+        public double[] Initial
+        {
+            get { return pi; }
+        }
+
+        #region ITopology Members
+
+        /// <summary>
+        ///   Gets the number of states in this topology.
+        /// </summary>
+        public int States
+        {
+            get { return states; }
         }
 
 
@@ -169,7 +170,7 @@ namespace Accord.Statistics.Models.Markov.Topology
         public int Create(out double[,] transitionMatrix, out double[] initialState)
         {
             int m = System.Math.Min(States, Deepness);
-            double[,] A = new double[States, States];
+            var A = new double[States,States];
 
             if (random)
             {
@@ -180,7 +181,7 @@ namespace Accord.Statistics.Models.Markov.Topology
                 {
                     double sum = 0.0;
                     for (int j = i; j < m; j++)
-                        sum += A[i, j] = Accord.Math.Tools.Random.NextDouble();
+                        sum += A[i, j] = Math.Tools.Random.NextDouble();
 
                     for (int j = i; j < m; j++)
                         A[i, j] /= sum;
@@ -193,16 +194,17 @@ namespace Accord.Statistics.Models.Markov.Topology
 
                 for (int i = 0; i < states; i++)
                 {
-                    double d = 1.0 / Math.Min(m, states - i);
+                    double d = 1.0/System.Math.Min(m, states - i);
                     for (int j = i; j < states && (j - i) < m; j++)
                         A[i, j] = d;
                 }
             }
 
             transitionMatrix = A;
-            initialState = (double[])pi.Clone(); 
+            initialState = (double[]) pi.Clone();
             return States;
         }
 
+        #endregion
     }
 }

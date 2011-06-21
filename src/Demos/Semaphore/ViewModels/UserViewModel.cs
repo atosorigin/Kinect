@@ -1,38 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using System.Windows.Threading;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
 using Kinect.Core;
-using System.Windows.Media.Media3D;
-using GalaSoft.MvvmLight.Threading;
-using System.Windows;
-using GalaSoft.MvvmLight;
-using Kinect.Core.Gestures;
-using System.Diagnostics;
-using System.Windows.Threading;
+using Kinect.Core.Eventing;
 using Kinect.Core.Filters.Helper;
+using Kinect.Core.Gestures;
 using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Semaphore.ViewModels
 {
     public class UserViewModel : ViewModelBase
     {
-        private readonly double _updateMargin = 0.5;
         private static object _syncRoot = new object();
-        private User _user;
-        private DispatcherTimer _dispatchtimer;
+        private readonly DispatcherTimer _dispatchtimer;
+        private readonly double _updateMargin = 0.5;
+        private readonly User _user;
+        private DateTime _StartDateTime;
+        private Brush _brush;
         private int _calibrationCounter = 5;
+        private string _calibrationText;
         private DispatcherTimer _calibrationTimer;
-        private int _counter = 0;
+        private Color _color;
+        private int _counter;
+        private Point3D _head;
+        private Point3D _leftAnkle;
+        private Point3D _leftElbow;
+        private Point3D _leftFingertip;
+        private Point3D _leftFoot;
+        private Point3D _leftHand;
+        private Point3D _leftHip;
+        private Point3D _leftKnee;
+        private Point3D _leftShoulder;
+        private Point3D _neck;
+        private Point3D _rightAnkle;
+        private Point3D _rightElbow;
+        private Point3D _rightFingertip;
+        private Point3D _rightFoot;
+        private Point3D _rightHand;
+        private Point3D _rightHip;
+        private Point3D _rightKnee;
+        private Point3D _rightShoulder;
+        private SemaphoreGesture _semaphoreGesture;
+        private TimeSpan _stopWatch;
+        private Point3D _torso;
+        private Point3D _waist;
+
+        public Visibility _win = Visibility.Hidden;
+
+        public UserViewModel(int id)
+            : this(new User(id))
+        {
+        }
+
+        public UserViewModel(User user)
+        {
+            _user = user;
+            _user.Updated += _user_Updated;
+            _dispatchtimer = new DispatcherTimer();
+            _dispatchtimer.Interval = TimeSpan.FromMilliseconds(1);
+            _dispatchtimer.Tick += _dispatchtimer_Tick;
+        }
 
         public int ID
         {
             get { return _user.ID; }
         }
 
-        public Visibility _win = Visibility.Hidden;
         public Visibility Win
         {
             get { return _win; }
@@ -46,7 +90,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private TimeSpan _stopWatch;
         public TimeSpan StopWatch
         {
             get { return _stopWatch; }
@@ -60,13 +103,9 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private string _calibrationText;
         public string CalibrationText
         {
-            get
-            {
-                return _calibrationText;
-            }
+            get { return _calibrationText; }
             set
             {
                 _calibrationText = value;
@@ -76,9 +115,6 @@ namespace Kinect.Semaphore.ViewModels
 
         public SemaphoreViewModel Semaphore { get; private set; }
 
-        private SemaphoreGesture _semaphoreGesture;
-
-        private Color _color;
         public Color Color
         {
             get { return _color; }
@@ -92,7 +128,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Brush _brush;
         public Brush Brush
         {
             get { return _brush; }
@@ -117,7 +152,7 @@ namespace Kinect.Semaphore.ViewModels
         }
 
         //private setters are for Expression Designer
-        private Point3D _head;
+
         public Point3D Head
         {
             get { return _head; }
@@ -133,7 +168,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _neck;
         public Point3D Neck
         {
             get { return _neck; }
@@ -147,7 +181,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _torso;
         public Point3D Torso
         {
             get { return _torso; }
@@ -161,7 +194,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _waist;
         public Point3D Waist
         {
             get { return _waist; }
@@ -175,7 +207,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftShoulder;
         public Point3D LeftShoulder
         {
             get { return _leftShoulder; }
@@ -189,7 +220,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightShoulder;
         public Point3D RightShoulder
         {
             get { return _rightShoulder; }
@@ -203,7 +233,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftElbow;
         public Point3D LeftElbow
         {
             get { return _leftElbow; }
@@ -217,7 +246,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightElbow;
         public Point3D RightElbow
         {
             get { return _rightElbow; }
@@ -231,7 +259,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftHand;
         public Point3D LeftHand
         {
             get { return _leftHand; }
@@ -245,7 +272,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightHand;
         public Point3D RightHand
         {
             get { return _rightHand; }
@@ -259,7 +285,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftFingertip;
         public Point3D LeftFingertip
         {
             get { return _leftFingertip; }
@@ -273,7 +298,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightFingertip;
         public Point3D RightFingertip
         {
             get { return _rightFingertip; }
@@ -287,7 +311,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftHip;
         public Point3D LeftHip
         {
             get { return _leftHip; }
@@ -301,7 +324,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightHip;
         public Point3D RightHip
         {
             get { return _rightHip; }
@@ -315,7 +337,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftKnee;
         public Point3D LeftKnee
         {
             get { return _leftKnee; }
@@ -329,7 +350,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightKnee;
         public Point3D RightKnee
         {
             get { return _rightKnee; }
@@ -343,7 +363,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftAnkle;
         public Point3D LeftAnkle
         {
             get { return _leftAnkle; }
@@ -357,7 +376,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightAnkle;
         public Point3D RightAnkle
         {
             get { return _rightAnkle; }
@@ -371,7 +389,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _leftFoot;
         public Point3D LeftFoot
         {
             get { return _leftFoot; }
@@ -385,7 +402,6 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private Point3D _rightFoot;
         public Point3D RightFoot
         {
             get { return _rightFoot; }
@@ -411,48 +427,34 @@ namespace Kinect.Semaphore.ViewModels
             return false;
         }
 
-        public UserViewModel(int id)
-            : this(new User(id))
-        {
-        }
-
-        public UserViewModel(User user)
-        {
-            _user = user;
-            _user.Updated += _user_Updated;
-            _dispatchtimer = new DispatcherTimer();
-            _dispatchtimer.Interval = TimeSpan.FromMilliseconds(1);
-            _dispatchtimer.Tick += _dispatchtimer_Tick;
-        }
-
         private void _dispatchtimer_Tick(object sender, EventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                StopWatch = DateTime.Now - _StartDateTime;
-                //StopWatch += TimeSpan.FromMilliseconds(1);
-            });
+                                                      {
+                                                          StopWatch = DateTime.Now - _StartDateTime;
+                                                          //StopWatch += TimeSpan.FromMilliseconds(1);
+                                                      });
         }
 
-        private void _user_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
+        private void _user_Updated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
-            var eventProperties = e.Event.GetType().GetProperties();
-            var thisType = this.GetType();
+            PropertyInfo[] eventProperties = e.Event.GetType().GetProperties();
+            Type thisType = GetType();
 
             eventProperties.AsParallel().ForAll(pi =>
-            {
-                var prop = thisType.GetProperty(pi.Name);
-                if (prop != null && prop.CanWrite)
-                {
-                    var propValue = pi.GetValue(e.Event, null);
-                    object newValue = propValue;
-                    if (pi.PropertyType == typeof(Point3D))
-                    {
-                        newValue = ((Point3D)propValue);
-                    }
-                    prop.SetValue(this, newValue, null);
-                }
-            });
+                                                    {
+                                                        PropertyInfo prop = thisType.GetProperty(pi.Name);
+                                                        if (prop != null && prop.CanWrite)
+                                                        {
+                                                            object propValue = pi.GetValue(e.Event, null);
+                                                            object newValue = propValue;
+                                                            if (pi.PropertyType == typeof (Point3D))
+                                                            {
+                                                                newValue = ((Point3D) propValue);
+                                                            }
+                                                            prop.SetValue(this, newValue, null);
+                                                        }
+                                                    });
         }
 
         internal void AddSemaphoreTracking()
@@ -470,8 +472,6 @@ namespace Kinect.Semaphore.ViewModels
                 SetStopwatch(Semaphore.IsRunning);
             }
         }
-
-        private DateTime _StartDateTime;
 
         public void SetStopwatch(bool isRunning)
         {
@@ -505,7 +505,8 @@ namespace Kinect.Semaphore.ViewModels
             }
             else if (_calibrationCounter == 0)
             {
-                AddSelfTouchGesture(FilterHelper.CalculateCorrection(new List<Point3D>() { _user.LeftHand, _user.RightShoulder }));
+                AddSelfTouchGesture(
+                    FilterHelper.CalculateCorrection(new List<Point3D> {_user.LeftHand, _user.RightShoulder}));
                 CalibrationText = "Saving";
             }
             else
@@ -517,7 +518,8 @@ namespace Kinect.Semaphore.ViewModels
 
         private void AddSelfTouchGesture(Point3D correction)
         {
-            _user.AddSelfTouchGesture(correction, JointID.HandLeft, JointID.ShoulderRight).SelfTouchDetected += SelfTouch;
+            _user.AddSelfTouchGesture(correction, JointID.HandLeft, JointID.ShoulderRight).SelfTouchDetected +=
+                SelfTouch;
             Trace.Write(string.Format("Correction {0}", correction.GetDebugString()));
         }
 
@@ -537,32 +539,33 @@ namespace Kinect.Semaphore.ViewModels
 
         private void _semaphoreGesture_SemafoorDetected(object sender, KinectSemaphoreGestureEventArgs e)
         {
-            var detected = e.Semafoor;
+            Core.Gestures.Model.Semaphore detected = e.Semafoor;
             Semaphore.SemaphoreDetected(detected);
         }
 
         public void LogToFile()
         {
-            using (System.IO.StreamWriter writer = new System.IO.StreamWriter("c:/temp/user.log"))
+            using (var writer = new StreamWriter("c:/temp/user.log"))
             {
-                writer.WriteLine("Head:\t\t{0}\t{1}\t{2}", this.Head.X, this.Head.Y, this.Head.Z);
-                writer.WriteLine("LeftAnkle:\t\t{0}\t{1}\t{2}", this.Neck.X, this.Neck.Y, this.Neck.Z);
-                writer.WriteLine("LeftShoulder:\t\t{0}\t{1}\t{2}", this.LeftShoulder.X, this.LeftShoulder.Y, this.LeftShoulder.Z);
-                writer.WriteLine("RightShoulder:\t\t{0}\t{1}\t{2}", this.RightShoulder.X, this.RightShoulder.Y, this.RightShoulder.Z);
-                writer.WriteLine("Torso:\t\t{0}\t{1}\t{2}", this.Torso.X, this.Torso.Y, this.Torso.Z);
-                writer.WriteLine("Waist:\t\t{0}\t{1}\t{2}", this.Waist.X, this.Waist.Y, this.Waist.Z);
-                writer.WriteLine("LeftElbow:\t\t{0}\t{1}\t{2}", this.LeftElbow.X, this.LeftElbow.Y, this.LeftElbow.Z);
-                writer.WriteLine("RightElbow:\t\t{0}\t{1}\t{2}", this.RightElbow.X, this.RightElbow.Y, this.RightElbow.Z);
-                writer.WriteLine("LeftHand:\t\t{0}\t{1}\t{2}", this.LeftHand.X, this.LeftHand.Y, this.LeftHand.Z);
-                writer.WriteLine("RightHand:\t\t{0}\t{1}\t{2}", this.RightHand.X, this.RightHand.Y, this.RightHand.Z);
-                writer.WriteLine("LeftFingertip:\t\t{0}\t{1}\t{2}", this.LeftFingertip.X, this.LeftFingertip.Y, this.LeftFingertip.Z);
-                writer.WriteLine("RightFingertip:\t\t{0}\t{1}\t{2}", this.RightFingertip.X, this.RightFingertip.Y, this.RightFingertip.Z);
-                writer.WriteLine("LeftHip:\t\t{0}\t{1}\t{2}", this.LeftHip.X, this.LeftHip.Y, this.LeftHip.Z);
-                writer.WriteLine("RightHip:\t\t{0}\t{1}\t{2}", this.RightHip.X, this.RightHip.Y, this.RightHip.Z);
-                writer.WriteLine("LeftKnee:\t\t{0}\t{1}\t{2}", this.LeftKnee.X, this.LeftKnee.Y, this.LeftKnee.Z);
-                writer.WriteLine("RightKnee:\t\t{0}\t{1}\t{2}", this.RightKnee.X, this.RightKnee.Y, this.RightKnee.Z);
-                writer.WriteLine("LeftFoot:\t\t{0}\t{1}\t{2}", this.LeftFoot.X, this.LeftFoot.Y, this.LeftFoot.Z);
-                writer.WriteLine("RightFoot:\t\t{0}\t{1}\t{2}", this.RightFoot.X, this.RightFoot.Y, this.RightFoot.Z);
+                writer.WriteLine("Head:\t\t{0}\t{1}\t{2}", Head.X, Head.Y, Head.Z);
+                writer.WriteLine("LeftAnkle:\t\t{0}\t{1}\t{2}", Neck.X, Neck.Y, Neck.Z);
+                writer.WriteLine("LeftShoulder:\t\t{0}\t{1}\t{2}", LeftShoulder.X, LeftShoulder.Y, LeftShoulder.Z);
+                writer.WriteLine("RightShoulder:\t\t{0}\t{1}\t{2}", RightShoulder.X, RightShoulder.Y, RightShoulder.Z);
+                writer.WriteLine("Torso:\t\t{0}\t{1}\t{2}", Torso.X, Torso.Y, Torso.Z);
+                writer.WriteLine("Waist:\t\t{0}\t{1}\t{2}", Waist.X, Waist.Y, Waist.Z);
+                writer.WriteLine("LeftElbow:\t\t{0}\t{1}\t{2}", LeftElbow.X, LeftElbow.Y, LeftElbow.Z);
+                writer.WriteLine("RightElbow:\t\t{0}\t{1}\t{2}", RightElbow.X, RightElbow.Y, RightElbow.Z);
+                writer.WriteLine("LeftHand:\t\t{0}\t{1}\t{2}", LeftHand.X, LeftHand.Y, LeftHand.Z);
+                writer.WriteLine("RightHand:\t\t{0}\t{1}\t{2}", RightHand.X, RightHand.Y, RightHand.Z);
+                writer.WriteLine("LeftFingertip:\t\t{0}\t{1}\t{2}", LeftFingertip.X, LeftFingertip.Y, LeftFingertip.Z);
+                writer.WriteLine("RightFingertip:\t\t{0}\t{1}\t{2}", RightFingertip.X, RightFingertip.Y,
+                                 RightFingertip.Z);
+                writer.WriteLine("LeftHip:\t\t{0}\t{1}\t{2}", LeftHip.X, LeftHip.Y, LeftHip.Z);
+                writer.WriteLine("RightHip:\t\t{0}\t{1}\t{2}", RightHip.X, RightHip.Y, RightHip.Z);
+                writer.WriteLine("LeftKnee:\t\t{0}\t{1}\t{2}", LeftKnee.X, LeftKnee.Y, LeftKnee.Z);
+                writer.WriteLine("RightKnee:\t\t{0}\t{1}\t{2}", RightKnee.X, RightKnee.Y, RightKnee.Z);
+                writer.WriteLine("LeftFoot:\t\t{0}\t{1}\t{2}", LeftFoot.X, LeftFoot.Y, LeftFoot.Z);
+                writer.WriteLine("RightFoot:\t\t{0}\t{1}\t{2}", RightFoot.X, RightFoot.Y, RightFoot.Z);
             }
         }
     }

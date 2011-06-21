@@ -16,17 +16,14 @@ namespace Kinect.Core.Gestures.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(this._name))
+                if (string.IsNullOrEmpty(_name))
                 {
-                    this.Name = this.Char.ToString();
+                    Name = Char.ToString();
                 }
 
-                return this._name;
+                return _name;
             }
-            internal set
-            {
-                this._name = value;
-            }
+            internal set { _name = value; }
         }
 
         /// <summary>
@@ -44,6 +41,24 @@ namespace Kinect.Core.Gestures.Model
         /// </summary>
         public int RightAngle { get; internal set; }
 
+        #region ICopyAble<Semaphore> Members
+
+        /// <summary>
+        /// Creates the copy.
+        /// </summary>
+        /// <returns></returns>
+        public Semaphore CreateCopy()
+        {
+            var sem = new Semaphore();
+            sem.Char = Char;
+            sem.Name = Name;
+            sem.LeftAngle = LeftAngle;
+            sem.RightAngle = RightAngle;
+            return sem;
+        }
+
+        #endregion
+
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
         /// </summary>
@@ -58,7 +73,7 @@ namespace Kinect.Core.Gestures.Model
                 return false;
             }
 
-            return this.Equals(obj as Semaphore);
+            return Equals(obj as Semaphore);
         }
 
         /// <summary>
@@ -70,7 +85,7 @@ namespace Kinect.Core.Gestures.Model
         {
             if (null != sem)
             {
-                var equals = sem.Char == this.Char;
+                bool equals = sem.Char == Char;
                 return equals;
             }
 
@@ -85,7 +100,7 @@ namespace Kinect.Core.Gestures.Model
         /// </returns>
         public override string ToString()
         {
-            return string.Format("{0}: Left: {1} | Right: {2}", this.Char, this.LeftAngle, this.RightAngle);
+            return string.Format("{0}: Left: {1} | Right: {2}", Char, LeftAngle, RightAngle);
         }
 
         /// <summary>
@@ -97,20 +112,6 @@ namespace Kinect.Core.Gestures.Model
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        /// <summary>
-        /// Creates the copy.
-        /// </summary>
-        /// <returns></returns>
-        public Semaphore CreateCopy()
-        {
-            Semaphore sem = new Semaphore();
-            sem.Char = this.Char;
-            sem.Name = this.Name;
-            sem.LeftAngle = this.LeftAngle;
-            sem.RightAngle = this.RightAngle;
-            return sem;
         }
     }
 }

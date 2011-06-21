@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using System;
-
     /// <summary>
     ///   Univariate generic discrete distribution, also referred as the
     ///   Categorical distribution.
@@ -29,15 +29,14 @@ namespace Accord.Statistics.Distributions.Univariate
     [Serializable]
     public class GeneralDiscreteDistribution : UnivariateDiscreteDistribution
     {
-
         // distribution parameters
-        private int start;
-        private double[] probabilities;
 
         // distribution measures
-        private double? mean;
-        private double? variance;
         private double? entropy;
+        private double? mean;
+        private double[] probabilities;
+        private int start;
+        private double? variance;
 
 
         /// <summary>
@@ -82,11 +81,11 @@ namespace Accord.Statistics.Distributions.Univariate
         public GeneralDiscreteDistribution(int start, int symbols)
         {
             this.start = start;
-            this.probabilities = new double[symbols];
+            probabilities = new double[symbols];
 
             // Initialize with uniform distribution
             for (int i = 0; i < symbols; i++)
-                probabilities[i] = 1.0 / symbols;
+                probabilities[i] = 1.0/symbols;
         }
 
         /// <summary>
@@ -155,7 +154,7 @@ namespace Accord.Statistics.Distributions.Univariate
                 {
                     mean = start;
                     for (int i = 0; i < probabilities.Length; i++)
-                        mean += i * probabilities[i];
+                        mean += i*probabilities[i];
                 }
                 return mean.Value;
             }
@@ -174,7 +173,7 @@ namespace Accord.Statistics.Distributions.Univariate
                     for (int i = 0; i < probabilities.Length; i++)
                     {
                         double d = i + start - mean.Value;
-                        variance += probabilities[i] * (d * d);
+                        variance += probabilities[i]*(d*d);
                     }
                 }
                 return variance.Value;
@@ -193,7 +192,7 @@ namespace Accord.Statistics.Distributions.Univariate
                 {
                     entropy = 0.0;
                     for (int i = 0; i < probabilities.Length; i++)
-                        entropy -= probabilities[i] * System.Math.Log(probabilities[i]);
+                        entropy -= probabilities[i]*System.Math.Log(probabilities[i]);
                 }
                 return entropy.Value;
             }
@@ -269,10 +268,10 @@ namespace Accord.Statistics.Distributions.Univariate
             if (observations.Length != weights.Length)
                 throw new ArgumentException("The weight vector should have the same size as the observations", "weights");
 
-            double[] p = new double[probabilities.Length];
+            var p = new double[probabilities.Length];
             for (int i = 0; i < observations.Length; i++)
             {
-                int j = (int)observations[i];
+                var j = (int) observations[i];
                 p[j] += weights[i];
             }
 
@@ -287,9 +286,9 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         public override object Clone()
         {
-            GeneralDiscreteDistribution c = new GeneralDiscreteDistribution();
-            
-            c.probabilities = (double[])probabilities.Clone();
+            var c = new GeneralDiscreteDistribution();
+
+            c.probabilities = (double[]) probabilities.Clone();
             c.start = start;
             c.mean = mean;
             c.entropy = entropy;

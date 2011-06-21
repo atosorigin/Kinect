@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Multivariate
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///   Multinomial probability distribution.
     /// </summary>
@@ -41,14 +41,14 @@ namespace Accord.Statistics.Distributions.Multivariate
     public class MultinomialDistribution : MultivariateDiscreteDistribution
     {
         // distribution parameters
-        private int N;
-        private double[] probabilities;
+        private readonly int N;
 
         // derived measures
-        private double nfac;
+        private readonly double nfac;
+        private readonly double[] probabilities;
+        private double[,] covariance;
         private double[] mean;
         private double[] variance;
-        private double[,] covariance;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MultinomialDistribution"/> class.
@@ -58,10 +58,10 @@ namespace Accord.Statistics.Distributions.Multivariate
         public MultinomialDistribution(int numberOfTrials, params double[] probabilities)
             : base(probabilities.Length)
         {
-            this.N = numberOfTrials;
+            N = numberOfTrials;
             this.probabilities = probabilities;
 
-            this.nfac = Accord.Math.Special.Factorial(numberOfTrials);
+            nfac = Special.Factorial(numberOfTrials);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Accord.Statistics.Distributions.Multivariate
                 {
                     mean = new double[probabilities.Length];
                     for (int i = 0; i < mean.Length; i++)
-                        mean[i] = N * probabilities[i];
+                        mean[i] = N*probabilities[i];
                 }
 
                 return mean;
@@ -109,7 +109,7 @@ namespace Accord.Statistics.Distributions.Multivariate
                 {
                     variance = new double[probabilities.Length];
                     for (int i = 0; i < variance.Length; i++)
-                        variance[i] = -N * probabilities[i] * (1.0 - probabilities[i]);
+                        variance[i] = -N*probabilities[i]*(1.0 - probabilities[i]);
                 }
 
                 return variance;
@@ -126,10 +126,10 @@ namespace Accord.Statistics.Distributions.Multivariate
                 if (covariance == null)
                 {
                     int k = probabilities.Length;
-                    covariance = new double[k, k];
+                    covariance = new double[k,k];
                     for (int i = 0; i < k; i++)
                         for (int j = 0; j < k; j++)
-                            covariance[i, j] = -N * probabilities[j] * probabilities[i];
+                            covariance[i, j] = -N*probabilities[j]*probabilities[i];
                 }
 
                 return covariance;
@@ -173,11 +173,11 @@ namespace Accord.Statistics.Distributions.Multivariate
             double prod = 1.0;
             for (int i = 0; i < x.Length; i++)
             {
-                theta *= Accord.Math.Special.Factorial(x[i]);
+                theta *= Special.Factorial(x[i]);
                 prod *= System.Math.Pow(probabilities[i], x[i]);
             }
 
-            return (nfac / theta) * prod;
+            return (nfac/theta)*prod;
         }
 
         /// <summary>
@@ -190,13 +190,13 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </returns>
         public override IDistribution Fit(double[][] observations, double[] weights)
         {
-            double[] pi = new double[probabilities.Length];
+            var pi = new double[probabilities.Length];
             double size = weights.Length;
 
             for (int c = 0; c < probabilities.Length; c++)
             {
                 for (int i = 0; i < observations.Length; i++)
-                    pi[c] += observations[i][c] * weights[i] * size;
+                    pi[c] += observations[i][c]*weights[i]*size;
                 pi[c] /= N;
             }
 

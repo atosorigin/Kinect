@@ -7,14 +7,14 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+
 namespace Accord.Math.Formats
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Globalization;
-
     /// <summary>
     ///   Defines how matrices are formatted and displayed, depending on the
     ///   chosen format representation.
@@ -22,6 +22,7 @@ namespace Accord.Math.Formats
     /// 
     public class MatrixFormatter : ICustomFormatter
     {
+        #region ICustomFormatter Members
 
         /// <summary>
         ///   Converts the value of a specified object to an equivalent string
@@ -40,8 +41,8 @@ namespace Accord.Math.Formats
         /// 
         public string Format(string format, object arg, IFormatProvider formatProvider)
         {
-            IMatrixFormatProvider provider = formatProvider as IMatrixFormatProvider;
-            Array obj = arg as Array;
+            var provider = formatProvider as IMatrixFormatProvider;
+            var obj = arg as Array;
 
             // Check if the user has provided the correct format provider
             // for a matrix or if the argument is indeed an array (matrix)
@@ -56,9 +57,10 @@ namespace Accord.Math.Formats
             }
         }
 
-
+        #endregion
 
         #region Static methods for output formatting
+
         /// <summary>
         ///   Converts a jagged or multidimensional array into a <a cref="System.String">System.String</a> representation.
         /// </summary>
@@ -88,7 +90,7 @@ namespace Accord.Math.Formats
 
 
             // Initialize the matrix construction
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(formatProvider.FormatMatrixStart);
 
 
@@ -102,7 +104,8 @@ namespace Accord.Math.Formats
                 if (matrix.Rank == 1)
                 {
                     #region Process row for jagged arrays
-                    Array row = (Array)matrix.GetValue(i);
+
+                    var row = (Array) matrix.GetValue(i);
                     cols = row.Length;
 
                     // For each column
@@ -112,6 +115,7 @@ namespace Accord.Math.Formats
 
                         if (j < cols - 1) sb.Append(formatProvider.FormatColDelimiter);
                     }
+
                     #endregion
                 }
                 else
@@ -125,6 +129,7 @@ namespace Accord.Math.Formats
 
                         if (j < cols - 1) sb.Append(formatProvider.FormatColDelimiter);
                     }
+
                     #endregion
                 }
 
@@ -201,13 +206,16 @@ namespace Accord.Math.Formats
                 switch (options[0])
                 {
                     case "Mn":
-                        newline = "\n"; break;
+                        newline = "\n";
+                        break;
 
                     case "Mnr":
-                        newline = "\n\r"; break;
+                        newline = "\n\r";
+                        break;
 
                     case "Ms":
-                        newline = String.Empty; break;
+                        newline = String.Empty;
+                        break;
 
                     default:
                         newline = String.Empty;
@@ -229,7 +237,7 @@ namespace Accord.Math.Formats
         {
             try
             {
-                IFormattable obj = arg as IFormattable;
+                var obj = arg as IFormattable;
                 if (obj != null && format != null && format.Length > 0)
                 {
                     return obj.ToString(format, culture);
@@ -244,14 +252,14 @@ namespace Accord.Math.Formats
                 throw new FormatException(String.Format("The format of '{0}' is invalid.", format), e);
             }
 
-            return String.Empty; ;
+            return String.Empty;
+            ;
         }
 
         #endregion
 
-
-
         #region Static methods for input parsing
+
         /// <summary>
         ///   Converts a matrix represented in a System.String into a jagged array.
         /// </summary>
@@ -266,8 +274,8 @@ namespace Accord.Math.Formats
             str = str.Remove(str.Length - provider.ParseMatrixEnd.Length, provider.ParseMatrixEnd.Length);
 
             // Now split rows
-            string[] strRows = str.Split(new string[] { provider.ParseRowDelimiter }, StringSplitOptions.RemoveEmptyEntries);
-            List<double[]> rows = new List<double[]>();
+            string[] strRows = str.Split(new[] {provider.ParseRowDelimiter}, StringSplitOptions.RemoveEmptyEntries);
+            var rows = new List<double[]>();
 
             foreach (string strRow in strRows)
             {
@@ -280,8 +288,8 @@ namespace Accord.Math.Formats
                     row = row.Remove(row.Length - provider.ParseRowEnd.Length, provider.ParseRowEnd.Length);
 
                 // Now split rows values
-                string[] strCols = row.Split(new string[] { provider.ParseColDelimiter }, StringSplitOptions.RemoveEmptyEntries);
-                List<double> values = new List<double>();
+                string[] strCols = row.Split(new[] {provider.ParseColDelimiter}, StringSplitOptions.RemoveEmptyEntries);
+                var values = new List<double>();
 
                 foreach (string strCol in strCols)
                 {
@@ -309,11 +317,9 @@ namespace Accord.Math.Formats
         /// 
         public static double[,] ParseMultidimensional(string str, IMatrixFormatProvider provider)
         {
-            return Matrix.ToMatrix(ParseJagged(str, provider));
+            return ParseJagged(str, provider).ToMatrix();
         }
-       
+
         #endregion
-
-
     }
 }

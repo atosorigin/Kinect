@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using GalaSoft.MvvmLight;
 using Kinect.Semaphore.Models;
 
@@ -6,11 +7,20 @@ namespace Kinect.Semaphore.ViewModels
 {
     public class SemaphoreViewModel : ViewModelBase
     {
-        private SemaphoreGame _game;
+        private readonly SemaphoreGame _game;
 
-        private System.Windows.Visibility _winner;
-        
         private bool _isRunning;
+        private Visibility _winner;
+
+        public SemaphoreViewModel()
+        {
+            _game = SemaphoreGames.Instance.GetNextGame();
+            _winner = Visibility.Hidden;
+            _game.Start += _game_Start;
+            _game.Updated += _game_Updated;
+            _game.Finished += _game_Finished;
+        }
+
         public bool IsRunning
         {
             get { return _isRunning; }
@@ -39,7 +49,7 @@ namespace Kinect.Semaphore.ViewModels
             get { return _game.GetTodoSentence(); }
         }
 
-        public System.Windows.Visibility Winner
+        public Visibility Winner
         {
             get { return _winner; }
             set
@@ -50,15 +60,6 @@ namespace Kinect.Semaphore.ViewModels
                     RaisePropertyChanged("Winner");
                 }
             }
-        }
-
-        public SemaphoreViewModel()
-        {
-            _game = SemaphoreGames.Instance.GetNextGame();
-            _winner = System.Windows.Visibility.Hidden;
-            _game.Start += _game_Start;
-            _game.Updated += _game_Updated;
-            _game.Finished += _game_Finished;
         }
 
         private void _game_Start(object sender, EventArgs e)
@@ -77,7 +78,7 @@ namespace Kinect.Semaphore.ViewModels
         private void _game_Finished(object sender, EventArgs e)
         {
             IsRunning = false;
-            Winner = System.Windows.Visibility.Visible;
+            Winner = Visibility.Visible;
         }
 
         public void SemaphoreDetected(Core.Gestures.Model.Semaphore Semaphore)

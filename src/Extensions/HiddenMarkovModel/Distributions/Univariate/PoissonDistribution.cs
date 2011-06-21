@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///   Poisson probability distribution.
     /// </summary>
@@ -35,10 +35,10 @@ namespace Accord.Statistics.Distributions.Univariate
     public class PoissonDistribution : UnivariateDiscreteDistribution
     {
         // distribution parameters
-        private double lambda;
 
         // derived values
-        private double epml;
+        private readonly double epml;
+        private readonly double lambda;
 
         // distribution measures
         private double? entropy;
@@ -51,7 +51,7 @@ namespace Accord.Statistics.Distributions.Univariate
         public PoissonDistribution(double lambda)
         {
             this.lambda = lambda;
-            this.epml = System.Math.Exp(-lambda);
+            epml = System.Math.Exp(-lambda);
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace Accord.Statistics.Distributions.Univariate
             {
                 if (entropy == null)
                 {
-                    entropy = 0.5 * System.Math.Log(2.0 * System.Math.PI * lambda)
-                        - 1 / (12 * lambda)
-                        - 1 / (24 * lambda * lambda)
-                        - 19 / (360 * lambda * lambda * lambda);
+                    entropy = 0.5*System.Math.Log(2.0*System.Math.PI*lambda)
+                              - 1/(12*lambda)
+                              - 1/(24*lambda*lambda)
+                              - 19/(360*lambda*lambda*lambda);
                 }
 
                 return entropy.Value;
@@ -106,7 +106,7 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </remarks>
         public override double DistributionFunction(int x)
         {
-            return Special.Igam(x + 1, lambda) / Special.Factorial(x);
+            return Special.Igam(x + 1, lambda)/Special.Factorial(x);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Accord.Statistics.Distributions.Univariate
         ///   
         public override double ProbabilityMassFunction(int x)
         {
-            return (System.Math.Pow(lambda, x) / Special.Factorial(x)) * epml;
+            return (System.Math.Pow(lambda, x)/Special.Factorial(x))*epml;
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </returns>
         public override IDistribution Fit(double[] observations, double[] weights)
         {
-            double mean = Accord.Statistics.Tools.Mean(observations, weights);
+            double mean = observations.Mean(weights);
             return new PoissonDistribution(mean);
         }
 

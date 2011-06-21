@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Topology
 {
-    using System;
-
     /// <summary>
     ///   Custom Topology for Hidden Markov Model.
     /// </summary>
@@ -44,10 +44,9 @@ namespace Accord.Statistics.Models.Markov.Topology
     [Serializable]
     public class Custom : ITopology
     {
-
-        private int states;
-        private double[] pi;
-        private double[,] transitions;
+        private readonly double[] pi;
+        private readonly int states;
+        private readonly double[,] transitions;
 
         /// <summary>
         ///   Creates a new custom topology with user-defined
@@ -76,23 +75,15 @@ namespace Accord.Statistics.Models.Markov.Topology
             if (initial.Length != transitions.GetLength(0))
             {
                 throw new ArgumentException(
-                     "Initial probabilities should have the same length as the number of states in the transition matrix.",
-                     "initial");
+                    "Initial probabilities should have the same length as the number of states in the transition matrix.",
+                    "initial");
             }
 
-            this.states = transitions.GetLength(0);
+            states = transitions.GetLength(0);
             this.transitions = transitions;
-            this.pi = initial;
+            pi = initial;
         }
 
-
-        /// <summary>
-        ///   Gets the number of states in this topology.
-        /// </summary>
-        public int States
-        {
-            get { return states; }
-        }
 
         /// <summary>
         ///   Gets the initial state probabilities.
@@ -110,6 +101,15 @@ namespace Accord.Statistics.Models.Markov.Topology
             get { return transitions; }
         }
 
+        #region ITopology Members
+
+        /// <summary>
+        ///   Gets the number of states in this topology.
+        /// </summary>
+        public int States
+        {
+            get { return states; }
+        }
 
 
         /// <summary>
@@ -118,10 +118,11 @@ namespace Accord.Statistics.Models.Markov.Topology
         /// </summary>
         public int Create(out double[,] transitionMatrix, out double[] initialState)
         {
-            transitionMatrix = (double[,])transitions.Clone();
-            initialState = (double[])pi.Clone();
+            transitionMatrix = (double[,]) transitions.Clone();
+            initialState = (double[]) pi.Clone();
             return states;
         }
 
+        #endregion
     }
 }

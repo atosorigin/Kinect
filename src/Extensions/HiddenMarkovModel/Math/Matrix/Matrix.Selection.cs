@@ -7,19 +7,18 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using AForge;
+
 namespace Accord.Math
 {
-    using System;
-    using System.Collections.Generic;
-    using AForge;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
         #region Submatrix
 
         /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
@@ -44,7 +43,7 @@ namespace Accord.Math
                 throw new ArgumentException("Argument out of range.");
             }
 
-            T[,] X = new T[endRow - startRow + 1, endColumn - startColumn + 1];
+            var X = new T[endRow - startRow + 1,endColumn - startColumn + 1];
             for (int i = startRow; i <= endRow; i++)
             {
                 for (int j = startColumn; j <= endColumn; j++)
@@ -72,7 +71,7 @@ namespace Accord.Math
                 columnIndexes = Indexes(0, data.GetLength(1));
 
 
-            T[,] X = new T[rowIndexes.Length, columnIndexes.Length];
+            var X = new T[rowIndexes.Length,columnIndexes.Length];
 
             for (int i = 0; i < rowIndexes.Length; i++)
             {
@@ -99,7 +98,7 @@ namespace Accord.Math
         /// </remarks>
         public static T[,] Submatrix<T>(this T[,] data, int[] rowIndexes)
         {
-            T[,] X = new T[rowIndexes.Length, data.GetLength(1)];
+            var X = new T[rowIndexes.Length,data.GetLength(1)];
 
             for (int i = 0; i < rowIndexes.Length; i++)
             {
@@ -125,7 +124,7 @@ namespace Accord.Math
         /// </remarks>
         public static T[] Submatrix<T>(this T[] data, int[] indexes)
         {
-            T[] X = new T[indexes.Length];
+            var X = new T[indexes.Length];
 
             for (int i = 0; i < indexes.Length; i++)
             {
@@ -144,7 +143,7 @@ namespace Accord.Math
         /// </remarks>
         public static T[] Submatrix<T>(this T[] data, int i0, int i1)
         {
-            T[] X = new T[i1 - i0 + 1];
+            var X = new T[i1 - i0 + 1];
 
             for (int i = i0; i <= i1; i++)
             {
@@ -163,7 +162,7 @@ namespace Accord.Math
             if (first < 1 || first > data.Length)
                 throw new ArgumentOutOfRangeException("first");
 
-            return Submatrix<T>(data, 0, first - 1);
+            return Submatrix(data, 0, first - 1);
         }
 
         /// <summary>Returns a sub matrix extracted from the current matrix.</summary>
@@ -182,7 +181,7 @@ namespace Accord.Math
                 throw new ArgumentException("Argument out of range.");
             }
 
-            T[,] X = new T[i1 - i0 + 1, c.Length];
+            var X = new T[i1 - i0 + 1,c.Length];
 
             for (int i = i0; i <= i1; i++)
             {
@@ -219,7 +218,7 @@ namespace Accord.Math
             if (rowIndexes == null)
                 rowIndexes = Indexes(0, data.GetLength(0));
 
-            T[,] X = new T[rowIndexes.Length, j1 - j0 + 1];
+            var X = new T[rowIndexes.Length,j1 - j0 + 1];
 
             for (int i = 0; i < rowIndexes.Length; i++)
             {
@@ -256,7 +255,7 @@ namespace Accord.Math
             if (rowIndexes == null)
                 rowIndexes = Indexes(0, data.GetLength(0));
 
-            T[][] X = new T[rowIndexes.Length][];
+            var X = new T[rowIndexes.Length][];
 
             for (int i = 0; i < rowIndexes.Length; i++)
             {
@@ -295,7 +294,7 @@ namespace Accord.Math
             if (columnIndexes == null)
                 columnIndexes = Indexes(0, data[0].Length);
 
-            T[][] X = new T[i1 - i0 + 1][];
+            var X = new T[i1 - i0 + 1][];
 
             for (int i = i0; i <= i1; i++)
             {
@@ -314,8 +313,8 @@ namespace Accord.Math
 
             return X;
         }
-        #endregion
 
+        #endregion
 
         #region Row and column getters and setters
 
@@ -324,7 +323,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] GetColumn<T>(this T[,] m, int index)
         {
-            T[] column = new T[m.GetLength(0)];
+            var column = new T[m.GetLength(0)];
 
             for (int i = 0; i < column.Length; i++)
                 column[i] = m[i, index];
@@ -337,7 +336,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] GetColumn<T>(this T[][] m, int index)
         {
-            T[] column = new T[m.Length];
+            var column = new T[m.Length];
 
             for (int i = 0; i < column.Length; i++)
                 column[i] = m[i][index];
@@ -361,7 +360,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] GetRow<T>(this T[,] m, int index)
         {
-            T[] row = new T[m.GetLength(1)];
+            var row = new T[m.GetLength(1)];
 
             for (int i = 0; i < row.Length; i++)
                 row[i] = m[index, i];
@@ -379,8 +378,8 @@ namespace Accord.Math
 
             return m;
         }
-        #endregion
 
+        #endregion
 
         #region Row and column insertion and removal
 
@@ -389,7 +388,7 @@ namespace Accord.Math
         /// </summary>
         public static T[][] RemoveColumn<T>(this T[][] m, int index)
         {
-            T[][] X = new T[m.Length][];
+            var X = new T[m.Length][];
 
             for (int i = 0; i < m.Length; i++)
             {
@@ -414,7 +413,7 @@ namespace Accord.Math
             int rows = m.GetLength(0);
             int cols = m.GetLength(1);
 
-            T[,] X = new T[rows, cols + 1];
+            var X = new T[rows,cols + 1];
 
             for (int i = 0; i < rows; i++)
             {
@@ -449,7 +448,7 @@ namespace Accord.Math
             int rows = m.GetLength(0);
             int cols = m.GetLength(1);
 
-            T[,] X = new T[rows + 1, cols];
+            var X = new T[rows + 1,cols];
 
             for (int i = 0; i < cols; i++)
             {
@@ -475,7 +474,7 @@ namespace Accord.Math
         /// </summary>
         public static T[] RemoveAt<T>(this T[] array, int index)
         {
-            T[] r = new T[array.Length - 1];
+            var r = new T[array.Length - 1];
             for (int i = 0; i < index; i++)
                 r[i] = array[i];
             for (int i = index; i < r.Length; i++)
@@ -483,8 +482,8 @@ namespace Accord.Math
 
             return r;
         }
-        #endregion
 
+        #endregion
 
         #region Element search
 
@@ -511,13 +510,13 @@ namespace Accord.Math
         /// </param>
         public static int[] Find<T>(this T[] data, Func<T, bool> func, bool firstOnly)
         {
-            List<int> idx = new List<int>();
+            var idx = new List<int>();
             for (int i = 0; i < data.Length; i++)
             {
                 if (func(data[i]))
                 {
                     if (firstOnly)
-                        return new int[] { i };
+                        return new[] {i};
                     else idx.Add(i);
                 }
             }
@@ -547,7 +546,7 @@ namespace Accord.Math
         /// </param>
         public static int[][] Find<T>(this T[,] data, Func<T, bool> func, bool firstOnly)
         {
-            List<int[]> idx = new List<int[]>();
+            var idx = new List<int[]>();
             for (int i = 0; i < data.GetLength(0); i++)
             {
                 for (int j = 0; j < data.GetLength(1); j++)
@@ -555,17 +554,18 @@ namespace Accord.Math
                     if (func(data[i, j]))
                     {
                         if (firstOnly)
-                            return new int[][] { new int[] { i, j } };
-                        else idx.Add(new int[] { i, j });
+                            return new[] {new[] {i, j}};
+                        else idx.Add(new[] {i, j});
                     }
                 }
             }
             return idx.ToArray();
         }
+
         #endregion
 
-
         #region Element ranges (maximum and minimum)
+
         /// <summary>
         ///   Gets the maximum element in a vector.
         /// </summary>
@@ -755,7 +755,7 @@ namespace Accord.Math
             else
             {
                 imax = new int[cols];
-                max = (T[])matrix[0].Clone();
+                max = (T[]) matrix[0].Clone();
 
                 for (int j = 0; j < cols; j++)
                 {
@@ -812,7 +812,7 @@ namespace Accord.Math
             else
             {
                 imin = new int[cols];
-                min = (T[])matrix[0].Clone();
+                min = (T[]) matrix[0].Clone();
 
                 for (int j = 0; j < cols; j++)
                 {
@@ -877,7 +877,7 @@ namespace Accord.Math
         /// </summary>
         public static DoubleRange[] Range(double[,] value)
         {
-            DoubleRange[] ranges = new DoubleRange[value.GetLength(1)];
+            var ranges = new DoubleRange[value.GetLength(1)];
 
             for (int j = 0; j < ranges.Length; j++)
             {
@@ -898,8 +898,8 @@ namespace Accord.Math
 
             return ranges;
         }
-        #endregion
 
+        #endregion
 
         /// <summary>
         ///   Sorts the columns of a matrix by sorting keys.
@@ -909,10 +909,10 @@ namespace Accord.Math
         /// <param name="comparer">The comparer to use.</param>
         public static TValue[,] Sort<TKey, TValue>(TKey[] keys, TValue[,] values, IComparer<TKey> comparer)
         {
-            int[] indices = new int[keys.Length];
+            var indices = new int[keys.Length];
             for (int i = 0; i < keys.Length; i++) indices[i] = i;
 
-            Array.Sort<TKey, int>(keys, indices, comparer);
+            Array.Sort(keys, indices, comparer);
 
             return values.Submatrix(0, values.GetLength(0) - 1, indices);
         }

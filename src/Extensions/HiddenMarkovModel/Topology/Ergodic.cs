@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Topology
 {
-    using System;
-
     /// <summary>
     ///   Ergodic (fully-connected) Topology for Hidden Markov Models.
     /// </summary>
@@ -66,37 +66,9 @@ namespace Accord.Statistics.Models.Markov.Topology
     [Serializable]
     public class Ergodic : ITopology
     {
-
-        private int states;
+        private readonly double[] pi;
+        private readonly int states;
         private bool random;
-        private double[] pi;
-
-        /// <summary>
-        ///   Gets the number of states in this topology.
-        /// </summary>
-        public int States
-        {
-            get { return states; }
-        }
-
-        /// <summary>
-        ///   Gets or sets whether the transition matrix
-        ///   should be initialized with random probabilities
-        ///   or not. Default is false.
-        /// </summary>
-        public bool Random
-        {
-            get { return random; }
-            set { random = value; }
-        }
-
-        /// <summary>
-        ///   Gets the initial state probabilities.
-        /// </summary>
-        public double[] Initial
-        {
-            get { return pi; }
-        }
 
 
         /// <summary>
@@ -124,13 +96,41 @@ namespace Accord.Statistics.Models.Markov.Topology
 
             this.states = states;
             this.random = random;
-            this.pi = new double[states];
+            pi = new double[states];
 
             //for (int i = 0; i < pi.Length; i++)
             //    pi[i] = 1.0 / states;
             pi[0] = 1.0;
         }
 
+        /// <summary>
+        ///   Gets or sets whether the transition matrix
+        ///   should be initialized with random probabilities
+        ///   or not. Default is false.
+        /// </summary>
+        public bool Random
+        {
+            get { return random; }
+            set { random = value; }
+        }
+
+        /// <summary>
+        ///   Gets the initial state probabilities.
+        /// </summary>
+        public double[] Initial
+        {
+            get { return pi; }
+        }
+
+        #region ITopology Members
+
+        /// <summary>
+        ///   Gets the number of states in this topology.
+        /// </summary>
+        public int States
+        {
+            get { return states; }
+        }
 
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Accord.Statistics.Models.Markov.Topology
         /// </summary>
         public int Create(out double[,] transitionMatrix, out double[] initialState)
         {
-            double[,] A = new double[States, States];
+            var A = new double[States,States];
 
             if (random)
             {
@@ -149,7 +149,7 @@ namespace Accord.Statistics.Models.Markov.Topology
                 {
                     double sum = 0.0;
                     for (int j = 0; j < states; j++)
-                        sum += A[i, j] = Accord.Math.Tools.Random.NextDouble();
+                        sum += A[i, j] = Math.Tools.Random.NextDouble();
 
                     for (int j = 0; j < states; j++)
                         A[i, j] /= sum;
@@ -161,13 +161,14 @@ namespace Accord.Statistics.Models.Markov.Topology
 
                 for (int i = 0; i < states; i++)
                     for (int j = 0; j < states; j++)
-                        A[i, j] = 1.0 / states;
+                        A[i, j] = 1.0/states;
             }
 
             transitionMatrix = A;
-            initialState = (double[])pi.Clone();
+            initialState = (double[]) pi.Clone();
             return States;
         }
 
+        #endregion
     }
 }

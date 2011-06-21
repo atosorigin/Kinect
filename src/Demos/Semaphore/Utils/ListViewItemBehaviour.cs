@@ -12,7 +12,10 @@ namespace Kinect.Semaphore.Utils
         /// <summary>
         /// Determines if the ListViewItem is bought into view when enabled   
         /// </summary>   
-        public static readonly DependencyProperty IsBroughtIntoViewWhenSelectedProperty = DependencyProperty.RegisterAttached("IsBroughtIntoViewWhenSelected", typeof(bool), typeof(ListViewItemBehaviour), new UIPropertyMetadata(false, OnIsBroughtIntoViewWhenSelectedChanged));
+        public static readonly DependencyProperty IsBroughtIntoViewWhenSelectedProperty =
+            DependencyProperty.RegisterAttached("IsBroughtIntoViewWhenSelected", typeof (bool),
+                                                typeof (ListViewItemBehaviour),
+                                                new UIPropertyMetadata(false, OnIsBroughtIntoViewWhenSelectedChanged));
 
         /// <summary>    
         /// Gets the IsBroughtIntoViewWhenSelected value    
@@ -21,7 +24,7 @@ namespace Kinect.Semaphore.Utils
         /// <returns></returns>
         public static bool GetIsBroughtIntoViewWhenSelected(ListViewItem listViewItem)
         {
-            return (bool)listViewItem.GetValue(IsBroughtIntoViewWhenSelectedProperty);
+            return (bool) listViewItem.GetValue(IsBroughtIntoViewWhenSelectedProperty);
         }
 
         /// <summary>    
@@ -39,9 +42,10 @@ namespace Kinect.Semaphore.Utils
         /// </summary>
         /// <param name="depObj"></param>
         /// <param name="e"></param>
-        static void OnIsBroughtIntoViewWhenSelectedChanged(DependencyObject depObj, DependencyPropertyChangedEventArgs e)
+        private static void OnIsBroughtIntoViewWhenSelectedChanged(DependencyObject depObj,
+                                                                   DependencyPropertyChangedEventArgs e)
         {
-            ListViewItem item = depObj as ListViewItem;
+            var item = depObj as ListViewItem;
             if (item == null)
             {
                 return;
@@ -50,7 +54,7 @@ namespace Kinect.Semaphore.Utils
             {
                 return;
             }
-            if ((bool)e.NewValue)
+            if ((bool) e.NewValue)
             {
                 item.Selected += OnListBoxItemSelected;
             }
@@ -60,17 +64,17 @@ namespace Kinect.Semaphore.Utils
             }
         }
 
-        static void OnListBoxItemSelected(object sender, RoutedEventArgs e)
+        private static void OnListBoxItemSelected(object sender, RoutedEventArgs e)
         {
             // Only react to the Selected event raised by the ListBoxItem         
             // whose IsSelected property was modified.  Ignore all ancestors         
             // who are merely reporting that a descendant's Selected fired.         
-            if (!Object.ReferenceEquals(sender, e.OriginalSource))
+            if (!ReferenceEquals(sender, e.OriginalSource))
             {
                 return;
             }
 
-            ListViewItem item = e.OriginalSource as ListViewItem;
+            var item = e.OriginalSource as ListViewItem;
             if (item != null)
             {
                 item.BringIntoView();

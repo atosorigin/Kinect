@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math.Decompositions;
+
 namespace Accord.Math
 {
-    using System;
-    using Accord.Math.Decompositions;
-
     /// <summary>
     ///   Static class Norm. Defines a set of extension methods defining norms measures.
     /// </summary>
@@ -23,8 +23,8 @@ namespace Accord.Math
         /// </summary>
         public static double Norm1(this double[,] a)
         {
-            double[] columnSums = Matrix.Sum(a, 1);
-            return Matrix.Max(columnSums);
+            double[] columnSums = a.Sum(1);
+            return columnSums.Max();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Accord.Math
         /// </summary>
         public static double Frobenius(this double[,] a)
         {
-            if (a == null) 
+            if (a == null)
                 throw new ArgumentNullException("a");
 
             int rows = a.GetLength(0);
@@ -52,7 +52,7 @@ namespace Accord.Math
                 for (int i = 0; i < rows; i++)
                 {
                     double v = a[i, j];
-                    norm += v * v;
+                    norm += v*v;
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Accord.Math
         {
             float sum = 0.0f;
             for (int i = 0; i < a.Length; i++)
-                sum += a[i] * a[i];
+                sum += a[i]*a[i];
             return sum;
         }
 
@@ -77,7 +77,7 @@ namespace Accord.Math
         {
             double sum = 0.0;
             for (int i = 0; i < a.Length; i++)
-                sum += a[i] * a[i];
+                sum += a[i]*a[i];
             return sum;
         }
 
@@ -86,7 +86,7 @@ namespace Accord.Math
         /// </summary>
         public static float Euclidean(this float[] a)
         {
-            return (float)Math.Sqrt(SquareEuclidean(a));
+            return (float) System.Math.Sqrt(SquareEuclidean(a));
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Accord.Math
         {
             int rows = a.GetLength(0);
             int cols = a.GetLength(1);
-            
+
             double[] norm;
 
             if (dimension == 0)
@@ -125,7 +125,7 @@ namespace Accord.Math
                     for (int i = 0; i < rows; i++)
                     {
                         double v = a[i, j];
-                        sum += v * v;
+                        sum += v*v;
                     }
                     norm[j] = sum;
                 }
@@ -140,7 +140,7 @@ namespace Accord.Math
                     for (int j = 0; j < cols; j++)
                     {
                         double v = a[i, j];
-                        sum += v * v;
+                        sum += v*v;
                     }
                     norm[i] = sum;
                 }
@@ -162,7 +162,7 @@ namespace Accord.Math
         /// </summary>
         public static double[] Euclidean(this double[,] a, int dimension)
         {
-            double[] norm = Norm.SquareEuclidean(a, dimension);
+            double[] norm = a.SquareEuclidean(dimension);
 
             for (int i = 0; i < norm.Length; i++)
                 norm[i] = System.Math.Sqrt(norm[i]);
@@ -190,7 +190,7 @@ namespace Accord.Math
                     for (int i = 0; i < rows; i++)
                     {
                         float v = a[i, j];
-                        sum += v * v;
+                        sum += v*v;
                     }
                     norm[j] = sum;
                 }
@@ -205,7 +205,7 @@ namespace Accord.Math
                     for (int j = 0; j < cols; j++)
                     {
                         float v = a[i, j];
-                        sum += v * v;
+                        sum += v*v;
                     }
                     norm[i] = sum;
                 }
@@ -227,13 +227,12 @@ namespace Accord.Math
         /// </summary>
         public static float[] Euclidean(this float[,] a, int dimension)
         {
-            float[] norm = Norm.SquareEuclidean(a, dimension);
+            float[] norm = a.SquareEuclidean(dimension);
 
             for (int i = 0; i < norm.Length; i++)
-                norm[i] = (float)System.Math.Sqrt(norm[i]);
+                norm[i] = (float) System.Math.Sqrt(norm[i]);
 
             return norm;
         }
-
     }
 }
