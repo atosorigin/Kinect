@@ -12,16 +12,16 @@ This Kinect application framework and demo apps are made by Marco Franssen and J
 Our goal is to create a framework for developers on top of Kinect. This Framework should support easy access to gestures etc. All the demo apps we created to test our framework are included. We would love it when you guys help to extend and improve the framework. Don't forget to add your own demo apps so you can show of all the cool stuff you made to the other developers participating.
 
 #How to fork
-1. Fork the “Kinect” repo
+1. Fork the `Kinect` repo
 Fork the kinect repo by clicking the Fork button on https://github.com/atosorigin/Kinect
 
-2. Clone the “Kinect” project
+2. Clone the `Kinect` project
 Run the following code:
 $ git clone git@github.com:username/Kinect.git
 
 3. Configure remotes
 When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:
-$ cd Spoon-KnifeChanges the active directory in the prompt to the newly cloned "Spoon-Knife" directory
+$ cd Kinect the active directory in the prompt to the newly cloned "Spoon-Knife" directory
 $ git remote add upstream git@github.com:atosorigin/Kinect.git Assigns the original repo to a remote called "upstream"
 $ git fetch upstream
 
