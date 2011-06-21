@@ -9,9 +9,9 @@ namespace Kinect.Plugins.Common
     internal class SinglePointEventArgs : EventArgs
     {
         internal Point3D Point { get; private set; }
-        internal uint UserID { get; private set; }
+        internal int UserID { get; private set; }
 
-        internal SinglePointEventArgs(uint userid, Point3D point)
+        internal SinglePointEventArgs(int userid, Point3D point)
         {
             Point = point;
             UserID = userid;

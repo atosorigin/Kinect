@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using Kinect.Common;
 using System.Diagnostics;
+using Kinect.Core;
 using log4net;
 
 namespace Kinect.Plugins.Common.ViewModels
@@ -268,7 +269,7 @@ namespace Kinect.Plugins.Common.ViewModels
             });
         }
 
-        private void ToggleLaser(uint userId)
+        private void ToggleLaser(int userId)
         {
             if (_laserOwner == -1 || _laserOwner == userId)
             {

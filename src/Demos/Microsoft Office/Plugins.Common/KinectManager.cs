@@ -53,7 +53,6 @@ namespace Kinect.Plugins.Common
             _kinect.UserRemoved += _kinect_UserRemoved;
             _kinect.KinectStarted += _kinect_Started;
             _kinect.KinectStopped += _kinect_Stopped;
-            _kinect.KinectCrashed += _kinect_KinectCrashed;
             _kinect.StartKinect();
         }
 
@@ -92,7 +91,7 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<SinglePointEventArgs> LaserUpdated;
-        private void OnLaserUpdated(uint userid, Point3D point)
+        private void OnLaserUpdated(int userid, Point3D point)
         {
             //TODO: Hier was ik gebleven. Toggle laser aan user binden
             var handler = LaserUpdated;
@@ -103,7 +102,7 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<UserEventArgs> NextSlide;
-        private void OnNextSlide(uint userid)
+        private void OnNextSlide(int userid)
         {
             var handler = NextSlide;
             if (handler != null)
@@ -113,7 +112,7 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<UserEventArgs> PreviousSlide;
-        private void OnPreviousSlide(uint userid)
+        private void OnPreviousSlide(int userid)
         {
             var handler = PreviousSlide;
             if (handler != null)
@@ -123,7 +122,7 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<UserEventArgs> TogglePointer;
-        private void OnTogglePointer(uint userID)
+        private void OnTogglePointer(int userID)
         {
             var handler = TogglePointer;
             if (handler != null)
@@ -153,7 +152,7 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler<UserEventArgs> UserFound;
-        private void OnUserFound(uint id)
+        private void OnUserFound(int id)
         {
             var handler = UserFound;
             if (handler != null)
@@ -163,7 +162,7 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler<UserEventArgs> UserLost;
-        private void OnUserLost(uint id)
+        private void OnUserLost(int id)
         {
             var handler = UserLost;
             if (handler != null)
@@ -268,12 +267,6 @@ namespace Kinect.Plugins.Common
             {
                 StartCalibration(user);
             }
-        }
-
-        private void _kinect_KinectCrashed(object sender, Core.KinectEventArgs e)
-        {
-            CleanUpAfterKinectStopped();
-            MessageBox.Show("Kinect is gecrashed, herstart Kinect");
         }
 
         private void AddUserTouchEvents(User user)

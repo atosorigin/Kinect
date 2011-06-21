@@ -7,8 +7,8 @@ namespace Kinect.Plugins.Common
 {
     public class UserEventArgs : EventArgs
     {
-        public uint UserID { get; private set;}
-        public UserEventArgs(uint userID)
+        public int UserID { get; private set; }
+        public UserEventArgs(int userID)
         {
             UserID = userID;
         }

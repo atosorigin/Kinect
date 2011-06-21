@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using System;
 using System.Windows.Media.Media3D;
+using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Plugins.Common.ViewModels
 {
@@ -11,20 +12,20 @@ namespace Kinect.Plugins.Common.ViewModels
     {
         private const string _calibrationmessage = "Put {0} on {1}";
 
-        public List<xn.SkeletonJoint> AvailebleJoints { get; set; }
+        public List<JointID> AvailebleJoints { get; set; }
 
-        public xn.SkeletonJoint MovePointer { get; set; }
+        public JointID MovePointer { get; set; }
         public bool DefaultEnableMovePointer { get; set; }
-        public xn.SkeletonJoint TogglePointer1 { get; set; }
-        public xn.SkeletonJoint TogglePointer2 { get; set; }
+        public JointID TogglePointer1 { get; set; }
+        public JointID TogglePointer2 { get; set; }
         public bool CalibrateTogglePointer { get; set; }
         public bool EnableTogglePointer { get; set; }
-        public xn.SkeletonJoint NextSlide1 { get; set; }
-        public xn.SkeletonJoint NextSlide2 { get; set; }
+        public JointID NextSlide1 { get; set; }
+        public JointID NextSlide2 { get; set; }
         public bool CalibrateNextSlide { get; set; }
         public bool EnableNextSlide { get; set; }
-        public xn.SkeletonJoint PreviousSlide1 { get; set; }
-        public xn.SkeletonJoint PreviousSlide2 { get; set; }
+        public JointID PreviousSlide1 { get; set; }
+        public JointID PreviousSlide2 { get; set; }
         public bool CalibratePreviousSlide { get; set; }
         public bool EnablePreviousSlide { get; set; }
 
@@ -53,13 +54,13 @@ namespace Kinect.Plugins.Common.ViewModels
 
         public ConfigureKinectViewModel()
         {
-            MovePointer = xn.SkeletonJoint.RightHand;
-            TogglePointer1 = xn.SkeletonJoint.RightHand;
-            TogglePointer2 = xn.SkeletonJoint.Head;
-            NextSlide1 = xn.SkeletonJoint.LeftHand;
-            NextSlide2 = xn.SkeletonJoint.RightShoulder;
-            PreviousSlide1 = xn.SkeletonJoint.RightHand;
-            PreviousSlide2 = xn.SkeletonJoint.LeftShoulder;
+            MovePointer = JointID.HandRight;
+            TogglePointer1 = JointID.HandRight;
+            TogglePointer2 = JointID.Head;
+            NextSlide1 = JointID.HandLeft;
+            NextSlide2 = JointID.ShoulderRight;
+            PreviousSlide1 = JointID.HandRight;
+            PreviousSlide2 = JointID.ShoulderLeft;
             Countdown = 5;
 
             //Calibration
@@ -85,8 +86,8 @@ namespace Kinect.Plugins.Common.ViewModels
 
         private void FillJoints()
         {
-            AvailebleJoints = new List<xn.SkeletonJoint>();
-            foreach (xn.SkeletonJoint joint in Enum.GetValues(typeof(xn.SkeletonJoint)))
+            AvailebleJoints = new List<JointID>();
+            foreach (JointID joint in Enum.GetValues(typeof(JointID)))
             {
                 AvailebleJoints.Add(joint);
             }

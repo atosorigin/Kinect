@@ -36,17 +36,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
-      <HintPath>..\Lib\MvvMLight\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Third Party\MvvMLight\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.WPF4">
-      <HintPath>..\Lib\MvvMLight\GalaSoft.MvvmLight.WPF4.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Third Party\MvvMLight\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <HintPath>..\Lib\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\..\lib\Third Party\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="OpenNI.net, Version=1.0.0.25, Culture=neutral, PublicKeyToken=6b43d0c6cf74ee7f, processorArchitecture=x86">
-      <HintPath>..\Lib\OpenNI.net.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Research.Kinect, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />

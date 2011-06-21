@@ -152,13 +152,13 @@
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
-      <HintPath>..\Lib\MvvMLight\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Third Party\MvvMLight\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.WPF4">
-      <HintPath>..\Lib\MvvMLight\GalaSoft.MvvmLight.WPF4.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Third Party\MvvMLight\GalaSoft.MvvmLight.WPF4.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\Lib\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Third Party\log4net-1.2.10\bin\net\2.0\release\log4net.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
