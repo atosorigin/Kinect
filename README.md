@@ -19,11 +19,11 @@ Fork the kinect repo by clicking the Fork button on https://github.com/atosorigi
 Run the following code:
 $ git clone git@github.com:username/Kinect.git
 
-1. Configure remotes
-When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:
-`$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory
-`$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"
-`$ git fetch upstream`
+1. Configure remotes<br />
+When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:<br />
+`$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory<br />
+`$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"<br />
+`$ git fetch upstream`<br />
 
 1. Pushing
 Pushing is always done to you fork
