@@ -12,7 +12,6 @@ using System.Windows.Media;
 using GalaSoft.MvvmLight.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using Kinect.Common;
 using System.Diagnostics;
 using Kinect.Core;
 using log4net;

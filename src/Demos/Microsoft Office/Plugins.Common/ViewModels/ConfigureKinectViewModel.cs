@@ -7,7 +7,6 @@ using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Plugins.Common.ViewModels
 {
-
     public class ConfigureKinectViewModel : ViewModelBase
     {
         private const string _calibrationmessage = "Put {0} on {1}";
@@ -50,7 +49,6 @@ namespace Kinect.Plugins.Common.ViewModels
                 RaisePropertyChanged("Countdown");
             }
         }
-
 
         public ConfigureKinectViewModel()
         {

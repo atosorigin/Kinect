@@ -2,7 +2,6 @@
 using System.Windows;
 using Kinect.Common;
 using GalaSoft.MvvmLight.Threading;
-using Kinect.Common;
 using Kinect.Core;
 using Kinect.Core.Filters.Helper;
 using Kinect.Core.Gestures;
