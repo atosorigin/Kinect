@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Kinect.Common;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
+﻿using System.Collections.Generic;
+using Microsoft.Research.Kinect.Nui;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using Kinect.Common;
 using System.Windows;
 using log4net;
@@ -20,7 +12,7 @@ namespace Kinect.XNA.User
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(User));
         private Kinect.Core.User _user;
-        private Dictionary<xn.SkeletonJoint, Bodypart> _bodyparts = new Dictionary<xn.SkeletonJoint, Bodypart>();
+        private Dictionary<JointID, Bodypart> _bodyparts = new Dictionary<JointID, Bodypart>();
         private ContentManager _content;
         private Size WindowSize;
 
@@ -36,24 +28,24 @@ namespace Kinect.XNA.User
         
         private void AddBodyParts()
         {
-            _bodyparts.Add(xn.SkeletonJoint.Torso,new Bodypart(_content.Load<Texture2D>("Images/Torso")));
-            _bodyparts.Add(xn.SkeletonJoint.LeftShoulder, new Bodypart(_content.Load<Texture2D>("Images/LeftArm")));
-            _bodyparts.Add(xn.SkeletonJoint.RightShoulder, new Bodypart(_content.Load<Texture2D>("Images/RightArm")));
-            _bodyparts.Add(xn.SkeletonJoint.LeftHip, new Bodypart(_content.Load<Texture2D>("Images/LeftLeg")));
-            _bodyparts.Add(xn.SkeletonJoint.RightHip, new Bodypart(_content.Load<Texture2D>("Images/RightLeg")));
+            _bodyparts.Add(JointID.Spine,new Bodypart(_content.Load<Texture2D>("Images/Torso")));
+            _bodyparts.Add(JointID.ShoulderLeft, new Bodypart(_content.Load<Texture2D>("Images/LeftArm")));
+            _bodyparts.Add(JointID.ShoulderRight, new Bodypart(_content.Load<Texture2D>("Images/RightArm")));
+            _bodyparts.Add(JointID.HipLeft, new Bodypart(_content.Load<Texture2D>("Images/LeftLeg")));
+            _bodyparts.Add(JointID.HipRight, new Bodypart(_content.Load<Texture2D>("Images/RightLeg")));
         }
 
         private void Kinect_User_Updated(object sender, Core.Eventing.ProcessEventArgs<Core.IUserChangedEvent> e)
         {
-            _bodyparts[xn.SkeletonJoint.Torso].LeftPoint = e.Event.Torso.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
-            _log.DebugFormat("{0}:{1}", xn.SkeletonJoint.LeftElbow, _bodyparts[xn.SkeletonJoint.LeftShoulder].LeftPoint);
-            _log.DebugFormat("{0}:{1}", xn.SkeletonJoint.LeftShoulder, _bodyparts[xn.SkeletonJoint.LeftShoulder].RightPoint);
-            //_bodyparts[xn.SkeletonJoint.RightShoulder].LeftTop = e.Event.RightShoulder.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); 
-            //_bodyparts[xn.SkeletonJoint.RightShoulder].RightBottom = e.Event.RightElbow.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); 
-            //_bodyparts[xn.SkeletonJoint.LeftHip].LeftTop = e.Event.LeftHip.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); ;
-            //_bodyparts[xn.SkeletonJoint.LeftHip].RightBottom = e.Event.LeftKnee.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
-            //_bodyparts[xn.SkeletonJoint.RightHip].LeftTop = e.Event.RightHip.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
-            //_bodyparts[xn.SkeletonJoint.RightHip].RightBottom = e.Event.RightKnee.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
+            _bodyparts[JointID.Spine].LeftPoint = e.Event.Torso.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
+            _log.DebugFormat("{0}:{1}", JointID.ElbowLeft, _bodyparts[JointID.ElbowLeft].LeftPoint);
+            _log.DebugFormat("{0}:{1}", JointID.ShoulderLeft, _bodyparts[JointID.ShoulderLeft].RightPoint);
+            //_bodyparts[JointID.RightShoulder].LeftTop = e.Event.RightShoulder.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); 
+            //_bodyparts[JointID.RightShoulder].RightBottom = e.Event.RightElbow.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); 
+            //_bodyparts[JointID.LeftHip].LeftTop = e.Event.LeftHip.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); ;
+            //_bodyparts[JointID.LeftHip].RightBottom = e.Event.LeftKnee.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
+            //_bodyparts[JointID.RightHip].LeftTop = e.Event.RightHip.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
+            //_bodyparts[JointID.RightHip].RightBottom = e.Event.RightKnee.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize);
         }
 
         internal void Draw(SpriteBatch spriteBatch)

@@ -4,6 +4,4 @@ Content\Images\RightArm.xnb
 Content\Images\RightLeg.xnb
 Content\Images\Step1.xnb
 Content\Images\Torso.xnb
-Configs\GestureConfiguration.xml
-Configs\openniconfig.xml
 log4net.config
