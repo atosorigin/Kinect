@@ -13,7 +13,7 @@ Our goal is to create a framework for developers on top of Kinect. This Framewor
 
 #How to fork
 1. Fork the `Kinect` repo<br />
-Fork the kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][4]<br />
+Fork the Kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][4]<br />
 
 1. Clone the `Kinect` project<br />
 Run the following code:<br />
@@ -22,7 +22,7 @@ Run the following code:<br />
 1. Configure remotes<br />
 When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:<br />
 `$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory<br />
-`$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"<br />
+`$ git remote add upstream [git@github.com:atosorigin/Kinect.git][5]` Assigns the original repo to a remote called "upstream"<br />
 `$ git fetch upstream`<br />
 
 1. Pushing<br />
@@ -41,6 +41,7 @@ Don't forget to do a [pull request][3] when you have added value to the project.
 [2]: http://twitter.com/#!/pjvds "Twitter Pieter Joost van de Sande"
 [3]: http://github.com/guides/pull-requests "Pull request guide"
 [4]: https://github.com/atosorigin/Kinect "Atos Origin Kinect Repository"
+[5]: git@github.com:atosorigin/Kinect.git "Atos Origin Github ssh connectionstring"
 
 #Installation
 Need to add an installation manual here
