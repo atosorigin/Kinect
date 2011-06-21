@@ -1,11 +1,11 @@
-﻿<Window x:Class="Kinect.WPF.nPong.MainWindow"
+﻿<Window x:Class="Kinect.Pong.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         Title="nPong" WindowState="Minimized">
     <Window.Background>
-        <ImageBrush ImageSource="/Kinect.WPF.nPong;component/Images/Background.jpg" />
+        <ImageBrush ImageSource="/Kinect.Pong;component/Images/Background.jpg" />
     </Window.Background>
     <Window.DataContext>
         <Binding Mode="OneWay"

@@ -21,7 +21,7 @@ namespace Kinect.Pong
     {
         public MainWindow()
         {
-            InitializeComponent();
+            //InitializeComponent();
         }
 
 

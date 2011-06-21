@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using Kinect.Core;
 using Kinect.Core.Gestures;
 using Kinect.Pong.Models;
-using Kinect.WPF.nPong;
 using System.Drawing;
 using System.Windows;
 
@@ -131,7 +130,6 @@ namespace Kinect.Pong.ViewModels
         {
             _kinect = Kinect.Core.MyKinect.Instance;
             _kinect.UserCreated += _kinect_UserCreated;
-            _kinect.NewUser += _kinect_NewUser;
             _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             _kinect.StartKinect();
         }
@@ -171,11 +169,6 @@ namespace Kinect.Pong.ViewModels
         void AccelerationGesture_AccelerationCalculated(object sender, AccelerationEventArgs e)
         {
             PongGame.Paddles.First(paddle => paddle.KinectUserID == e.UserID).SetDirection(4 * e.DeltaY);
-        }
-
-        void _kinect_NewUser(object sender, KinectEventArgs e)
-        {
-            DebugInformation = "New user in field of camera";
         }
 
         void _kinect_CameraDataUpdated(object sender, KinectEventArgs e)
