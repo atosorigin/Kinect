@@ -12,29 +12,29 @@ This Kinect application framework and demo apps are made by [Marco Franssen][1] 
 Our goal is to create a framework for developers on top of Kinect. This Framework should support easy access to gestures etc. All the demo apps we created to test our framework are included. We would love it when you guys help to extend and improve the framework. Don't forget to add your own demo apps so you can show of all the cool stuff you made to the other developers participating.
 
 #How to fork
-1. Fork the `Kinect` repo<br />
+1. ## Fork the `Kinect` repo<br />
 Fork the Kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][7]<br />
 
-## 1. Clone the `Kinect` project<br />
+1. ## Clone the `Kinect` project<br />
 Run the following code:<br />
 `$ git clone git@github.com:username/Kinect.git`<br />
 
-## 1. Configure remotes<br />
+1. ## Configure remotes<br />
 When a repo is cloned, it has a default remote called origin that points to your fork on GitHub, not the original repo it was forked from. To keep track of the original repo, you need to add another remote named upstream:<br />
 `$ cd Kinect` the active directory in the prompt to the newly cloned "Kinect" directory<br />
 `$ git remote add upstream git@github.com:atosorigin/Kinect.git` Assigns the original repo to a remote called "upstream"<br />
 `$ git fetch upstream`<br />
 
-## 1. Pushing<br />
+1. ## Pushing<br />
 Pushing is always done to you fork<br />
 `$ git push origin master`<br />
 
-## 1. Fetch the upstream with your fork<br />
+1. ## Fetch the upstream with your fork<br />
 When you want to get the latest changes fetched from the upstream into your fork, you need to fetch the upstream.<br />
 `$ git fetch upstream`<br />
 `$ git merge upstream/master`<br />
 
-## 1. Pull requests<br />
+1. ## Pull requests<br />
 Don't forget to do a [pull request][6] when you have added value to the project.<br />
 
 [1]: https://github.com/marcofranssen "Marco Franssen's Github profile"
