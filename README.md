@@ -37,6 +37,10 @@ When you want to get the latest changes fetched from the upstream into your fork
 1. ## Pull requests<br />
 Don't forget to do a [pull request][6] when you have added value to the project.<br />
 
+#Installation
+* Install the Microsoft Kinect SDK. (You can find them in the [lib/Third Party/Microsoft Kinect SDK][8] folder)
+* Start one of the demo's to check if it works.
+
 [1]: https://github.com/marcofranssen "Marco Franssen's Github profile"
 [2]: https://github.com/pjvds "Pieter Joost van de Sande's Github profile"
 [3]: https://github.com/jansaris "Jan Saris's Github profile"
@@ -44,6 +48,4 @@ Don't forget to do a [pull request][6] when you have added value to the project.
 [5]: https://github.com/erwinwolff "Erwin Wolff's Github profile"
 [6]: http://github.com/guides/pull-requests "Pull request guide"
 [7]: https://github.com/atosorigin/Kinect "Atos Origin Kinect Repository"
-
-#Installation
-Need to add an installation manual here
+[8]: https://github.com/atosorigin/Kinect/tree/master/lib/Third%20Party/Microsoft%20Kinect%20SDK "Microsoft SDK's"
