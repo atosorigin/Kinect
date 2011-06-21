@@ -7,19 +7,19 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math.Decompositions;
+
 namespace Accord.Math
 {
-    using System;
-    using Accord.Math.Decompositions;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
         #region Comparison
+
         /// <summary>
         ///   Compares two matrices for equality, considering an acceptance threshold.
         /// </summary>
@@ -258,12 +258,12 @@ namespace Accord.Math
         /// <summary>
         ///   This method should not be called. Use Matrix.IsEqual instead.
         /// </summary>
-        public static new bool Equals(object value)
+        public new static bool Equals(object value)
         {
             throw new NotSupportedException("Use Matrix.IsEqual instead.");
         }
-        #endregion
 
+        #endregion
 
         #region Transpose
 
@@ -320,7 +320,7 @@ namespace Accord.Math
             }
             else
             {
-                T[,] result = new T[cols, rows];
+                var result = new T[cols,rows];
 
                 for (int i = 0; i < rows; i++)
                     for (int j = 0; j < cols; j++)
@@ -364,7 +364,7 @@ namespace Accord.Math
             }
             else
             {
-                T[][] result = new T[cols][];
+                var result = new T[cols][];
 
                 for (int j = 0; j < cols; j++)
                 {
@@ -387,16 +387,17 @@ namespace Accord.Math
         {
             if (rowVector == null) throw new ArgumentNullException("matrix");
 
-            T[,] trans = new T[rowVector.Length, 1];
+            var trans = new T[rowVector.Length,1];
             for (int i = 0; i < rowVector.Length; i++)
                 trans[i, 0] = rowVector[i];
 
             return trans;
         }
+
         #endregion
 
-
         #region Matrix Characteristics
+
         /// <summary>
         ///   Returns true if a matrix is square.
         /// </summary>
@@ -458,7 +459,7 @@ namespace Accord.Math
         {
             if (matrix == null) throw new ArgumentNullException("matrix");
 
-            T[] r = new T[matrix.GetLength(0)];
+            var r = new T[matrix.GetLength(0)];
             for (int i = 0; i < r.Length; i++)
                 r[i] = matrix[i, i];
 
@@ -483,7 +484,7 @@ namespace Accord.Math
 
             if (symmetric) // Use faster robust cholesky decomposition
                 return new CholeskyDecomposition(matrix, true, true).Determinant;
-            
+
             return new LuDecomposition(matrix).Determinant;
         }
 
@@ -496,10 +497,11 @@ namespace Accord.Math
 
             return new CholeskyDecomposition(matrix).PositiveDefinite;
         }
+
         #endregion
 
-
         #region Summation
+
         /// <summary>Calculates the matrix Sum vector.</summary>
         /// <param name="matrix">A matrix whose sums will be calculated.</param>
         /// <returns>Returns a vector containing the sums of each variable in the given matrix.</returns>
@@ -638,7 +640,7 @@ namespace Accord.Math
             if (vector.Length == 0)
                 return new double[0];
 
-            double[] sum = new double[vector.Length];
+            var sum = new double[vector.Length];
 
             sum[0] = vector[0];
             for (int i = 1; i < vector.Length; i++)
@@ -693,9 +695,11 @@ namespace Accord.Math
 
             return sum;
         }
+
         #endregion
 
         #region Product
+
         /// <summary>
         ///   Gets the product of all elements in a vector.
         /// </summary>
@@ -721,8 +725,8 @@ namespace Accord.Math
                 product *= vector[i];
             return product;
         }
-        #endregion
 
+        #endregion
 
         #region Operation Mapping (Apply)
 
@@ -785,7 +789,7 @@ namespace Accord.Math
         {
             if (vector == null) throw new ArgumentNullException("vector");
 
-            TResult[] r = new TResult[vector.Length];
+            var r = new TResult[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
                 r[i] = func(vector[i]);
@@ -800,7 +804,7 @@ namespace Accord.Math
         {
             if (vector == null) throw new ArgumentNullException("vector");
 
-            TResult[] r = new TResult[vector.Length];
+            var r = new TResult[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
                 r[i] = func(vector[i], i);
@@ -818,7 +822,7 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            TResult[,] r = new TResult[rows, cols];
+            var r = new TResult[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -837,7 +841,7 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            TResult[,] r = new TResult[rows, cols];
+            var r = new TResult[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -845,10 +849,11 @@ namespace Accord.Math
 
             return r;
         }
+
         #endregion
 
-
         #region Rounding and discretization
+
         /// <summary>
         ///   Rounds a double-precision floating-point matrix to a specified number of fractional digits.
         /// </summary>
@@ -856,7 +861,7 @@ namespace Accord.Math
         {
             if (matrix == null) throw new ArgumentNullException("matrix");
 
-            double[,] r = new double[matrix.GetLength(0), matrix.GetLength(1)];
+            var r = new double[matrix.GetLength(0),matrix.GetLength(1)];
 
             for (int i = 0; i < matrix.GetLength(0); i++)
                 for (int j = 0; j < matrix.GetLength(1); j++)
@@ -873,7 +878,7 @@ namespace Accord.Math
         {
             if (matrix == null) throw new ArgumentNullException("matrix");
 
-            double[,] r = new double[matrix.GetLength(0), matrix.GetLength(1)];
+            var r = new double[matrix.GetLength(0),matrix.GetLength(1)];
 
             for (int i = 0; i < matrix.GetLength(0); i++)
                 for (int j = 0; j < matrix.GetLength(1); j++)
@@ -890,7 +895,7 @@ namespace Accord.Math
         {
             if (matrix == null) throw new ArgumentNullException("matrix");
 
-            double[,] r = new double[matrix.GetLength(0), matrix.GetLength(1)];
+            var r = new double[matrix.GetLength(0),matrix.GetLength(1)];
 
             for (int i = 0; i < matrix.GetLength(0); i++)
                 for (int j = 0; j < matrix.GetLength(1); j++)
@@ -906,9 +911,9 @@ namespace Accord.Math
         {
             if (vector == null) throw new ArgumentNullException("vector");
 
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
             for (int i = 0; i < r.Length; i++)
-                r[i] = Math.Round(vector[i], decimals);
+                r[i] = System.Math.Round(vector[i], decimals);
             return r;
         }
 
@@ -920,9 +925,9 @@ namespace Accord.Math
         {
             if (vector == null) throw new ArgumentNullException("vector");
 
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
             for (int i = 0; i < r.Length; i++)
-                r[i] = Math.Floor(vector[i]);
+                r[i] = System.Math.Floor(vector[i]);
             return r;
         }
 
@@ -934,16 +939,16 @@ namespace Accord.Math
         {
             if (vector == null) throw new ArgumentNullException("vector");
 
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
             for (int i = 0; i < r.Length; i++)
-                r[i] = Math.Ceiling(vector[i]);
+                r[i] = System.Math.Ceiling(vector[i]);
             return r;
         }
 
         #endregion
 
-
         #region Morphological operations
+
         /// <summary>
         ///   Transforms a vector into a matrix of given dimensions.
         /// </summary>
@@ -953,7 +958,7 @@ namespace Accord.Math
             if (rows < 0) throw new ArgumentException("rows");
             if (cols < 0) throw new ArgumentException("cols");
 
-            T[,] r = new T[rows, cols];
+            var r = new T[rows,cols];
 
             for (int j = 0, k = 0; j < cols; j++)
                 for (int i = 0; i < rows; i++)
@@ -973,7 +978,7 @@ namespace Accord.Math
             int rows = array.GetLength(0);
             int cols = array.GetLength(1);
 
-            T[] r = new T[rows * cols];
+            var r = new T[rows*cols];
 
             if (dimension == 1)
             {
@@ -992,7 +997,5 @@ namespace Accord.Math
         }
 
         #endregion
-
-
     }
 }

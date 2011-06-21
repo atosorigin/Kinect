@@ -7,19 +7,19 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Globalization;
+
 namespace Accord.Math.Formats
 {
-    using System;
-    using System.Globalization;
-
     /// <summary>
     ///   Base class for IMatrixFormatProvider implementors.
     /// </summary>
     /// 
     public abstract class MatrixFormatProviderBase : IMatrixFormatProvider
     {
-
         #region Formatting specification
+
         /// <summary>
         /// A string denoting the start of the matrix to be used in formatting.
         /// </summary>
@@ -34,6 +34,7 @@ namespace Accord.Math.Formats
         /// A string denoting the start of a matrix row to be used in formatting.
         /// </summary>
         public string FormatRowStart { get; protected set; }
+
         /// <summary>
         /// A string denoting the end of a matrix row to be used in formatting.
         /// </summary>
@@ -58,9 +59,11 @@ namespace Accord.Math.Formats
         /// A string containing the column delimiter for a matrix to be used in formatting.
         /// </summary>
         public string FormatColDelimiter { get; protected set; }
+
         #endregion
 
         #region Parsing specification
+
         /// <summary>
         /// A string denoting the start of the matrix to be used in parsing.
         /// </summary>
@@ -100,15 +103,8 @@ namespace Accord.Math.Formats
         /// A string containing the column delimiter for a matrix to be used in parsing.
         /// </summary>
         public string ParseColDelimiter { get; protected set; }
+
         #endregion
-
-
-        /// <summary>
-        /// Gets the culture specific formatting information
-        /// to be used during parsing or formatting.
-        /// </summary>
-        public CultureInfo CultureInfo { get; protected set; }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatrixFormatProviderBase"/> class.
@@ -116,8 +112,16 @@ namespace Accord.Math.Formats
         /// <param name="culture">The culture.</param>
         protected MatrixFormatProviderBase(CultureInfo culture)
         {
-            this.CultureInfo = culture;
+            CultureInfo = culture;
         }
+
+        #region IMatrixFormatProvider Members
+
+        /// <summary>
+        /// Gets the culture specific formatting information
+        /// to be used during parsing or formatting.
+        /// </summary>
+        public CultureInfo CultureInfo { get; protected set; }
 
         /// <summary>
         ///   Returns an object that provides formatting services for the specified
@@ -135,7 +139,7 @@ namespace Accord.Math.Formats
         {
             // Determine whether custom formatting object is requested.
 
-            if (formatType == typeof(ICustomFormatter))
+            if (formatType == typeof (ICustomFormatter))
             {
                 return new MatrixFormatter();
             }
@@ -143,5 +147,6 @@ namespace Accord.Math.Formats
             return null;
         }
 
+        #endregion
     }
 }

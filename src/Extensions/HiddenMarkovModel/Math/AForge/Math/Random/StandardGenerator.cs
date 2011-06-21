@@ -8,8 +8,6 @@
 
 namespace AForge.Math.Random
 {
-    using System;
-
     /// <summary>
     /// Standard random numbers generator.
     /// </summary>
@@ -32,10 +30,32 @@ namespace AForge.Math.Random
     /// 
     public class StandardGenerator : IRandomNumberGenerator
     {
-        private UniformOneGenerator rand = null;
+        private UniformOneGenerator rand;
 
-        private double  secondValue;
-        private bool    useSecond = false;
+        private double secondValue;
+        private bool useSecond;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
+        /// </summary>
+        /// 
+        public StandardGenerator()
+        {
+            rand = new UniformOneGenerator();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
+        /// </summary>
+        /// 
+        /// <param name="seed">Seed value to initialize random numbers generator.</param>
+        /// 
+        public StandardGenerator(int seed)
+        {
+            rand = new UniformOneGenerator(seed);
+        }
+
+        #region IRandomNumberGenerator Members
 
         /// <summary>
         /// Mean value of the generator.
@@ -56,35 +76,15 @@ namespace AForge.Math.Random
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
-        /// </summary>
-        /// 
-        public StandardGenerator( )
-        {
-            rand = new UniformOneGenerator( );
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StandardGenerator"/> class.
-        /// </summary>
-        /// 
-        /// <param name="seed">Seed value to initialize random numbers generator.</param>
-        /// 
-        public StandardGenerator( int seed )
-        {
-            rand = new UniformOneGenerator( seed );
-        }
-
-        /// <summary>
         /// Generate next random number.
         /// </summary>
         /// 
         /// <returns>Returns next random number.</returns>
         /// 
-        public double Next( )
+        public double Next()
         {
             // check if we can use second value
-            if ( useSecond )
+            if (useSecond)
             {
                 // return the second number
                 useSecond = false;
@@ -96,17 +96,16 @@ namespace AForge.Math.Random
             // generate new numbers
             do
             {
-                x1  = rand.Next( ) * 2.0 - 1.0;
-                x2  = rand.Next( ) * 2.0 - 1.0;
-                w   = x1 * x1 + x2 * x2;
-            }
-            while ( w >= 1.0 );
+                x1 = rand.Next()*2.0 - 1.0;
+                x2 = rand.Next()*2.0 - 1.0;
+                w = x1*x1 + x2*x2;
+            } while (w >= 1.0);
 
-            w = Math.Sqrt( ( -2.0 * Math.Log( w ) ) / w );
+            w = System.Math.Sqrt((-2.0*System.Math.Log(w))/w);
 
             // get two standard random numbers
-            firstValue  = x1 * w;
-            secondValue = x2 * w;
+            firstValue = x1*w;
+            secondValue = x2*w;
 
             useSecond = true;
 
@@ -123,10 +122,12 @@ namespace AForge.Math.Random
         /// <remarks>Resets random numbers generator initializing it with
         /// specified seed value.</remarks>
         /// 
-        public void SetSeed( int seed )
+        public void SetSeed(int seed)
         {
-            rand = new UniformOneGenerator( seed );
+            rand = new UniformOneGenerator(seed);
             useSecond = false;
         }
+
+        #endregion
     }
 }

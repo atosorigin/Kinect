@@ -7,26 +7,29 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using AForge;
+
 namespace Accord.Math
 {
-    using System;
-    using System.Collections.Generic;
-    using AForge;
-
     /// <summary>
     ///   Set of mathematical tools.
     /// </summary>
     public static class Tools
     {
-
         #region Framework-wide random number generator
+
         private static Random random = new Random();
 
         /// <summary>
         ///   Gets a reference to the random number generator used
         ///   internally by the Accord.NET classes and methods.
         /// </summary>
-        public static Random Random { get { return random; } }
+        public static Random Random
+        {
+            get { return random; }
+        }
 
         /// <summary>
         ///   Sets a random seed for the internal number generator.
@@ -35,10 +38,8 @@ namespace Accord.Math
         {
             random = new Random(seed);
         }
+
         #endregion
-
-
-
 
         /// <summary>
         ///   Returns the next power of 2 after the input value x.
@@ -63,7 +64,7 @@ namespace Accord.Math
         /// <returns>Returns the previous power of 2 after the input value x.</returns>
         public static int PreviousPowerOf2(int x)
         {
-            return NextPowerOf2(x + 1) / 2;
+            return NextPowerOf2(x + 1)/2;
         }
 
 
@@ -81,13 +82,13 @@ namespace Accord.Math
 
             if (absA > absB)
             {
-                r = b / a;
-                r = absA * System.Math.Sqrt(1 + r * r);
+                r = b/a;
+                r = absA*System.Math.Sqrt(1 + r*r);
             }
             else if (b != 0)
             {
-                r = a / b;
-                r = absB * System.Math.Sqrt(1 + r * r);
+                r = a/b;
+                r = absB*System.Math.Sqrt(1 + r*r);
             }
 
             return r;
@@ -100,7 +101,7 @@ namespace Accord.Math
         public static int Mod(int x, int m)
         {
             if (m < 0) m = -m;
-            int r = x % m;
+            int r = x%m;
             return r < 0 ? r + m : r;
         }
 
@@ -112,7 +113,7 @@ namespace Accord.Math
         public static int Scale(this IntRange from, IntRange to, int x)
         {
             if (from.Length == 0) return 0;
-            return (to.Length) * (x - from.Min) / from.Length + to.Min;
+            return (to.Length)*(x - from.Min)/from.Length + to.Min;
         }
 
         /// <summary>
@@ -122,7 +123,7 @@ namespace Accord.Math
         public static double Scale(this DoubleRange from, DoubleRange to, double x)
         {
             if (from.Length == 0) return 0;
-            return (to.Length) * (x - from.Min) / from.Length + to.Min;
+            return (to.Length)*(x - from.Min)/from.Length + to.Min;
         }
 
         /// <summary>
@@ -132,7 +133,7 @@ namespace Accord.Math
         public static double Scale(double fromMin, double fromMax, double toMin, double toMax, double x)
         {
             if (fromMax - fromMin == 0) return 0;
-            return (toMax - toMin) * (x - fromMin) / (fromMax - fromMin) + toMin;
+            return (toMax - toMin)*(x - fromMin)/(fromMax - fromMin) + toMin;
         }
 
         /// <summary>
@@ -141,9 +142,9 @@ namespace Accord.Math
         /// </summary>
         public static double[] Scale(double fromMin, double fromMax, double toMin, double toMax, double[] x)
         {
-            double[] result = new double[x.Length];
+            var result = new double[x.Length];
             for (int i = 0; i < x.Length; i++)
-                result[i] = (toMax - toMin) * (x[i] - fromMin) / (fromMax - fromMin) + toMin;
+                result[i] = (toMax - toMin)*(x[i] - fromMin)/(fromMax - fromMin) + toMin;
 
             return result;
         }
@@ -154,9 +155,9 @@ namespace Accord.Math
         /// </summary>
         public static float[] Scale(float fromMin, float fromMax, float toMin, float toMax, float[] x)
         {
-            float[] result = new float[x.Length];
+            var result = new float[x.Length];
             for (int i = 0; i < x.Length; i++)
-                result[i] = (toMax - toMin) * (x[i] - fromMin) / (fromMax - fromMin) + toMin;
+                result[i] = (toMax - toMin)*(x[i] - fromMin)/(fromMax - fromMin) + toMin;
 
             return result;
         }
@@ -167,7 +168,7 @@ namespace Accord.Math
         /// </summary>
         public static double[] Scale(double toMin, double toMax, double[] x)
         {
-            return Scale(Matrix.Min(x), Matrix.Max(x), toMin, toMax, x);
+            return Scale(x.Min(), x.Max(), toMin, toMax, x);
         }
 
         /// <summary>
@@ -179,13 +180,13 @@ namespace Accord.Math
             int rows = x.Length;
             int cols = fromMin.Length;
 
-            double[][] result = new double[rows][];
+            var result = new double[rows][];
             for (int i = 0; i < rows; i++)
             {
                 result[i] = new double[cols];
                 for (int j = 0; j < cols; j++)
                 {
-                    result[i][j] = (toMax[j] - toMin[j]) * (x[i][j] - fromMin[j]) / (fromMax[j] - fromMin[j]) + toMin[j];
+                    result[i][j] = (toMax[j] - toMin[j])*(x[i][j] - fromMin[j])/(fromMax[j] - fromMin[j]) + toMin[j];
                 }
             }
 
@@ -201,13 +202,13 @@ namespace Accord.Math
             int rows = x.Length;
             int cols = fromMin.Length;
 
-            double[][] result = new double[rows][];
+            var result = new double[rows][];
             for (int i = 0; i < rows; i++)
             {
                 result[i] = new double[cols];
                 for (int j = 0; j < cols; j++)
                 {
-                    result[i][j] = (toMax - toMin) * (x[i][j] - fromMin[j]) / (fromMax[j] - fromMin[j]) + toMin;
+                    result[i][j] = (toMax - toMin)*(x[i][j] - fromMin[j])/(fromMax[j] - fromMin[j]) + toMin;
                 }
             }
 
@@ -220,8 +221,8 @@ namespace Accord.Math
         /// </summary>
         public static double[][] Scale(double[] toMin, double[] toMax, double[][] x)
         {
-            var min = Matrix.Min(x);
-            var max = Matrix.Max(x);
+            double[] min = x.Min();
+            double[] max = x.Max();
             return Scale(min, max, toMin, toMax, x);
         }
 
@@ -231,7 +232,7 @@ namespace Accord.Math
         /// </summary>
         public static double[][] Scale(double toMin, double toMax, double[][] x)
         {
-            return Scale(Matrix.Min(x), Matrix.Max(x), toMin, toMax, x);
+            return Scale(x.Min(), x.Max(), toMin, toMax, x);
         }
 
         /// <summary>
@@ -241,7 +242,7 @@ namespace Accord.Math
         public static float Scale(float fromMin, float fromMax, float toMin, float toMax, float x)
         {
             if (fromMax - fromMin == 0) return 0;
-            return (toMax - toMin) * (x - fromMin) / (fromMax - fromMin) + toMin;
+            return (toMax - toMin)*(x - fromMin)/(fromMax - fromMin) + toMin;
         }
 
 
@@ -252,7 +253,7 @@ namespace Accord.Math
         {
             if (x < 1.0)
                 throw new ArgumentOutOfRangeException("x");
-            return System.Math.Log(x + System.Math.Sqrt(x * x - 1));
+            return System.Math.Log(x + System.Math.Sqrt(x*x - 1));
         }
 
         /// <summary>
@@ -276,7 +277,7 @@ namespace Accord.Math
                 sign = 1;
                 x = d;
             }
-            return sign * System.Math.Log(x + System.Math.Sqrt(x * x + 1));
+            return sign*System.Math.Log(x + System.Math.Sqrt(x*x + 1));
         }
 
         /// <summary>
@@ -286,9 +287,8 @@ namespace Accord.Math
         {
             if (d > 1.0 || d < -1.0)
                 throw new ArgumentOutOfRangeException("d");
-            return 0.5 * System.Math.Log((1.0 + d) / (1.0 - d));
+            return 0.5*System.Math.Log((1.0 + d)/(1.0 - d));
         }
-
 
 
         /// <summary>
@@ -314,13 +314,13 @@ namespace Accord.Math
         /// <summary>
         ///   Fast inverse floating-point square root.
         /// </summary>
-        public unsafe static float InvSqrt(float f)
+        public static unsafe float InvSqrt(float f)
         {
-            float xhalf = 0.5f * f;
-            Int32 i = *(Int32*)&f; 
+            float xhalf = 0.5f*f;
+            Int32 i = *(Int32*) &f;
             i = 0x5f375a86 - (i >> 1);
-            f = *(float*)&i;
-            f = f * (1.5f - xhalf * f * f);
+            f = *(float*) &i;
+            f = f*(1.5f - xhalf*f*f);
             return f;
         }
     }
@@ -338,7 +338,7 @@ namespace Accord.Math
         ///   Sorting will be performed in descending order.
         /// </summary>
         Descending
-    };
+    } ;
 
     /// <summary>
     ///   General comparer which supports multiple directions
@@ -346,8 +346,8 @@ namespace Accord.Math
     /// </summary>
     public class GeneralComparer : IComparer<double>
     {
-        private bool absolute;
-        private int direction = 1;
+        private readonly bool absolute;
+        private readonly int direction = 1;
 
         /// <summary>
         ///   Constructs a new General Comparer.
@@ -366,8 +366,10 @@ namespace Accord.Math
         public GeneralComparer(ComparerDirection direction, bool useAbsoluteValues)
         {
             this.direction = (direction == ComparerDirection.Ascending) ? 1 : -1;
-            this.absolute = useAbsoluteValues;
+            absolute = useAbsoluteValues;
         }
+
+        #region IComparer<double> Members
 
         /// <summary>
         ///   Compares two objects and returns a value indicating whether one is less than,
@@ -378,9 +380,11 @@ namespace Accord.Math
         public int Compare(double x, double y)
         {
             if (absolute)
-                return direction * (System.Math.Abs(x).CompareTo(System.Math.Abs(y)));
+                return direction*(System.Math.Abs(x).CompareTo(System.Math.Abs(y)));
             else
-                return direction * (x.CompareTo(y));
+                return direction*(x.CompareTo(y));
         }
+
+        #endregion
     }
 }

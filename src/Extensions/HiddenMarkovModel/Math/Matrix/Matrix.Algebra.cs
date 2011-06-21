@@ -7,22 +7,19 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Accord.Math.Decompositions;
+
 namespace Accord.Math
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Accord.Math.Decompositions;
-
     /// <summary>
     /// Static class Matrix. Defines a set of extension methods
     /// that operates mainly on multidimensional arrays and vectors.
     /// </summary>
     public static partial class Matrix
     {
-
-
-
         #region Matrix-Matrix Multiplication
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace Accord.Math
         /// <returns>The product of the multiplication of the given matrices.</returns>
         public static double[,] Multiply(this double[,] a, double[,] b)
         {
-            double[,] r = new double[a.GetLength(0), b.GetLength(1)];
+            var r = new double[a.GetLength(0),b.GetLength(1)];
             Multiply(a, b, r);
             return r;
         }
@@ -49,7 +46,7 @@ namespace Accord.Math
             int rows = a.Length;
             int cols = b[0].Length;
 
-            double[][] r = new double[rows][];
+            var r = new double[rows][];
             for (int i = 0; i < rows; i++)
                 r[i] = new double[cols];
 
@@ -68,7 +65,7 @@ namespace Accord.Math
             int rows = a.Length;
             int cols = b[0].Length;
 
-            float[][] r = new float[rows][];
+            var r = new float[rows][];
             for (int i = 0; i < rows; i++)
                 r[i] = new float[cols];
 
@@ -85,7 +82,7 @@ namespace Accord.Math
         /// <returns>The product of the multiplication of the given matrices.</returns>
         public static float[,] Multiply(this float[,] a, float[,] b)
         {
-            float[,] r = new float[a.GetLength(0), b.GetLength(1)];
+            var r = new float[a.GetLength(0),b.GetLength(1)];
             Multiply(a, b, r);
             return r;
         }
@@ -109,7 +106,7 @@ namespace Accord.Math
 
             fixed (double* ptrA = a)
             {
-                double[] Bcolj = new double[n];
+                var Bcolj = new double[n];
                 for (int j = 0; j < p; j++)
                 {
                     for (int k = 0; k < n; k++)
@@ -120,7 +117,7 @@ namespace Accord.Math
                     {
                         double s = 0;
                         for (int k = 0; k < n; k++)
-                            s += *(Arowi++) * Bcolj[k];
+                            s += *(Arowi++)*Bcolj[k];
                         result[i, j] = s;
                     }
                 }
@@ -144,7 +141,7 @@ namespace Accord.Math
             int m = a.Length;
             int p = b[0].Length;
 
-            double[] Bcolj = new double[n];
+            var Bcolj = new double[n];
             for (int j = 0; j < p; j++)
             {
                 for (int k = 0; k < n; k++)
@@ -156,7 +153,7 @@ namespace Accord.Math
 
                     double s = 0;
                     for (int k = 0; k < n; k++)
-                        s += Arowi[k] * Bcolj[k];
+                        s += Arowi[k]*Bcolj[k];
 
                     result[i][j] = s;
                 }
@@ -180,7 +177,7 @@ namespace Accord.Math
             int m = a.Length;
             int p = b[0].Length;
 
-            float[] Bcolj = new float[n];
+            var Bcolj = new float[n];
             for (int j = 0; j < p; j++)
             {
                 for (int k = 0; k < n; k++)
@@ -192,7 +189,7 @@ namespace Accord.Math
 
                     float s = 0;
                     for (int k = 0; k < n; k++)
-                        s += Arowi[k] * Bcolj[k];
+                        s += Arowi[k]*Bcolj[k];
 
                     result[i][j] = s;
                 }
@@ -213,7 +210,7 @@ namespace Accord.Math
 
             fixed (float* ptrA = a)
             {
-                float[] Bcolj = new float[acols];
+                var Bcolj = new float[acols];
                 for (int j = 0; j < bcols; j++)
                 {
                     for (int k = 0; k < acols; k++)
@@ -224,7 +221,7 @@ namespace Accord.Math
                     {
                         float s = 0;
                         for (int k = 0; k < acols; k++)
-                            s += *(Arowi++) * Bcolj[k];
+                            s += *(Arowi++)*Bcolj[k];
                         result[i, j] = s;
                     }
                 }
@@ -237,7 +234,7 @@ namespace Accord.Math
         /// </summary>
         public static double[,] MultiplyByTranspose(this double[,] a, double[,] b)
         {
-            double[,] r = new double[a.GetLength(0), b.GetLength(0)];
+            var r = new double[a.GetLength(0),b.GetLength(0)];
             MultiplyByTranspose(a, b, r);
             return r;
         }
@@ -262,11 +259,11 @@ namespace Accord.Math
                     double* bColj = ptrB;
                     for (int j = 0; j < p; j++)
                     {
-                        double* aColi = ptrA + n * i;
+                        double* aColi = ptrA + n*i;
 
                         double s = 0;
                         for (int k = 0; k < n; k++)
-                            s += *(aColi++) * *(bColj++);
+                            s += *(aColi++)**(bColj++);
                         *(rc++) = s;
                     }
                 }
@@ -279,7 +276,7 @@ namespace Accord.Math
         /// </summary>
         public static double[,] TransposeAndMultiply(this double[,] a, double[,] b)
         {
-            double[,] r = new double[a.GetLength(1), b.GetLength(1)];
+            var r = new double[a.GetLength(1),b.GetLength(1)];
             MultiplyByTranspose(a, b, r);
             return r;
         }
@@ -287,7 +284,7 @@ namespace Accord.Math
         /// <summary>
         ///   Computes A'*B, where A' denotes the transpose of A.
         /// </summary>
-        public static unsafe void TransposeAndMultiply(this double[,] a, double[,] b, double[,] result)
+        public static void TransposeAndMultiply(this double[,] a, double[,] b, double[,] result)
         {
             if (a == null) throw new ArgumentNullException("a");
             if (b == null) throw new ArgumentNullException("b");
@@ -299,7 +296,7 @@ namespace Accord.Math
             int m = a.GetLength(1);
             int p = b.GetLength(1);
 
-            double[] Bcolj = new double[n];
+            var Bcolj = new double[n];
             for (int i = 0; i < p; i++)
             {
                 for (int k = 0; k < n; k++)
@@ -309,7 +306,7 @@ namespace Accord.Math
                 {
                     double s = 0;
                     for (int k = 0; k < n; k++)
-                        s += a[k, j] * Bcolj[k];
+                        s += a[k, j]*Bcolj[k];
 
                     result[j, i] = s;
                 }
@@ -322,7 +319,7 @@ namespace Accord.Math
         /// </summary>
         public static double[,] MultiplyByDiagonal(this double[,] a, double[] b)
         {
-            double[,] r = new double[a.GetLength(0), b.Length];
+            var r = new double[a.GetLength(0),b.Length];
             MultiplyByDiagonal(a, b, r);
             return r;
         }
@@ -344,12 +341,11 @@ namespace Accord.Math
                 double* R = ptrR;
                 for (int i = 0; i < m; i++)
                     for (int j = 0; j < b.Length; j++)
-                        *R++ = *A++ * b[j];
+                        *R++ = *A++*b[j];
             }
         }
 
         #endregion
-
 
         #region Matrix-Vector multiplication
 
@@ -364,11 +360,11 @@ namespace Accord.Math
             if (matrix.GetLength(0) != rowVector.Length)
                 throw new ArgumentException("Matrix dimensions must match", "b");
 
-            double[] r = new double[matrix.GetLength(1)];
+            var r = new double[matrix.GetLength(1)];
 
             for (int j = 0; j < matrix.GetLength(1); j++)
                 for (int k = 0; k < rowVector.Length; k++)
-                    r[j] += rowVector[k] * matrix[k, j];
+                    r[j] += rowVector[k]*matrix[k, j];
 
             return r;
         }
@@ -384,11 +380,11 @@ namespace Accord.Math
             if (matrix.GetLength(1) != columnVector.Length)
                 throw new ArgumentException("Matrix dimensions must match", "b");
 
-            double[] r = new double[matrix.GetLength(0)];
+            var r = new double[matrix.GetLength(0)];
 
             for (int i = 0; i < matrix.GetLength(0); i++)
                 for (int j = 0; j < columnVector.Length; j++)
-                    r[i] += matrix[i, j] * columnVector[j];
+                    r[i] += matrix[i, j]*columnVector[j];
 
             return r;
         }
@@ -404,11 +400,11 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
-                    r[i, j] = matrix[i, j] * scalar;
+                    r[i, j] = matrix[i, j]*scalar;
 
             return r;
         }
@@ -421,10 +417,10 @@ namespace Accord.Math
         /// <returns>The product of the multiplication of the given vector and scalar.</returns>
         public static double[] Multiply(this double[] vector, double scalar)
         {
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
-                r[i] = vector[i] * scalar;
+                r[i] = vector[i]*scalar;
 
             return r;
         }
@@ -453,8 +449,8 @@ namespace Accord.Math
 
         #endregion
 
-
         #region Division
+
         /// <summary>
         ///   Divides a vector by a scalar.
         /// </summary>
@@ -463,10 +459,10 @@ namespace Accord.Math
         /// <returns>The division quotient of the given vector and scalar.</returns>
         public static double[] Divide(this double[] vector, double scalar)
         {
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
-                r[i] = vector[i] / scalar;
+                r[i] = vector[i]/scalar;
 
             return r;
         }
@@ -479,10 +475,10 @@ namespace Accord.Math
         /// <returns>The division quotient of the given vector and scalar.</returns>
         public static float[] Divide(this float[] vector, float scalar)
         {
-            float[] r = new float[vector.Length];
+            var r = new float[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
-                r[i] = vector[i] / scalar;
+                r[i] = vector[i]/scalar;
 
             return r;
         }
@@ -495,10 +491,10 @@ namespace Accord.Math
         /// <returns>The division quotient of the given scalar and vector.</returns>
         public static double[] Divide(this double scalar, double[] vector)
         {
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
-                r[i] = scalar / vector[i];
+                r[i] = scalar/vector[i];
 
             return r;
         }
@@ -541,11 +537,11 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
-                    r[i, j] = matrix[i, j] / scalar;
+                    r[i, j] = matrix[i, j]/scalar;
 
             return r;
         }
@@ -561,17 +557,19 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
-                    r[i, j] = scalar / matrix[i, j];
+                    r[i, j] = scalar/matrix[i, j];
 
             return r;
         }
+
         #endregion
 
         #region Products
+
         /// <summary>
         ///   Gets the inner product (scalar product) between two vectors (aT*b).
         /// </summary>
@@ -598,7 +596,7 @@ namespace Accord.Math
                 throw new ArgumentException("Vector dimensions must match", "b");
 
             for (int i = 0; i < a.Length; i++)
-                r += a[i] * b[i];
+                r += a[i]*b[i];
 
             return r;
         }
@@ -614,11 +612,11 @@ namespace Accord.Math
         /// </remarks>
         public static double[,] OuterProduct(this double[] a, double[] b)
         {
-            double[,] r = new double[a.Length, b.Length];
+            var r = new double[a.Length,b.Length];
 
             for (int i = 0; i < a.Length; i++)
                 for (int j = 0; j < b.Length; j++)
-                    r[i, j] += a[i] * b[j];
+                    r[i, j] += a[i]*b[j];
 
             return r;
         }
@@ -634,11 +632,12 @@ namespace Accord.Math
         /// </remarks>
         public static double[] VectorProduct(double[] a, double[] b)
         {
-            return new double[] {
-                a[1]*b[2] - a[2]*b[1],
-                a[2]*b[0] - a[0]*b[2],
-                a[0]*b[1] - a[1]*b[0]
-            };
+            return new[]
+                       {
+                           a[1]*b[2] - a[2]*b[1],
+                           a[2]*b[0] - a[0]*b[2],
+                           a[0]*b[1] - a[1]*b[0]
+                       };
         }
 
         /// <summary>
@@ -646,11 +645,12 @@ namespace Accord.Math
         /// </summary>
         public static float[] VectorProduct(float[] a, float[] b)
         {
-            return new float[] {
-                a[1]*b[2] - a[2]*b[1],
-                a[2]*b[0] - a[0]*b[2],
-                a[0]*b[1] - a[1]*b[0]
-            };
+            return new[]
+                       {
+                           a[1]*b[2] - a[2]*b[1],
+                           a[2]*b[0] - a[0]*b[2],
+                           a[0]*b[1] - a[1]*b[0]
+                       };
         }
 
         /// <summary>
@@ -662,12 +662,12 @@ namespace Accord.Math
         /// </remarks>
         public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
         {
-            IEnumerable<IEnumerable<T>> empty = new[] { Enumerable.Empty<T>() };
+            IEnumerable<IEnumerable<T>> empty = new[] {Enumerable.Empty<T>()};
 
             return sequences.Aggregate(empty, (accumulator, sequence) =>
-                from accumulatorSequence in accumulator
-                from item in sequence
-                select accumulatorSequence.Concat(new[] { item }));
+                                              from accumulatorSequence in accumulator
+                                              from item in sequence
+                                              select accumulatorSequence.Concat(new[] {item}));
         }
 
         /// <summary>
@@ -675,10 +675,10 @@ namespace Accord.Math
         /// </summary>
         public static T[][] CartesianProduct<T>(params T[][] sequences)
         {
-            var result = CartesianProduct(sequences as IEnumerable<IEnumerable<T>>);
+            IEnumerable<IEnumerable<T>> result = CartesianProduct(sequences as IEnumerable<IEnumerable<T>>);
 
-            List<T[]> list = new List<T[]>();
-            foreach (IEnumerable<T> point in result)
+            var list = new List<T[]>();
+            foreach (var point in result)
                 list.Add(point.ToArray());
 
             return list.ToArray();
@@ -689,12 +689,13 @@ namespace Accord.Math
         /// </summary>
         public static T[][] CartesianProduct<T>(this T[] sequence1, T[] sequence2)
         {
-            return CartesianProduct(new T[][] { sequence1, sequence2 });
+            return CartesianProduct(new[] {sequence1, sequence2});
         }
 
         #endregion
 
         #region Addition and Subraction
+
         /// <summary>
         ///   Adds two matrices.
         /// </summary>
@@ -712,7 +713,7 @@ namespace Accord.Math
             int rows = a.GetLength(0);
             int cols = b.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -738,12 +739,13 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             if (dimension == 1)
             {
-                if (rows != vector.Length) throw new ArgumentException(
-                    "Length of B should equal the number of rows in A", "b");
+                if (rows != vector.Length)
+                    throw new ArgumentException(
+                        "Length of B should equal the number of rows in A", "b");
 
                 for (int j = 0; j < cols; j++)
                     for (int i = 0; i < rows; i++)
@@ -751,8 +753,9 @@ namespace Accord.Math
             }
             else
             {
-                if (cols != vector.Length) throw new ArgumentException(
-                    "Length of B should equal the number of cols in A", "b");
+                if (cols != vector.Length)
+                    throw new ArgumentException(
+                        "Length of B should equal the number of cols in A", "b");
 
                 for (int i = 0; i < rows; i++)
                     for (int j = 0; j < cols; j++)
@@ -773,12 +776,13 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             if (dimension == 1)
             {
-                if (rows != vector.Length) throw new ArgumentException(
-                    "Length of B should equal the number of rows in A", "b");
+                if (rows != vector.Length)
+                    throw new ArgumentException(
+                        "Length of B should equal the number of rows in A", "b");
 
                 for (int j = 0; j < cols; j++)
                     for (int i = 0; i < rows; i++)
@@ -786,8 +790,9 @@ namespace Accord.Math
             }
             else
             {
-                if (cols != vector.Length) throw new ArgumentException(
-                    "Length of B should equal the number of cols in A", "b");
+                if (cols != vector.Length)
+                    throw new ArgumentException(
+                        "Length of B should equal the number of cols in A", "b");
 
                 for (int i = 0; i < rows; i++)
                     for (int j = 0; j < cols; j++)
@@ -811,7 +816,7 @@ namespace Accord.Math
             if (a.Length != b.Length)
                 throw new ArgumentException("Vector lengths must match", "b");
 
-            double[] r = new double[a.Length];
+            var r = new double[a.Length];
 
             for (int i = 0; i < a.Length; i++)
                 r[i] = a[i] + b[i];
@@ -836,7 +841,7 @@ namespace Accord.Math
             int rows = a.GetLength(0);
             int cols = b.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -855,7 +860,7 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -877,7 +882,7 @@ namespace Accord.Math
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[,] r = new double[rows, cols];
+            var r = new double[rows,cols];
 
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
@@ -897,7 +902,7 @@ namespace Accord.Math
             if (a.Length != b.Length)
                 throw new ArgumentException("Vector length must match", "b");
 
-            double[] r = new double[a.Length];
+            var r = new double[a.Length];
 
             for (int i = 0; i < a.Length; i++)
                 r[i] = a[i] - b[i];
@@ -913,7 +918,7 @@ namespace Accord.Math
         /// <returns>The subtraction of given scalar from all elements in the given vector.</returns>
         public static double[] Subtract(this double[] vector, double scalar)
         {
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
                 r[i] = vector[i] - scalar;
@@ -929,15 +934,15 @@ namespace Accord.Math
         /// <returns>The subtraction of the given vector elements from the given scalar.</returns>
         public static double[] Subtract(this double scalar, double[] vector)
         {
-            double[] r = new double[vector.Length];
+            var r = new double[vector.Length];
 
             for (int i = 0; i < vector.Length; i++)
                 r[i] = vector[i] - scalar;
 
             return r;
         }
-        #endregion
 
+        #endregion
 
         /// <summary>
         ///   Multiplies a matrix by itself <c>n</c> times.
@@ -959,6 +964,5 @@ namespace Accord.Math
 
             return r;
         }
-
     }
 }

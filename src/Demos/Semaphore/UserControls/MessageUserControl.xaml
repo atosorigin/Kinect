@@ -1,21 +1,9 @@
-﻿<UserControl
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	mc:Ignorable="d"
-	x:Class="Kinect.Semaphore.UserControls.MessageUserControl"
-	x:Name="UserControl"
-	d:DesignWidth="144.862" d:DesignHeight="18.62">
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Kinect.Semaphore.UserControls.MessageUserControl" x:Name="UserControl" d:DesignWidth="144.862" d:DesignHeight="18.62">
 
 	<Grid x:Name="LayoutRoot">
 		<StackPanel Orientation="Horizontal" d:LayoutOverrides="Width, Height">
-			<TextBlock Text="{Binding Value}"
-				FontSize="14"
-				Foreground="Black"/>
-			<Image Margin="0,0,5,0"
-				Width="20"
-				Source="{Binding ImageUrl}"/>
+			<TextBlock Text="{Binding Value}" FontSize="14" Foreground="Black" />
+			<Image Margin="0,0,5,0" Width="20" Source="{Binding ImageUrl}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

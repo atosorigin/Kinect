@@ -7,10 +7,10 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Distributions
 {
-    using System;
-
     /// <summary>
     ///   Common interface for probability distributions.
     /// </summary>
@@ -86,7 +86,6 @@ namespace Accord.Statistics.Distributions
         ///  Returns a new IDistribution fitted to the given observations.
         /// </returns>
         IDistribution Fit(Array observations);
-
     }
 
     /// <summary>

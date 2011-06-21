@@ -6,16 +6,16 @@ namespace Kinect.Workshop.Winforms
 {
     public class MyGesture : GestureBase
     {
-        public event EventHandler<GestureEventArgs> MyGestureDetected;
-
         protected override string GestureName
         {
             get { return "MyGesture"; }
         }
 
+        public event EventHandler<GestureEventArgs> MyGestureDetected;
+
         public override void Process(IUserChangedEvent evt)
         {
-            var gestureDetected = false;
+            bool gestureDetected = false;
             //TODO: Workshop -> Part 3:
             //TODO: Workshop -> Controleer hier of de data voldoet aan je gesture criteria
 
@@ -32,7 +32,7 @@ namespace Kinect.Workshop.Winforms
             //Het kan zijn dat jij je abonnement opheft en op hetzelfde moment
             //De kinect thread het event probeert af te vuren
             //Dit zorgt er dan voor dat het .NET framework er dan geen problemen mee heeft
-            var handler = MyGestureDetected;
+            EventHandler<GestureEventArgs> handler = MyGestureDetected;
             if (handler != null)
             {
                 handler(this, new GestureEventArgs(userid));

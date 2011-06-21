@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Models.Markov
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///   Base class for (HMM) Sequence Classifiers.
     /// </summary>
@@ -20,8 +20,7 @@ namespace Accord.Statistics.Models.Markov
     public abstract class SequenceClassifierBase<TModel> : ISequenceClassifier
         where TModel : IHiddenMarkovModel
     {
-
-        private TModel[] models;
+        private readonly TModel[] models;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="SequenceClassifierBase&lt;T&gt;"/> class.
@@ -62,6 +61,8 @@ namespace Accord.Statistics.Models.Markov
             get { return models[label]; }
         }
 
+        #region ISequenceClassifier Members
+
         /// <summary>
         ///   Gets the number of classes which can be recognized by this classifier.
         /// </summary>
@@ -69,6 +70,8 @@ namespace Accord.Statistics.Models.Markov
         {
             get { return models.Length; }
         }
+
+        #endregion
 
         /// <summary>
         ///   Computes the most likely class for a given sequence.
@@ -91,13 +94,12 @@ namespace Accord.Statistics.Models.Markov
         }
 
 
-
         /// <summary>
         ///   Computes the most likely class for a given sequence.
         /// </summary>
         protected int Compute(Array sequence, out double[] likelihoods)
         {
-            double[] response = new double[models.Length];
+            var response = new double[models.Length];
 
             // For every model in the set,
 #if !DEBUG
@@ -121,9 +123,6 @@ namespace Accord.Statistics.Models.Markov
             return imax;
         }
 
-
-
-
         #region ISequenceClassifier implementation
 
         /// <summary>
@@ -131,10 +130,9 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         int ISequenceClassifier.Compute(Array sequence, out double[] likelihoods)
         {
-            return this.Compute(sequence, out likelihoods);
+            return Compute(sequence, out likelihoods);
         }
 
         #endregion
-
     }
 }

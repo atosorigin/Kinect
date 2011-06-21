@@ -7,16 +7,29 @@
 // http://www.crsouza.com
 //
 
+using System.Globalization;
+
 namespace Accord.Math.Formats
 {
-    using System.Globalization;
-
     /// <summary>
     ///   Gets the matrix representation used in C# jagged arrays.
     /// </summary>
     /// 
     public sealed class CSharpJaggedMatrixFormatProvider : MatrixFormatProviderBase
     {
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
+        /// </summary>
+        /// 
+        public static readonly CSharpJaggedMatrixFormatProvider CurrentCulture =
+            new CSharpJaggedMatrixFormatProvider(CultureInfo.CurrentCulture);
+
+        /// <summary>
+        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
+        /// </summary>
+        /// 
+        public static readonly CSharpJaggedMatrixFormatProvider InvariantCulture =
+            new CSharpJaggedMatrixFormatProvider(CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CSharpJaggedMatrixFormatProvider"/> class.
@@ -42,18 +55,5 @@ namespace Accord.Math.Formats
             ParseRowDelimiter = "},";
             ParseColDelimiter = ",";
         }
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the CultureInfo used by the current thread.
-        /// </summary>
-        /// 
-        public static readonly CSharpJaggedMatrixFormatProvider CurrentCulture = new CSharpJaggedMatrixFormatProvider(CultureInfo.CurrentCulture);
-
-        /// <summary>
-        ///   Gets the IMatrixFormatProvider which uses the invariant system culture.
-        /// </summary>
-        /// 
-        public static readonly CSharpJaggedMatrixFormatProvider InvariantCulture = new CSharpJaggedMatrixFormatProvider(CultureInfo.InvariantCulture);
-
     }
 }

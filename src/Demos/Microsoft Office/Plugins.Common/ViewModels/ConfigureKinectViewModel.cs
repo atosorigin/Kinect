@@ -1,8 +1,7 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
-using System;
 using System.Windows.Media.Media3D;
+using GalaSoft.MvvmLight;
 using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Plugins.Common.ViewModels
@@ -10,45 +9,7 @@ namespace Kinect.Plugins.Common.ViewModels
     public class ConfigureKinectViewModel : ViewModelBase
     {
         private const string _calibrationmessage = "Put {0} on {1}";
-
-        public List<JointID> AvailebleJoints { get; set; }
-
-        public JointID MovePointer { get; set; }
-        public bool DefaultEnableMovePointer { get; set; }
-        public JointID TogglePointer1 { get; set; }
-        public JointID TogglePointer2 { get; set; }
-        public bool CalibrateTogglePointer { get; set; }
-        public bool EnableTogglePointer { get; set; }
-        public JointID NextSlide1 { get; set; }
-        public JointID NextSlide2 { get; set; }
-        public bool CalibrateNextSlide { get; set; }
-        public bool EnableNextSlide { get; set; }
-        public JointID PreviousSlide1 { get; set; }
-        public JointID PreviousSlide2 { get; set; }
-        public bool CalibratePreviousSlide { get; set; }
-        public bool EnablePreviousSlide { get; set; }
-
-        public string TogglePointerCalibrationMessage { get { return string.Format(_calibrationmessage, TogglePointer1, TogglePointer2); } }
-        public string NextSlideCalibrationMessage { get { return string.Format(_calibrationmessage, NextSlide1, NextSlide2); } }
-        public string PreviousSlideCalibrationMessage { get { return string.Format(_calibrationmessage, PreviousSlide1, PreviousSlide2); } }
-
-        public Point3D NextSlideCorrection { get; set; }
-        public Point3D PreviousSlideCorrection { get; set; }
-        public Point3D TogglePointerCorrection { get; set; }
-
         private int _countdown;
-        public int Countdown
-        {
-            get
-            {
-                return _countdown;
-            }
-            set
-            {
-                _countdown = value;
-                RaisePropertyChanged("Countdown");
-            }
-        }
 
         public ConfigureKinectViewModel()
         {
@@ -82,10 +43,56 @@ namespace Kinect.Plugins.Common.ViewModels
             ////}
         }
 
+        public List<JointID> AvailebleJoints { get; set; }
+
+        public JointID MovePointer { get; set; }
+        public bool DefaultEnableMovePointer { get; set; }
+        public JointID TogglePointer1 { get; set; }
+        public JointID TogglePointer2 { get; set; }
+        public bool CalibrateTogglePointer { get; set; }
+        public bool EnableTogglePointer { get; set; }
+        public JointID NextSlide1 { get; set; }
+        public JointID NextSlide2 { get; set; }
+        public bool CalibrateNextSlide { get; set; }
+        public bool EnableNextSlide { get; set; }
+        public JointID PreviousSlide1 { get; set; }
+        public JointID PreviousSlide2 { get; set; }
+        public bool CalibratePreviousSlide { get; set; }
+        public bool EnablePreviousSlide { get; set; }
+
+        public string TogglePointerCalibrationMessage
+        {
+            get { return string.Format(_calibrationmessage, TogglePointer1, TogglePointer2); }
+        }
+
+        public string NextSlideCalibrationMessage
+        {
+            get { return string.Format(_calibrationmessage, NextSlide1, NextSlide2); }
+        }
+
+        public string PreviousSlideCalibrationMessage
+        {
+            get { return string.Format(_calibrationmessage, PreviousSlide1, PreviousSlide2); }
+        }
+
+        public Point3D NextSlideCorrection { get; set; }
+        public Point3D PreviousSlideCorrection { get; set; }
+        public Point3D TogglePointerCorrection { get; set; }
+
+        public int Countdown
+        {
+            get { return _countdown; }
+            set
+            {
+                _countdown = value;
+                RaisePropertyChanged("Countdown");
+            }
+        }
+
         private void FillJoints()
         {
             AvailebleJoints = new List<JointID>();
-            foreach (JointID joint in Enum.GetValues(typeof(JointID)))
+            foreach (JointID joint in Enum.GetValues(typeof (JointID)))
             {
                 AvailebleJoints.Add(joint);
             }

@@ -10,11 +10,10 @@
 //  Adapted from Mapack for COM and Jama routines
 //
 
+using System;
+
 namespace Accord.Math.Decompositions
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///	  QR decomposition for a rectangular matrix.
     /// </summary>
@@ -33,8 +32,8 @@ namespace Accord.Math.Decompositions
     /// 
     public sealed class QrDecomposition : ISolverDecomposition
     {
-        private double[,] qr;
-        private double[] Rdiag;
+        private readonly double[] Rdiag;
+        private readonly double[,] qr;
 
         /// <summary>Constructs a QR decomposition.</summary>	
         /// <param name="value">The matrix A to be decomposed.</param>
@@ -55,16 +54,16 @@ namespace Accord.Math.Decompositions
             }
 
             if ((!transpose && value.GetLength(0) < value.GetLength(1)) ||
-                 (transpose && value.GetLength(1) < value.GetLength(0)))
+                (transpose && value.GetLength(1) < value.GetLength(0)))
             {
                 throw new ArgumentException("Matrix has more columns than rows.", "value");
             }
 
-            this.qr = transpose ? value.Transpose() : (double[,])value.Clone();
+            qr = transpose ? value.Transpose() : (double[,]) value.Clone();
 
             int rows = qr.GetLength(0);
             int cols = qr.GetLength(1);
-            this.Rdiag = new double[cols];
+            Rdiag = new double[cols];
 
             for (int k = 0; k < cols; k++)
             {
@@ -97,183 +96,20 @@ namespace Accord.Math.Decompositions
 
                         for (int i = k; i < rows; i++)
                         {
-                            s += qr[i, k] * qr[i, j];
+                            s += qr[i, k]*qr[i, j];
                         }
 
-                        s = -s / qr[k, k];
+                        s = -s/qr[k, k];
 
                         for (int i = k; i < rows; i++)
                         {
-                            qr[i, j] += s * qr[i, k];
+                            qr[i, j] += s*qr[i, k];
                         }
                     }
                 }
 
-                this.Rdiag[k] = -nrm;
+                Rdiag[k] = -nrm;
             }
-        }
-
-        /// <summary>Least squares solution of <c>A * X = B</c></summary>
-        /// <param name="value">Right-hand-side matrix with as many rows as <c>A</c> and any number of columns.</param>
-        /// <returns>A matrix that minimized the two norm of <c>Q * R * X - B</c>.</returns>
-        /// <exception cref="T:System.ArgumentException">Matrix row dimensions must be the same.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
-        public double[,] Solve(double[,] value)
-        {
-            if (value == null)
-                throw new ArgumentNullException("value", "Matrix cannot be null.");
-
-            if (value.GetLength(0) != qr.GetLength(0))
-                throw new ArgumentException("Matrix row dimensions must agree.");
-
-            if (!this.FullRank)
-                throw new InvalidOperationException("Matrix is rank deficient.");
-
-            // Copy right hand side
-            int count = value.GetLength(1);
-            double[,] X = (double[,])value.Clone();
-            int m = qr.GetLength(0);
-            int n = qr.GetLength(1);
-
-            // Compute Y = transpose(Q)*B
-            for (int k = 0; k < n; k++)
-            {
-                for (int j = 0; j < count; j++)
-                {
-                    double s = 0.0;
-
-                    for (int i = k; i < m; i++)
-                        s += qr[i, k] * X[i, j];
-
-                    s = -s / qr[k, k];
-
-                    for (int i = k; i < m; i++)
-                        X[i, j] += s * qr[i, k];
-                }
-            }
-
-            // Solve R*X = Y;
-            for (int k = n - 1; k >= 0; k--)
-            {
-                for (int j = 0; j < count; j++)
-                    X[k, j] /= Rdiag[k];
-
-                for (int i = 0; i < k; i++)
-                    for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * qr[i, k];
-            }
-
-            double[,] r = new double[n, count];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < count; j++)
-                    r[i, j] = X[i, j];
-
-            return r;
-        }
-
-        /// <summary>Least squares solution of <c>X * A = B</c></summary>
-        /// <param name="value">Right-hand-side matrix with as many columns as <c>A</c> and any number of rows.</param>
-        /// <returns>A matrix that minimized the two norm of <c>X * Q * R - B</c>.</returns>
-        /// <exception cref="T:System.ArgumentException">Matrix column dimensions must be the same.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
-        public double[,] SolveTranspose(double[,] value)
-        {
-            if (value == null)
-                throw new ArgumentNullException("value", "Matrix cannot be null.");
-
-            if (value.GetLength(1) != qr.GetLength(0))
-                throw new ArgumentException("Matrix row dimensions must agree.");
-
-            if (!this.FullRank)
-                throw new InvalidOperationException("Matrix is rank deficient.");
-
-            // Copy right hand side
-            int count = value.GetLength(0);
-            double[,] X = value.Transpose();
-            int m = qr.GetLength(0);
-            int n = qr.GetLength(1);
-
-            // Compute Y = transpose(Q)*B
-            for (int k = 0; k < n; k++)
-            {
-                for (int j = 0; j < count; j++)
-                {
-                    double s = 0.0;
-
-                    for (int i = k; i < m; i++)
-                        s += qr[i, k] * X[i, j];
-
-                    s = -s / qr[k, k];
-
-                    for (int i = k; i < m; i++)
-                        X[i, j] += s * qr[i, k];
-                }
-            }
-
-            // Solve R*X = Y;
-            for (int k = n - 1; k >= 0; k--)
-            {
-                for (int j = 0; j < count; j++)
-                    X[k, j] /= Rdiag[k];
-
-                for (int i = 0; i < k; i++)
-                    for (int j = 0; j < count; j++)
-                        X[i, j] -= X[k, j] * qr[i, k];
-            }
-
-            double[,] r = new double[count, n];
-            for (int i = 0; i < n; i++)
-                for (int j = 0; j < count; j++)
-                    r[j, i] = X[i, j];
-
-            return r;
-        }
-
-        /// <summary>Least squares solution of <c>A * X = B</c></summary>
-        /// <param name="value">Right-hand-side matrix with as many rows as <c>A</c> and any number of columns.</param>
-        /// <returns>A matrix that minimized the two norm of <c>Q * R * X - B</c>.</returns>
-        /// <exception cref="T:System.ArgumentException">Matrix row dimensions must be the same.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
-        public double[] Solve(double[] value)
-        {
-            if (value == null)
-                throw new ArgumentNullException("value");
-
-            if (value.GetLength(0) != qr.GetLength(0))
-                throw new ArgumentException("Matrix row dimensions must agree.");
-
-            if (!this.FullRank)
-                throw new InvalidOperationException("Matrix is rank deficient.");
-
-            // Copy right hand side
-            double[] X = (double[])value.Clone();
-            int m = qr.GetLength(0);
-            int n = qr.GetLength(1);
-
-            // Compute Y = transpose(Q)*B
-            for (int k = 0; k < n; k++)
-            {
-                double s = 0.0;
-
-                for (int i = k; i < m; i++)
-                    s += qr[i, k] * X[i];
-
-                s = -s / qr[k, k];
-
-                for (int i = k; i < m; i++)
-                    X[i] += s * qr[i, k];
-            }
-
-            // Solve R*X = Y;
-            for (int k = n - 1; k >= 0; k--)
-            {
-                X[k] /= Rdiag[k];
-
-                for (int i = 0; i < k; i++)
-                    X[i] -= X[k] * qr[i, k];
-            }
-
-            return X;
         }
 
         /// <summary>Shows if the matrix <c>A</c> is of full rank.</summary>
@@ -286,7 +122,7 @@ namespace Accord.Math.Decompositions
 
                 for (int i = 0; i < columns; i++)
                 {
-                    if (this.Rdiag[i] == 0)
+                    if (Rdiag[i] == 0)
                     {
                         return false;
                     }
@@ -301,8 +137,8 @@ namespace Accord.Math.Decompositions
         {
             get
             {
-                int n = this.qr.GetLength(1);
-                double[,] x = new double[n, n];
+                int n = qr.GetLength(1);
+                var x = new double[n,n];
 
                 for (int i = 0; i < n; i++)
                 {
@@ -334,7 +170,7 @@ namespace Accord.Math.Decompositions
             {
                 int rows = qr.GetLength(0);
                 int cols = qr.GetLength(1);
-                double[,] x = new double[rows, cols];
+                var x = new double[rows,cols];
 
                 for (int k = cols - 1; k >= 0; k--)
                 {
@@ -352,14 +188,14 @@ namespace Accord.Math.Decompositions
 
                             for (int i = k; i < rows; i++)
                             {
-                                s += qr[i, k] * x[i, j];
+                                s += qr[i, k]*x[i, j];
                             }
 
-                            s = -s / qr[k, k];
+                            s = -s/qr[k, k];
 
                             for (int i = k; i < rows; i++)
                             {
-                                x[i, j] += s * qr[i, k];
+                                x[i, j] += s*qr[i, k];
                             }
                         }
                     }
@@ -375,16 +211,183 @@ namespace Accord.Math.Decompositions
             get { return Rdiag; }
         }
 
+        #region ISolverDecomposition Members
+
+        /// <summary>Least squares solution of <c>A * X = B</c></summary>
+        /// <param name="value">Right-hand-side matrix with as many rows as <c>A</c> and any number of columns.</param>
+        /// <returns>A matrix that minimized the two norm of <c>Q * R * X - B</c>.</returns>
+        /// <exception cref="T:System.ArgumentException">Matrix row dimensions must be the same.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
+        public double[,] Solve(double[,] value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value", "Matrix cannot be null.");
+
+            if (value.GetLength(0) != qr.GetLength(0))
+                throw new ArgumentException("Matrix row dimensions must agree.");
+
+            if (!FullRank)
+                throw new InvalidOperationException("Matrix is rank deficient.");
+
+            // Copy right hand side
+            int count = value.GetLength(1);
+            var X = (double[,]) value.Clone();
+            int m = qr.GetLength(0);
+            int n = qr.GetLength(1);
+
+            // Compute Y = transpose(Q)*B
+            for (int k = 0; k < n; k++)
+            {
+                for (int j = 0; j < count; j++)
+                {
+                    double s = 0.0;
+
+                    for (int i = k; i < m; i++)
+                        s += qr[i, k]*X[i, j];
+
+                    s = -s/qr[k, k];
+
+                    for (int i = k; i < m; i++)
+                        X[i, j] += s*qr[i, k];
+                }
+            }
+
+            // Solve R*X = Y;
+            for (int k = n - 1; k >= 0; k--)
+            {
+                for (int j = 0; j < count; j++)
+                    X[k, j] /= Rdiag[k];
+
+                for (int i = 0; i < k; i++)
+                    for (int j = 0; j < count; j++)
+                        X[i, j] -= X[k, j]*qr[i, k];
+            }
+
+            var r = new double[n,count];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < count; j++)
+                    r[i, j] = X[i, j];
+
+            return r;
+        }
+
+        /// <summary>Least squares solution of <c>A * X = B</c></summary>
+        /// <param name="value">Right-hand-side matrix with as many rows as <c>A</c> and any number of columns.</param>
+        /// <returns>A matrix that minimized the two norm of <c>Q * R * X - B</c>.</returns>
+        /// <exception cref="T:System.ArgumentException">Matrix row dimensions must be the same.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
+        public double[] Solve(double[] value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            if (value.GetLength(0) != qr.GetLength(0))
+                throw new ArgumentException("Matrix row dimensions must agree.");
+
+            if (!FullRank)
+                throw new InvalidOperationException("Matrix is rank deficient.");
+
+            // Copy right hand side
+            var X = (double[]) value.Clone();
+            int m = qr.GetLength(0);
+            int n = qr.GetLength(1);
+
+            // Compute Y = transpose(Q)*B
+            for (int k = 0; k < n; k++)
+            {
+                double s = 0.0;
+
+                for (int i = k; i < m; i++)
+                    s += qr[i, k]*X[i];
+
+                s = -s/qr[k, k];
+
+                for (int i = k; i < m; i++)
+                    X[i] += s*qr[i, k];
+            }
+
+            // Solve R*X = Y;
+            for (int k = n - 1; k >= 0; k--)
+            {
+                X[k] /= Rdiag[k];
+
+                for (int i = 0; i < k; i++)
+                    X[i] -= X[k]*qr[i, k];
+            }
+
+            return X;
+        }
+
+        #endregion
+
+        /// <summary>Least squares solution of <c>X * A = B</c></summary>
+        /// <param name="value">Right-hand-side matrix with as many columns as <c>A</c> and any number of rows.</param>
+        /// <returns>A matrix that minimized the two norm of <c>X * Q * R - B</c>.</returns>
+        /// <exception cref="T:System.ArgumentException">Matrix column dimensions must be the same.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Matrix is rank deficient.</exception>
+        public double[,] SolveTranspose(double[,] value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value", "Matrix cannot be null.");
+
+            if (value.GetLength(1) != qr.GetLength(0))
+                throw new ArgumentException("Matrix row dimensions must agree.");
+
+            if (!FullRank)
+                throw new InvalidOperationException("Matrix is rank deficient.");
+
+            // Copy right hand side
+            int count = value.GetLength(0);
+            double[,] X = value.Transpose();
+            int m = qr.GetLength(0);
+            int n = qr.GetLength(1);
+
+            // Compute Y = transpose(Q)*B
+            for (int k = 0; k < n; k++)
+            {
+                for (int j = 0; j < count; j++)
+                {
+                    double s = 0.0;
+
+                    for (int i = k; i < m; i++)
+                        s += qr[i, k]*X[i, j];
+
+                    s = -s/qr[k, k];
+
+                    for (int i = k; i < m; i++)
+                        X[i, j] += s*qr[i, k];
+                }
+            }
+
+            // Solve R*X = Y;
+            for (int k = n - 1; k >= 0; k--)
+            {
+                for (int j = 0; j < count; j++)
+                    X[k, j] /= Rdiag[k];
+
+                for (int i = 0; i < k; i++)
+                    for (int j = 0; j < count; j++)
+                        X[i, j] -= X[k, j]*qr[i, k];
+            }
+
+            var r = new double[count,n];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < count; j++)
+                    r[j, i] = X[i, j];
+
+            return r;
+        }
+
         /// <summary>Least squares solution of <c>A * X = I</c></summary>
         public double[,] Inverse()
         {
-            if (!this.FullRank)
+            if (!FullRank)
                 throw new InvalidOperationException("Matrix is rank deficient.");
 
             // Copy right hand side
             int m = qr.GetLength(0);
             int n = qr.GetLength(1);
-            double[,] X = new double[m, m];
+            var X = new double[m,m];
 
             // Compute Y = transpose(Q)
             for (int k = n - 1; k >= 0; k--)
@@ -400,12 +403,12 @@ namespace Accord.Math.Decompositions
                         double s = 0.0;
 
                         for (int i = k; i < m; i++)
-                            s += qr[i, k] * X[j, i];
+                            s += qr[i, k]*X[j, i];
 
-                        s = -s / qr[k, k];
+                        s = -s/qr[k, k];
 
                         for (int i = k; i < m; i++)
-                            X[j, i] += s * qr[i, k];
+                            X[j, i] += s*qr[i, k];
                     }
                 }
             }
@@ -418,7 +421,7 @@ namespace Accord.Math.Decompositions
 
                 for (int i = 0; i < k; i++)
                     for (int j = 0; j < m; j++)
-                        X[i, j] -= X[k, j] * qr[i, k];
+                        X[i, j] -= X[k, j]*qr[i, k];
             }
 
             return X;

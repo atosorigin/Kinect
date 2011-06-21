@@ -26,7 +26,7 @@ namespace Accord.Math
         /// <returns>The Square Mahalanobis distance between x and y.</returns>
         public static double SquareMahalanobis(this double[] x, double[] y, double[,] precision)
         {
-            double[] d = new double[x.Length];
+            var d = new double[x.Length];
             for (int i = 0; i < x.Length; i++)
                 d[i] = x[i] - y[i];
 
@@ -74,7 +74,7 @@ namespace Accord.Math
             for (int i = 0; i < x.Length; i++)
             {
                 u = x[i] - y[i];
-                d += u * u;
+                d += u*u;
             }
 
             return d;
@@ -111,7 +111,7 @@ namespace Accord.Math
             double b = 0; // Bhattacharyya's coefficient
 
             for (int i = 0; i < bins; i++)
-                b += System.Math.Sqrt(histogram1[i]) * System.Math.Sqrt(histogram2[i]);
+                b += System.Math.Sqrt(histogram1[i])*System.Math.Sqrt(histogram2[i]);
 
             // bhattacharyya distance between the two distributions
             return System.Math.Sqrt(1.0 - b);
@@ -145,25 +145,24 @@ namespace Accord.Math
             int n = covX.GetLength(0);
 
             // P = (covX + covY) / 2
-            double[,] P = new double[n, n];
+            var P = new double[n,n];
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n - i; j++)
-                    P[j, i] = P[i, j] = (covX[i, j] + covY[i, j]) / 2.0;
+                    P[j, i] = P[i, j] = (covX[i, j] + covY[i, j])/2.0;
 
             double detP = P.Determinant(true);
             double detP1 = covX.Determinant(true);
             double detP2 = covY.Determinant(true);
 
-            return (1.0 / 8.0) * SquareMahalanobis(meanY, meanX, Matrix.Inverse(P))
-                + (0.5) * System.Math.Log(detP / System.Math.Sqrt(detP1 * detP2));
+            return (1.0/8.0)*SquareMahalanobis(meanY, meanX, P.Inverse())
+                   + (0.5)*System.Math.Log(detP/System.Math.Sqrt(detP1*detP2));
         }
 
-
-
         #region Private methods
+
         private static double[] mean(double[,] matrix)
         {
-            double[] mean = new double[matrix.GetLength(1)];
+            var mean = new double[matrix.GetLength(1)];
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
             double N = matrix.GetLength(0);
@@ -184,14 +183,14 @@ namespace Accord.Math
             int cols = matrix.GetLength(1);
             double divisor = rows - 1;
 
-            double[,] cov = new double[cols, cols];
+            var cov = new double[cols,cols];
             for (int i = 0; i < cols; i++)
             {
                 for (int j = i; j < cols; j++)
                 {
                     double s = 0.0;
                     for (int k = 0; k < rows; k++)
-                        s += (matrix[k, j] - means[j]) * (matrix[k, i] - means[i]);
+                        s += (matrix[k, j] - means[j])*(matrix[k, i] - means[i]);
                     s /= divisor;
                     cov[i, j] = s;
                     cov[j, i] = s;
@@ -200,7 +199,7 @@ namespace Accord.Math
 
             return cov;
         }
-        #endregion
 
+        #endregion
     }
 }

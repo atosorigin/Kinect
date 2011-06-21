@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using Accord.Math;
-    using System;
-
     /// <summary>
     ///   Normal (Gaussian) distribution.
     /// </summary>
@@ -24,14 +24,14 @@ namespace Accord.Statistics.Distributions.Univariate
     [Serializable]
     public class NormalDistribution : UnivariateContinuousDistribution
     {
-
         // Distribution parameters
-        private double mean;
-        private double variance;
+        private static readonly NormalDistribution standard = new NormalDistribution();
+        private readonly double entropy;
+        private readonly double mean;
+        private readonly double variance;
 
 
         // Distribution measures
-        private double entropy;
 
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Accord.Statistics.Distributions.Univariate
             this.variance = variance;
 
             // Compute distribution measures
-            double b = 2.0 * System.Math.PI * variance;
+            double b = 2.0*System.Math.PI*variance;
             entropy = System.Math.Log(System.Math.Sqrt(b));
         }
 
@@ -95,6 +95,15 @@ namespace Accord.Statistics.Distributions.Univariate
         }
 
         /// <summary>
+        ///   Gets the Standard Gaussian Distribution,
+        ///   with zero mean and unit variance.
+        /// </summary>
+        public static NormalDistribution Standard
+        {
+            get { return standard; }
+        }
+
+        /// <summary>
         ///   Gets the cumulative distribution function (cdf) for
         ///   the this distribution evaluated at point <c>x</c>.
         /// </summary>
@@ -118,7 +127,7 @@ namespace Accord.Statistics.Distributions.Univariate
         public override double DistributionFunction(double x)
         {
             double z = ZScore(x);
-            return Special.Erfc(-z / Special.Sqrt2) / 2.0;
+            return Special.Erfc(-z/Special.Sqrt2)/2.0;
         }
 
         /// <summary>
@@ -140,7 +149,7 @@ namespace Accord.Statistics.Distributions.Univariate
         public override double ProbabilityDensityFunction(double x)
         {
             double z = ZScore(x);
-            return ((1.0 / (Special.SqrtPI * variance)) * System.Math.Exp((-z * z) / 2.0));
+            return ((1.0/(Special.SqrtPI*variance))*System.Math.Exp((-z*z)/2.0));
         }
 
         /// <summary>
@@ -148,18 +157,8 @@ namespace Accord.Statistics.Distributions.Univariate
         /// </summary>
         public double ZScore(double x)
         {
-            return (x - mean) / variance;
+            return (x - mean)/variance;
         }
-
-
-
-        /// <summary>
-        ///   Gets the Standard Gaussian Distribution,
-        ///   with zero mean and unit variance.
-        /// </summary>
-        public static NormalDistribution Standard { get { return standard; } }
-
-        private static readonly NormalDistribution standard = new NormalDistribution();
 
 
         /// <summary>
@@ -177,10 +176,10 @@ namespace Accord.Statistics.Distributions.Univariate
         public override IDistribution Fit(double[] observations, double[] weights)
         {
             // Compute weighted mean
-            double mean = Statistics.Tools.Mean(observations, weights);
+            double mean = observations.Mean(weights);
 
             // Compute weighted variance
-            double variance = Statistics.Tools.Variance(observations, mean, weights);
+            double variance = Tools.Variance(observations, mean, weights);
 
             return new NormalDistribution(mean, variance);
         }

@@ -5,18 +5,18 @@ namespace Kinect.Core.Gestures
 {
     public class SelfTouchEventArgs : GestureEventArgs
     {
-        public JointID[] Joints { get; private set; }
-
         public SelfTouchEventArgs(int userid, params JointID[] joints)
             : base(userid)
         {
-            this.Joints = joints;
+            Joints = joints;
         }
+
+        public JointID[] Joints { get; private set; }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
-            foreach (var joint in this.Joints)
+            var builder = new StringBuilder();
+            foreach (JointID joint in Joints)
             {
                 builder.Append(joint);
                 builder.Append("+");

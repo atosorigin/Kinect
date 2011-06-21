@@ -1,46 +1,69 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Windows;
-using Kinect.Common;
+using System.Windows.Media.Media3D;
 using GalaSoft.MvvmLight.Threading;
+using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Eventing;
 using Kinect.Core.Filters.Helper;
 using Kinect.Core.Gestures;
 using Kinect.Plugins.Common.ViewModels;
 using Kinect.Plugins.Common.Views;
 using log4net;
-using System.Windows.Media.Media3D;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Kinect.Plugins.Common
 {
     public class KinectManager
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(KinectManager));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (KinectManager));
 
         private static readonly KinectManager _instance = new KinectManager();
-        public static KinectManager Instance { get { return _instance; } }
 
-        private static object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
         //private User _kinectUser;
 
-        private List<User> _kinectUsers;
+        private readonly Calibration _calibrationView;
+        private readonly CalibrationViewModel _calibrationViewModel;
+        private readonly MyKinect _kinect;
         private User _calibratingUser;
+        private int _calibration;
+        private List<User> _kinectUsers;
+        private DateTime _lastHit = DateTime.Now;
+        private SelfTouchGesture _nextSlideSelfTouch, _previousSlideSelfTouch;
+        private bool _saveCalibrationData;
+        private SelfTouchGesture _togglePointerSelfTouch;
+        private bool _userCalibrated;
 
-        private MyKinect _kinect;
+        private KinectManager()
+        {
+            EventIntervalInMilliseconds = 2000;
+            _kinect = MyKinect.Instance;
+            _kinect.SingleUserMode = true;
+            ConfigurationViewModel = new ConfigureKinectViewModel();
+            _calibrationView = new Calibration();
+            _calibrationViewModel = CalibrationViewModel.Current;
+
+            if (_calibrationViewModel != null)
+            {
+                _calibrationViewModel.SaveCalibrationData += CalibrationView_SaveCalibrationData;
+                _calibrationViewModel.CountDownFinished += CalibrationView_CountDownFinished;
+            }
+        }
+
+        public static KinectManager Instance
+        {
+            get { return _instance; }
+        }
+
         internal MyKinect Kinect
         {
             get { return _kinect != null && _kinect.KinectState == KinectState.Running ? _kinect : null; }
         }
 
-        private DateTime _lastHit = DateTime.Now;
-        private bool _saveCalibrationData = false;
-        private int _calibration = 0;
-        private bool _userCalibrated = false;
-        private Calibration _calibrationView;
-        private CalibrationViewModel _calibrationViewModel;
         public ConfigureKinectViewModel ConfigurationViewModel { get; private set; }
-        private SelfTouchGesture _nextSlideSelfTouch, _previousSlideSelfTouch, _togglePointerSelfTouch;
 
         public int EventIntervalInMilliseconds { get; set; }
         public bool Running { get; private set; }
@@ -90,20 +113,22 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<SinglePointEventArgs> LaserUpdated;
+
         private void OnLaserUpdated(int userid, Point3D point)
         {
             //TODO: Hier was ik gebleven. Toggle laser aan user binden
-            var handler = LaserUpdated;
+            EventHandler<SinglePointEventArgs> handler = LaserUpdated;
             if (handler != null)
             {
-                handler.Invoke(this, new SinglePointEventArgs(userid,point));
+                handler.Invoke(this, new SinglePointEventArgs(userid, point));
             }
         }
 
         internal event EventHandler<UserEventArgs> NextSlide;
+
         private void OnNextSlide(int userid)
         {
-            var handler = NextSlide;
+            EventHandler<UserEventArgs> handler = NextSlide;
             if (handler != null)
             {
                 handler.Invoke(this, new UserEventArgs(userid));
@@ -111,9 +136,10 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<UserEventArgs> PreviousSlide;
+
         private void OnPreviousSlide(int userid)
         {
-            var handler = PreviousSlide;
+            EventHandler<UserEventArgs> handler = PreviousSlide;
             if (handler != null)
             {
                 handler.Invoke(this, new UserEventArgs(userid));
@@ -121,9 +147,10 @@ namespace Kinect.Plugins.Common
         }
 
         internal event EventHandler<UserEventArgs> TogglePointer;
+
         private void OnTogglePointer(int userID)
         {
-            var handler = TogglePointer;
+            EventHandler<UserEventArgs> handler = TogglePointer;
             if (handler != null)
             {
                 handler.Invoke(this, new UserEventArgs(userID));
@@ -131,9 +158,10 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler UserCalibrating;
+
         private void OnUserCalibrating()
         {
-            var handler = UserCalibrating;
+            EventHandler handler = UserCalibrating;
             if (handler != null)
             {
                 handler.Invoke(this, new EventArgs());
@@ -141,9 +169,10 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler UserCalibrated;
+
         private void OnUserCalibrated()
         {
-            var handler = UserCalibrated;
+            EventHandler handler = UserCalibrated;
             if (handler != null)
             {
                 handler.Invoke(this, new EventArgs());
@@ -151,9 +180,10 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler<UserEventArgs> UserFound;
+
         private void OnUserFound(int id)
         {
-            var handler = UserFound;
+            EventHandler<UserEventArgs> handler = UserFound;
             if (handler != null)
             {
                 handler.Invoke(this, new UserEventArgs(id));
@@ -161,9 +191,10 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler<UserEventArgs> UserLost;
+
         private void OnUserLost(int id)
         {
-            var handler = UserLost;
+            EventHandler<UserEventArgs> handler = UserLost;
             if (handler != null)
             {
                 handler.Invoke(this, new UserEventArgs(id));
@@ -171,9 +202,10 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler KinectStarted;
+
         private void OnKinectStarted()
         {
-            var handler = KinectStarted;
+            EventHandler handler = KinectStarted;
             if (handler != null)
             {
                 handler.Invoke(this, new EventArgs());
@@ -181,40 +213,25 @@ namespace Kinect.Plugins.Common
         }
 
         public event EventHandler KinectStopped;
+
         private void OnKinectStopped()
         {
-            var handler = KinectStopped;
+            EventHandler handler = KinectStopped;
             if (handler != null)
             {
                 handler.Invoke(this, new EventArgs());
             }
         }
 
-        private KinectManager()
-        {
-            EventIntervalInMilliseconds = 2000;
-            _kinect = MyKinect.Instance;
-            _kinect.SingleUserMode = true;
-            ConfigurationViewModel = new ConfigureKinectViewModel();
-            _calibrationView = new Calibration();
-            _calibrationViewModel = CalibrationViewModel.Current;
-
-            if (_calibrationViewModel != null)
-            {
-                _calibrationViewModel.SaveCalibrationData += CalibrationView_SaveCalibrationData;
-                _calibrationViewModel.CountDownFinished += CalibrationView_CountDownFinished;
-            }
-        }
-
-        private void _kinect_Started(object sender, Core.KinectEventArgs e)
+        private void _kinect_Started(object sender, KinectEventArgs e)
         {
             Running = true;
             OnKinectStarted();
-            System.Threading.Thread.Sleep(100);
+            Thread.Sleep(100);
             ShowCalibrationMessage("Please initialise user");
         }
 
-        private void _kinect_Stopped(object sender, Core.KinectEventArgs e)
+        private void _kinect_Stopped(object sender, KinectEventArgs e)
         {
             CleanUpAfterKinectStopped();
         }
@@ -226,12 +243,12 @@ namespace Kinect.Plugins.Common
             OnKinectStopped();
         }
 
-        private void _kinect_UserRemoved(object sender, Core.KinectUserEventArgs e)
+        private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
         {
             if (_kinectUsers != null)
             {
-
-                var user = (from kinectuser in _kinectUsers where kinectuser.ID == e.User.ID select kinectuser).FirstOrDefault();
+                User user =
+                    (from kinectuser in _kinectUsers where kinectuser.ID == e.User.ID select kinectuser).FirstOrDefault();
                 if (user != null)
                 {
                     _kinectUsers.Remove(user);
@@ -242,17 +259,16 @@ namespace Kinect.Plugins.Common
             OnUserLost(e.User.ID);
         }
 
-        private void _kinect_UserCreated(object sender, Core.KinectUserEventArgs e)
+        private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
-
             if (_kinectUsers.Count > 0 && !_userCalibrated)
             {
                 //De gebruiker is al aan het initialiseren
-                _log.DebugFormat("User {0} ignored, because another user is calibrating",e.User.ID);
+                _log.DebugFormat("User {0} ignored, because another user is calibrating", e.User.ID);
                 return;
             }
 
-            var user = _kinect.GetUser(e.User.ID);
+            User user = _kinect.GetUser(e.User.ID);
             user.Updated += _kinectUser_Updated;
             _kinectUsers.Add(user);
             _log.DebugFormat("User {0} added to the list of active Powerpoint users", user.ID);
@@ -275,54 +291,65 @@ namespace Kinect.Plugins.Common
             {
                 if (ConfigurationViewModel.EnableNextSlide)
                 {
-                    _nextSlideSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.NextSlideCorrection, ConfigurationViewModel.NextSlide1, ConfigurationViewModel.NextSlide2);
+                    _nextSlideSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.NextSlideCorrection,
+                                                                   ConfigurationViewModel.NextSlide1,
+                                                                   ConfigurationViewModel.NextSlide2);
                     _nextSlideSelfTouch.SelfTouchDetected +=
                         ((s, evt) =>
-                        {
-                            if (CheckEventInterval())
-                            {
-                                _log.DebugFormat("Next Slide \tUser:{0}", evt.UserID);
-                                OnNextSlide(evt.UserID);
-                            }
-                        });
-                    _log.DebugFormat("Added NextSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID, ConfigurationViewModel.NextSlideCorrection.GetDebugString(),ConfigurationViewModel.NextSlide1,ConfigurationViewModel.NextSlide2);
+                             {
+                                 if (CheckEventInterval())
+                                 {
+                                     _log.DebugFormat("Next Slide \tUser:{0}", evt.UserID);
+                                     OnNextSlide(evt.UserID);
+                                 }
+                             });
+                    _log.DebugFormat("Added NextSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                                     ConfigurationViewModel.NextSlideCorrection.GetDebugString(),
+                                     ConfigurationViewModel.NextSlide1, ConfigurationViewModel.NextSlide2);
                 }
 
                 if (ConfigurationViewModel.EnablePreviousSlide)
                 {
-                    _previousSlideSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.PreviousSlideCorrection, ConfigurationViewModel.PreviousSlide1, ConfigurationViewModel.PreviousSlide2);
+                    _previousSlideSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.PreviousSlideCorrection,
+                                                                       ConfigurationViewModel.PreviousSlide1,
+                                                                       ConfigurationViewModel.PreviousSlide2);
                     _previousSlideSelfTouch.SelfTouchDetected +=
                         ((s, evt) =>
-                        {
-                            if (CheckEventInterval())
-                            {
-                                _log.DebugFormat("Previous Slide \tUser:{0}", evt.UserID);
-                                OnPreviousSlide(evt.UserID);
-                            }
-                        });
-                    _log.DebugFormat("Added PreviousSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID, ConfigurationViewModel.PreviousSlideCorrection.GetDebugString(),ConfigurationViewModel.PreviousSlide1,ConfigurationViewModel.PreviousSlide2);
+                             {
+                                 if (CheckEventInterval())
+                                 {
+                                     _log.DebugFormat("Previous Slide \tUser:{0}", evt.UserID);
+                                     OnPreviousSlide(evt.UserID);
+                                 }
+                             });
+                    _log.DebugFormat("Added PreviousSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                                     ConfigurationViewModel.PreviousSlideCorrection.GetDebugString(),
+                                     ConfigurationViewModel.PreviousSlide1, ConfigurationViewModel.PreviousSlide2);
                 }
 
                 if (ConfigurationViewModel.EnableTogglePointer)
                 {
-                    _togglePointerSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.TogglePointerCorrection, ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2);
+                    _togglePointerSelfTouch = user.AddSelfTouchGesture(ConfigurationViewModel.TogglePointerCorrection,
+                                                                       ConfigurationViewModel.TogglePointer1,
+                                                                       ConfigurationViewModel.TogglePointer2);
                     _togglePointerSelfTouch.SelfTouchDetected +=
                         ((s, evt) =>
-                        {
-                            if (CheckEventInterval())
-                            {
-                                _log.DebugFormat("TogglePointer \tUser:{0}", evt.UserID);
-                                OnTogglePointer(evt.UserID);
-                            }
-                        });
-                    _log.DebugFormat("Added TogglePointerEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID, ConfigurationViewModel.TogglePointerCorrection.GetDebugString(), ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2);
+                             {
+                                 if (CheckEventInterval())
+                                 {
+                                     _log.DebugFormat("TogglePointer \tUser:{0}", evt.UserID);
+                                     OnTogglePointer(evt.UserID);
+                                 }
+                             });
+                    _log.DebugFormat("Added TogglePointerEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                                     ConfigurationViewModel.TogglePointerCorrection.GetDebugString(),
+                                     ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2);
                 }
             }
         }
 
         private void RemoveUserTouchEvents(User user)
         {
-
             if (user != null)
             {
                 if (_nextSlideSelfTouch != null)
@@ -342,7 +369,7 @@ namespace Kinect.Plugins.Common
 
         private void RunCalibration(User user)
         {
-            var message = GetCalibrationMessage();
+            string message = GetCalibrationMessage();
             if (_calibration < 3)
             {
                 ShowCalibrationMessage(message);
@@ -365,12 +392,12 @@ namespace Kinect.Plugins.Common
         {
             _calibrationViewModel.CalibrationMessage = message;
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                if (_calibrationView.Visibility != Visibility.Visible)
-                {
-                    _calibrationView.Show();
-                }
-            });
+                                                      {
+                                                          if (_calibrationView.Visibility != Visibility.Visible)
+                                                          {
+                                                              _calibrationView.Show();
+                                                          }
+                                                      });
         }
 
         private string GetCalibrationMessage()
@@ -416,7 +443,7 @@ namespace Kinect.Plugins.Common
             RunCalibration(_calibratingUser);
         }
 
-        private void _kinectUser_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
+        private void _kinectUser_Updated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
             if (_saveCalibrationData)
             {
@@ -424,9 +451,21 @@ namespace Kinect.Plugins.Common
                 {
                     switch (_calibration)
                     {
-                        case 0: ConfigurationViewModel.NextSlideCorrection = FilterHelper.CalculateCorrection(e.Event.GetPoints(ConfigurationViewModel.NextSlide1, ConfigurationViewModel.NextSlide2)); break;
-                        case 1: ConfigurationViewModel.PreviousSlideCorrection = FilterHelper.CalculateCorrection(e.Event.GetPoints(ConfigurationViewModel.PreviousSlide1, ConfigurationViewModel.PreviousSlide2)); break;
-                        case 2: ConfigurationViewModel.TogglePointerCorrection = FilterHelper.CalculateCorrection(e.Event.GetPoints(ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2)); break;
+                        case 0:
+                            ConfigurationViewModel.NextSlideCorrection =
+                                FilterHelper.CalculateCorrection(e.Event.GetPoints(ConfigurationViewModel.NextSlide1,
+                                                                                   ConfigurationViewModel.NextSlide2));
+                            break;
+                        case 1:
+                            ConfigurationViewModel.PreviousSlideCorrection =
+                                FilterHelper.CalculateCorrection(e.Event.GetPoints(
+                                    ConfigurationViewModel.PreviousSlide1, ConfigurationViewModel.PreviousSlide2));
+                            break;
+                        case 2:
+                            ConfigurationViewModel.TogglePointerCorrection =
+                                FilterHelper.CalculateCorrection(e.Event.GetPoints(
+                                    ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2));
+                            break;
                     }
                     _saveCalibrationData = false;
                 }
@@ -434,7 +473,7 @@ namespace Kinect.Plugins.Common
 
             if (ConfigurationViewModel.EnableTogglePointer)
             {
-                OnLaserUpdated(e.Event.ID,e.Event.GetPoint(ConfigurationViewModel.MovePointer));
+                OnLaserUpdated(e.Event.ID, e.Event.GetPoint(ConfigurationViewModel.MovePointer));
             }
         }
 

@@ -1,19 +1,42 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.ComponentModel;
+using System.Drawing;
+using Point = System.Windows.Point;
 
 namespace Kinect.Pong.Models
 {
     public class Ball : INotifyPropertyChanged
     {
         private Point _position;
+
+        public Ball(int radius, double angle, double speed)
+        {
+            Radius = radius;
+            Angle = angle;
+            Speed = speed;
+
+            //Spawn at middle point
+            Position = new Point(Boundry.Width/2 - (Radius/2), Boundry.Height/2 - (Radius/2));
+            //Aanliggend
+            XVelocity = (Math.Cos(Angle*(Math.PI/180))*Speed);
+            //Overstaand
+            YVelocity = (Math.Sin(Angle*(Math.PI/180))*Speed);
+
+            if (XVelocity > -0.5 && XVelocity < 0.5)
+            {
+                XVelocity = XVelocity < 0 ? XVelocity - 0.5 : XVelocity + 0.5;
+            }
+
+            if (YVelocity > -0.5 && YVelocity < 0.5)
+            {
+                YVelocity = YVelocity < 0 ? YVelocity - 0.5 : YVelocity + 0.5;
+            }
+        }
+
         public Point Position
         {
-            get
-            {
-                return _position;
-            }
+            get { return _position; }
             private set
             {
                 if (_position != value)
@@ -31,28 +54,26 @@ namespace Kinect.Pong.Models
         public double Angle { get; private set; }
         public double Speed { get; private set; }
 
-        private System.Drawing.Rectangle Boundry
+        private Rectangle Boundry
         {
-            get
-            {
-                return _game.Boundry;
-            }
+            get { return _game.Boundry; }
         }
 
         private PongGame _game
         {
-            get
-            {
-                return PongGame.Instance;
-            }
+            get { return PongGame.Instance; }
         }
+
         private ObservableCollection<Paddle> _paddles
         {
-            get
-            {
-                return this._game.Paddles;
-            }
+            get { return _game.Paddles; }
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
         public event EventHandler<ScoreEventArgs> Scored;
 
@@ -72,7 +93,7 @@ namespace Kinect.Pong.Models
             {
                 OnScored(Paddle.Side.Right, this);
             }
-            if (Position.X <= 0 + this.Radius)
+            if (Position.X <= 0 + Radius)
             {
                 OnScored(Paddle.Side.Left, this);
             }
@@ -80,12 +101,12 @@ namespace Kinect.Pong.Models
 
         private void DetermineBallCollision()
         {
-            var minx = Position.X - (this.Radius / 2);
-            var maxx = Position.X + (this.Radius / 2);
-            var minY = Position.Y - (this.Radius / 2);
-            var maxY = Position.Y + (this.Radius / 2);
+            double minx = Position.X - (Radius/2);
+            double maxx = Position.X + (Radius/2);
+            double minY = Position.Y - (Radius/2);
+            double maxY = Position.Y + (Radius/2);
 
-            foreach (var ball in PongGame.Instance.Balls)
+            foreach (Ball ball in PongGame.Instance.Balls)
             {
                 //Jezelf niet controleren
                 if (ball == this)
@@ -101,18 +122,18 @@ namespace Kinect.Pong.Models
                     //Bereken daarna de juiste X en Y velocity
                     XVelocity = -XVelocity;
                 }
-            }   
+            }
         }
 
         private void DeterminePaddleCollision()
         {
-            foreach (var paddle in _paddles)
+            foreach (Paddle paddle in _paddles)
             {
                 if (paddle.PaddleSide == Paddle.Side.Left)
                 {
-                    if ((paddle.Position.X + (this.Radius / 2) + paddle.Width) > Position.X + (this.Radius / 2) &&
-                        Position.Y + (this.Radius / 2) > paddle.Position.Y + (this.Radius / 2) &&
-                        Position.Y + (this.Radius / 2) < paddle.Position.Y + (this.Radius / 2) + paddle.Height)
+                    if ((paddle.Position.X + (Radius/2) + paddle.Width) > Position.X + (Radius/2) &&
+                        Position.Y + (Radius/2) > paddle.Position.Y + (Radius/2) &&
+                        Position.Y + (Radius/2) < paddle.Position.Y + (Radius/2) + paddle.Height)
                     {
                         XVelocity = -XVelocity;
                     }
@@ -126,7 +147,6 @@ namespace Kinect.Pong.Models
                         XVelocity = -XVelocity;
                     }
                 }
-
             }
         }
 
@@ -144,7 +164,7 @@ namespace Kinect.Pong.Models
 
         protected virtual void OnScored(Paddle.Side _side, Ball ball)
         {
-            var handler = this.Scored;
+            EventHandler<ScoreEventArgs> handler = Scored;
 
             if (handler != null)
             {
@@ -152,34 +172,9 @@ namespace Kinect.Pong.Models
             }
         }
 
-        public Ball(int radius, double angle, double speed)
-        {
-            Radius = radius;
-            Angle = angle;
-            Speed = speed;
-
-            //Spawn at middle point
-            Position = new Point(Boundry.Width / 2 - (Radius / 2), Boundry.Height / 2 - (Radius / 2));
-            //Aanliggend
-            XVelocity = (Math.Cos(Angle * (Math.PI / 180)) * Speed);
-            //Overstaand
-            YVelocity = (Math.Sin(Angle * (Math.PI / 180)) * Speed);
-
-            if (XVelocity > -0.5 && XVelocity < 0.5)
-            {
-                XVelocity = XVelocity < 0 ? XVelocity - 0.5 : XVelocity + 0.5;
-            }
-
-            if (YVelocity > -0.5 && YVelocity < 0.5)
-            {
-                YVelocity = YVelocity < 0 ? YVelocity - 0.5 : YVelocity + 0.5;
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));

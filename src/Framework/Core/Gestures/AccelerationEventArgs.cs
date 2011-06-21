@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Kinect.Core.Gestures
+﻿namespace Kinect.Core.Gestures
 {
     /// <summary>
     /// Eventargs for the AccelerationGesture
     /// </summary>
     public class AccelerationEventArgs : GestureEventArgs
     {
-        /// <summary>
-        /// Gets the delta Y.
-        /// </summary>
-        public double DeltaY { get; private set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AccelerationEventArgs"/> class.
         /// </summary>
@@ -25,5 +15,10 @@ namespace Kinect.Core.Gestures
         {
             DeltaY = deltaY;
         }
+
+        /// <summary>
+        /// Gets the delta Y.
+        /// </summary>
+        public double DeltaY { get; private set; }
     }
 }

@@ -1,83 +1,66 @@
-﻿<Window x:Class="Kinect.Pong.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
-        Title="nPong" WindowState="Minimized">
-    <Window.Background>
-        <ImageBrush ImageSource="/Kinect.Pong;component/Images/Background.jpg" />
-    </Window.Background>
-    <Window.DataContext>
-        <Binding Mode="OneWay"
-                 Source="{StaticResource MainViewModelDataSource}" />
-    </Window.DataContext>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="KeyDown">
-            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding KeyPress}"
-                                                       PassEventArgsToCommand="True" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Closing">
-            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding Closing}"
-                                                       PassEventArgsToCommand="True" />
-        </i:EventTrigger>
+﻿<Window x:Class="Kinect.Pong.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4" Title="nPong" WindowState="Minimized">
+	<Window.Background>
+		<ImageBrush ImageSource="/Kinect.Pong;component/Images/Background.jpg" />
+	</Window.Background>
+	<Window.DataContext>
+		<Binding Mode="OneWay" Source="{StaticResource MainViewModelDataSource}" />
+	</Window.DataContext>
+	<i:Interaction.Triggers>
+		<i:EventTrigger EventName="KeyDown">
+			<GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding KeyPress}" PassEventArgsToCommand="True" />
+		</i:EventTrigger>
+		<i:EventTrigger EventName="Closing">
+			<GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding Closing}" PassEventArgsToCommand="True" />
+		</i:EventTrigger>
 
-    </i:Interaction.Triggers>
-    <DockPanel>
-        <DockPanel.Background>
-            <ImageBrush Stretch="None" ImageSource="{Binding CameraView}" />
-        </DockPanel.Background>
+	</i:Interaction.Triggers>
+	<DockPanel>
+		<DockPanel.Background>
+			<ImageBrush Stretch="None" ImageSource="{Binding CameraView}" />
+		</DockPanel.Background>
 
-        <!--Score -->
-        <StackPanel DockPanel.Dock="Bottom" Background="Black"  HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="{Binding PongGame.ScoreLeft}" FontSize="48" Foreground="White" FontWeight="Bold"/>
-                <TextBlock Text="-" FontSize="48" Foreground="White" FontWeight="Bold" />
-                <TextBlock Text="{Binding PongGame.ScoreRight}" FontSize="48" Foreground="White" FontWeight="Bold"/>
-            </StackPanel>
-        </StackPanel>
+		<!--Score -->
+		<StackPanel DockPanel.Dock="Bottom" Background="Black" HorizontalAlignment="Stretch">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<TextBlock Text="{Binding PongGame.ScoreLeft}" FontSize="48" Foreground="White" FontWeight="Bold" />
+				<TextBlock Text="-" FontSize="48" Foreground="White" FontWeight="Bold" />
+				<TextBlock Text="{Binding PongGame.ScoreRight}" FontSize="48" Foreground="White" FontWeight="Bold" />
+			</StackPanel>
+		</StackPanel>
 
-        <!--Debug -->
-        <StackPanel DockPanel.Dock="Top" Background="Black"  HorizontalAlignment="Stretch">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="{Binding DebugInformation}" FontSize="48" Foreground="White" FontWeight="Bold"/>
-            </StackPanel>
-        </StackPanel>
+		<!--Debug -->
+		<StackPanel DockPanel.Dock="Top" Background="Black" HorizontalAlignment="Stretch">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<TextBlock Text="{Binding DebugInformation}" FontSize="48" Foreground="White" FontWeight="Bold" />
+			</StackPanel>
+		</StackPanel>
 
-        <!--Playingfield -->
-        <Canvas>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SizeChanged">
-                    <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding SizeChanged}"
-                                                       PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <ItemsControl ItemsSource="{Binding PongGame.Paddles}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Canvas>
-                            <Rectangle Height="{Binding Height, Mode=OneWay}"
-                                           Width="{Binding Width, Mode=OneWay}"
-                                           Canvas.Left="{Binding Position.X}"
-                                           Canvas.Top="{Binding Position.Y}"
-                                           Fill="{Binding Brush}"/>
-                        </Canvas>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <ItemsControl ItemsSource="{Binding PongGame.Balls}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Canvas>
-                            <Ellipse Height="{Binding Radius}"
-                                         Width="{Binding Radius}"
-                                         Canvas.Left="{Binding Position.X}"
-                                         Canvas.Top="{Binding Position.Y}"
-                                         Fill="White"></Ellipse>
-                        </Canvas>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Canvas>
+		<!--Playingfield -->
+		<Canvas>
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="SizeChanged">
+					<GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding SizeChanged}" PassEventArgsToCommand="True" />
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+			<ItemsControl ItemsSource="{Binding PongGame.Paddles}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Canvas>
+							<Rectangle Height="{Binding Height, Mode=OneWay}" Width="{Binding Width, Mode=OneWay}" Canvas.Left="{Binding Position.X}" Canvas.Top="{Binding Position.Y}" Fill="{Binding Brush}" />
+						</Canvas>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<ItemsControl ItemsSource="{Binding PongGame.Balls}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Canvas>
+							<Ellipse Height="{Binding Radius}" Width="{Binding Radius}" Canvas.Left="{Binding Position.X}" Canvas.Top="{Binding Position.Y}" Fill="White"></Ellipse>
+						</Canvas>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Canvas>
 
-    </DockPanel>
+	</DockPanel>
 </Window>

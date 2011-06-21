@@ -1,18 +1,20 @@
 ﻿using System;
-using System.Text;
 using System.Collections.ObjectModel;
+using System.Text;
 using Kinect.Common;
 
 namespace Kinect.Semaphore.Models
 {
     public class SemaphoreGame : ICopyAble<SemaphoreGame>
     {
-        private static object _syncRoot = new object();
+        private static readonly object _syncRoot = new object();
         private int _position;
 
-        public event EventHandler Start;
-        public event EventHandler Finished;
-        public event EventHandler Updated;
+        public SemaphoreGame()
+        {
+            _position = 0;
+            Semaphores = new ObservableCollection<SemaphoreImage>();
+        }
 
         internal ObservableCollection<SemaphoreImage> Semaphores { get; set; }
 
@@ -20,12 +22,12 @@ namespace Kinect.Semaphore.Models
         {
             get
             {
-                if (this._position >= this.Semaphores.Count)
+                if (_position >= Semaphores.Count)
                 {
                     return null;
                 }
 
-                return this.Semaphores[this._position];
+                return Semaphores[_position];
             }
         }
 
@@ -33,49 +35,58 @@ namespace Kinect.Semaphore.Models
         {
             get
             {
-                if (this._position + 1 >= this.Semaphores.Count)
+                if (_position + 1 >= Semaphores.Count)
                 {
-                   return null;
+                    return null;
                 }
 
-                return Semaphores[this._position + 1];
+                return Semaphores[_position + 1];
             }
         }
 
-        public SemaphoreGame()
+        #region ICopyAble<SemaphoreGame> Members
+
+        public SemaphoreGame CreateCopy()
         {
-            this._position = 0;
-            this.Semaphores = new ObservableCollection<SemaphoreImage>();
+            var game = new SemaphoreGame();
+            game.Semaphores = Semaphores.CreateCopy();
+            return game;
         }
 
-        public void SemaphoreDetected(Kinect.Core.Gestures.Model.Semaphore detected)
+        #endregion
+
+        public event EventHandler Start;
+        public event EventHandler Finished;
+        public event EventHandler Updated;
+
+        public void SemaphoreDetected(Core.Gestures.Model.Semaphore detected)
         {
             lock (_syncRoot)
             {
-                if (this._position < this.Semaphores.Count && this.Semaphores[_position].Semaphore.Equals(detected))
+                if (_position < Semaphores.Count && Semaphores[_position].Semaphore.Equals(detected))
                 {
-                    if (this._position == 0)
+                    if (_position == 0)
                     {
                         OnStart();
                     }
 
-                    this._position++;
+                    _position++;
 
-                    if (this._position == Semaphores.Count)
+                    if (_position == Semaphores.Count)
                     {
                         OnFinished();
                     }
 
-                    this.OnUpdated();
+                    OnUpdated();
                 }
             }
         }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            foreach (SemaphoreImage item in this.Semaphores)
+            foreach (SemaphoreImage item in Semaphores)
             {
                 sb.Append(item.Semaphore.Char);
             }
@@ -85,19 +96,12 @@ namespace Kinect.Semaphore.Models
 
         public string GetTodoSentence()
         {
-            return ToString().Substring(this._position);
-        }
-
-        public SemaphoreGame CreateCopy()
-        {
-            var game = new SemaphoreGame();
-            game.Semaphores = Semaphores.CreateCopy();
-            return game;
+            return ToString().Substring(_position);
         }
 
         protected virtual void OnStart()
         {
-            var handler = Start;
+            EventHandler handler = Start;
 
             if (handler != null)
             {
@@ -107,7 +111,7 @@ namespace Kinect.Semaphore.Models
 
         protected virtual void OnFinished()
         {
-            var handler = this.Finished;
+            EventHandler handler = Finished;
 
             if (handler != null)
             {
@@ -117,7 +121,7 @@ namespace Kinect.Semaphore.Models
 
         protected virtual void OnUpdated()
         {
-            var handler = this.Updated;
+            EventHandler handler = Updated;
 
             if (handler != null)
             {

@@ -7,14 +7,13 @@
 // http://www.crsouza.com
 //
 
+using System;
+using System.Collections.Generic;
+using Accord.Math;
+using Accord.Math.Decompositions;
+
 namespace Accord.Statistics
 {
-    using System;
-    using System.Collections.Generic;
-    using Accord.Math;
-    using Accord.Math.Decompositions;
-
-
     /// <summary>
     ///     Set of statistics functions
     /// </summary>
@@ -28,8 +27,6 @@ namespace Accord.Statistics
     /// 
     public static class Tools
     {
-
-
         #region Arrays
 
         /// <summary>Computes the Mean of the given values.</summary>
@@ -43,7 +40,7 @@ namespace Accord.Statistics
             {
                 sum += values[i];
             }
-            return sum / n;
+            return sum/n;
         }
 
         /// <summary>Computes the Weighted Mean of the given values.</summary>
@@ -56,7 +53,7 @@ namespace Accord.Statistics
             double sum = 0.0;
             for (int i = 0; i < values.Length; i++)
             {
-                sum += values[i] * weights[i];
+                sum += values[i]*weights[i];
             }
             return sum;
         }
@@ -99,7 +96,7 @@ namespace Accord.Statistics
         /// <returns>The standard error for the sample.</returns>
         public static double StandardError(int samples, double standardDeviation)
         {
-            return standardDeviation / System.Math.Sqrt(samples);
+            return standardDeviation/System.Math.Sqrt(samples);
         }
 
         /// <summary>
@@ -128,7 +125,7 @@ namespace Accord.Statistics
         /// <returns>The median of the given data.</returns>
         public static double Median(double[] values, bool alreadySorted)
         {
-            double[] data = new double[values.Length];
+            var data = new double[values.Length];
             values.CopyTo(data, 0); // Creates a copy of the given values,
 
             if (!alreadySorted) // So we can sort it without modifying the original array.
@@ -136,9 +133,9 @@ namespace Accord.Statistics
 
             int N = data.Length;
 
-            if (N % 2 == 0)
-                return (data[N / 2] + data[(N / 2) - 1]) * 0.5; // N is even 
-            else return data[N / 2];                            // N is odd
+            if (N%2 == 0)
+                return (data[N/2] + data[(N/2) - 1])*0.5; // N is even 
+            else return data[N/2]; // N is odd
         }
 
 
@@ -163,11 +160,11 @@ namespace Accord.Statistics
             for (int i = 0; i < values.Length; i++)
             {
                 x = values[i] - mean;
-                variance += x * x;
+                variance += x*x;
             }
 
             // Sample variance
-            return variance / (N - 1);
+            return variance/(N - 1);
         }
 
         /// <summary>Computes the weighted Variance of the given values.</summary>
@@ -188,13 +185,13 @@ namespace Accord.Statistics
             for (int i = 0; i < values.Length; i++)
             {
                 x = values[i] - mean;
-                variance += x * x * weights[i];
+                variance += x*x*weights[i];
 
                 w = weights[i];
-                V2 += w * w;
+                V2 += w*w;
             }
 
-            return variance / (1 - V2);
+            return variance/(1 - V2);
         }
 
 
@@ -203,13 +200,13 @@ namespace Accord.Statistics
         /// <returns>The variance of the given data.</returns>
         public static double Mode(double[] values)
         {
-            int[] itemCount = new int[values.Length];
-            double[] itemArray = new double[values.Length];
+            var itemCount = new int[values.Length];
+            var itemArray = new double[values.Length];
             int count = 0;
 
             for (int i = 0; i < values.Length; i++)
             {
-                int index = Array.IndexOf<double>(itemArray, values[i], 0, count);
+                int index = Array.IndexOf(itemArray, values[i], 0, count);
 
                 if (index >= 0)
                 {
@@ -245,7 +242,7 @@ namespace Accord.Statistics
         /// <returns>The variance of the given data.</returns>
         public static double[,] Covariance(double[] vector1, double[] vector2)
         {
-            double[][] vectors = new double[][] { vector1, vector2 };
+            var vectors = new[] {vector1, vector2};
             return Scatter(vectors, Mean(vectors, 1), vectors.Length, 1);
         }
 
@@ -292,7 +289,7 @@ namespace Accord.Statistics
                 sum += System.Math.Pow(values[i] - mean, 3);
             }
 
-            return sum / ((double)n * System.Math.Pow(standardDeviation, 3));
+            return sum/(n*System.Math.Pow(standardDeviation, 3));
         }
 
 
@@ -326,17 +323,12 @@ namespace Accord.Statistics
                 sum += System.Math.Pow(deviation, 4);
             }
 
-            return sum / ((double)n * System.Math.Pow(standardDeviation, 4)) - 3.0;
+            return sum/(n*System.Math.Pow(standardDeviation, 4)) - 3.0;
         }
 
         #endregion
 
-
-        // ------------------------------------------------------------
-
-
         #region Matrix
-
 
         /// <summary>Calculates the matrix Mean vector.</summary>
         /// <param name="matrix">A matrix whose means will be calculated.</param>
@@ -409,7 +401,7 @@ namespace Accord.Statistics
                 double N = cols;
 
                 // for each row
-                for (int j = 0; j <rows; j++)
+                for (int j = 0; j < rows; j++)
                 {
                     // for each column
                     for (int i = 0; i < cols; i++)
@@ -479,7 +471,7 @@ namespace Accord.Statistics
 
             if (dimension == 0)
             {
-                 mean = new double[cols];
+                mean = new double[cols];
                 double N = rows;
 
                 // for each column
@@ -489,7 +481,7 @@ namespace Accord.Statistics
                     for (int i = 0; i < rows; i++)
                         mean[j] += matrix[i][j];
 
-                    mean[j] = mean[j] / N;
+                    mean[j] = mean[j]/N;
                 }
             }
             else if (dimension == 1)
@@ -504,7 +496,7 @@ namespace Accord.Statistics
                     for (int i = 0; i < cols; i++)
                         mean[j] += matrix[j][i];
 
-                    mean[j] = mean[j] / N;
+                    mean[j] = mean[j]/N;
                 }
             }
             else
@@ -545,7 +537,7 @@ namespace Accord.Statistics
 
             if (dimension == 0)
             {
-                 mean = new double[cols];
+                mean = new double[cols];
 
                 // for each row
                 for (int i = 0; i < rows; i++)
@@ -555,12 +547,12 @@ namespace Accord.Statistics
 
                     // for each column
                     for (int j = 0; j < cols; j++)
-                        mean[j] += row[j] * w;
+                        mean[j] += row[j]*w;
                 }
             }
             else if (dimension == 1)
             {
-                 mean = new double[rows];
+                mean = new double[rows];
 
                 // for each row
                 for (int j = 0; j < rows; j++)
@@ -570,7 +562,7 @@ namespace Accord.Statistics
 
                     // for each column
                     for (int i = 0; i < cols; i++)
-                        mean[j] += row[i] * w;
+                        mean[j] += row[i]*w;
                 }
             }
             else
@@ -590,11 +582,11 @@ namespace Accord.Statistics
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[] mean = new double[cols];
+            var mean = new double[cols];
             double N = rows;
 
             for (int j = 0; j < cols; j++)
-                mean[j] = sums[j] / N;
+                mean[j] = sums[j]/N;
 
             return mean;
         }
@@ -614,7 +606,7 @@ namespace Accord.Statistics
         /// <returns>Returns a vector containing the standard deviations of the given matrix.</returns>
         public static double[] StandardDeviation(this double[,] matrix, double[] means)
         {
-            return Matrix.Sqrt(Variance(matrix, means));
+            return Variance(matrix, means).Sqrt();
         }
 
         /// <summary>Calculates the matrix Standard Deviations vector.</summary>
@@ -623,7 +615,7 @@ namespace Accord.Statistics
         /// <returns>Returns a vector containing the standard deviations of the given matrix.</returns>
         public static double[] StandardDeviation(this double[][] matrix, double[] means)
         {
-            return Matrix.Sqrt(Variance(matrix, means));
+            return Variance(matrix, means).Sqrt();
         }
 
         /// <summary>Calculates the matrix Standard Deviations vector.</summary>
@@ -666,7 +658,7 @@ namespace Accord.Statistics
             int cols = matrix.GetLength(1);
             double N = rows;
 
-            double[] variance = new double[cols];
+            var variance = new double[cols];
 
             // for each column (for each variable)
             for (int j = 0; j < cols; j++)
@@ -680,11 +672,11 @@ namespace Accord.Statistics
                 {
                     x = matrix[i, j] - means[j];
                     sum1 += x;
-                    sum2 += x * x;
+                    sum2 += x*x;
                 }
 
                 // calculate the variance
-                variance[j] = (sum2 - ((sum1 * sum1) / N)) / (N - 1);
+                variance[j] = (sum2 - ((sum1*sum1)/N))/(N - 1);
             }
 
             return variance;
@@ -709,7 +701,7 @@ namespace Accord.Statistics
             int cols = matrix[0].Length;
             double N = rows;
 
-            double[] variance = new double[cols];
+            var variance = new double[cols];
 
             // for each column (for each variable)
             for (int j = 0; j < cols; j++)
@@ -723,11 +715,11 @@ namespace Accord.Statistics
                 {
                     x = matrix[i][j] - means[j];
                     sum1 += x;
-                    sum2 += x * x;
+                    sum2 += x*x;
                 }
 
                 // calculate the variance
-                variance[j] = (sum2 - ((sum1 * sum1) / N)) / (N - 1);
+                variance[j] = (sum2 - ((sum1*sum1)/N))/(N - 1);
             }
 
             return variance;
@@ -741,11 +733,11 @@ namespace Accord.Statistics
         {
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
-            double[] medians = new double[cols];
+            var medians = new double[cols];
 
             for (int i = 0; i < cols; i++)
             {
-                double[] data = new double[rows];
+                var data = new double[rows];
 
                 // Creates a copy of the given values
                 for (int j = 0; j < rows; j++)
@@ -755,9 +747,9 @@ namespace Accord.Statistics
 
                 int N = data.Length;
 
-                if (N % 2 == 0)
-                    medians[i] = (data[N / 2] + data[(N / 2) - 1]) * 0.5; // N is even 
-                else medians[i] = data[N / 2];                      // N is odd
+                if (N%2 == 0)
+                    medians[i] = (data[N/2] + data[(N/2) - 1])*0.5; // N is even 
+                else medians[i] = data[N/2]; // N is odd
             }
 
             return medians;
@@ -772,11 +764,11 @@ namespace Accord.Statistics
 
             int rows = matrix.Length;
             int cols = matrix[0].Length;
-            double[] medians = new double[cols];
+            var medians = new double[cols];
 
             for (int i = 0; i < cols; i++)
             {
-                double[] data = new double[rows];
+                var data = new double[rows];
 
                 // Creates a copy of the given values
                 for (int j = 0; j < rows; j++)
@@ -786,9 +778,9 @@ namespace Accord.Statistics
 
                 int N = data.Length;
 
-                if (N % 2 == 0)
-                    medians[i] = (data[N / 2] + data[(N / 2) - 1]) * 0.5; // N is even 
-                else medians[i] = data[N / 2];                      // N is odd
+                if (N%2 == 0)
+                    medians[i] = (data[N/2] + data[(N/2) - 1])*0.5; // N is even 
+                else medians[i] = data[N/2]; // N is odd
             }
 
             return medians;
@@ -803,18 +795,18 @@ namespace Accord.Statistics
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
 
-            double[] mode = new double[cols];
+            var mode = new double[cols];
 
             for (int i = 0; i < cols; i++)
             {
-                int[] itemCount = new int[rows];
-                double[] itemArray = new double[rows];
+                var itemCount = new int[rows];
+                var itemArray = new double[rows];
                 int count = 0;
 
                 // for each row
                 for (int j = 0; j < rows; j++)
                 {
-                    int index = Array.IndexOf<double>(itemArray, matrix[j, i], 0, count);
+                    int index = Array.IndexOf(itemArray, matrix[j, i], 0, count);
 
                     if (index >= 0)
                     {
@@ -882,7 +874,7 @@ namespace Accord.Statistics
         public static double[] Skewness(double[,] matrix, double[] means, double[] standardDeviations)
         {
             int n = matrix.GetLength(0);
-            double[] skewness = new double[matrix.GetLength(1)];
+            var skewness = new double[matrix.GetLength(1)];
             for (int j = 0; j < skewness.Length; j++)
             {
                 double sum = 0.0;
@@ -892,7 +884,7 @@ namespace Accord.Statistics
                     sum += System.Math.Pow(matrix[i, j] - means[j], 3);
                 }
 
-                skewness[j] = sum / ((n - 1) * System.Math.Pow(standardDeviations[j], 3));
+                skewness[j] = sum/((n - 1)*System.Math.Pow(standardDeviations[j], 3));
             }
 
             return skewness;
@@ -920,7 +912,7 @@ namespace Accord.Statistics
         public static double[] Kurtosis(double[,] matrix, double[] means, double[] standardDeviations)
         {
             int n = matrix.GetLength(0);
-            double[] kurtosis = new double[matrix.GetLength(1)];
+            var kurtosis = new double[matrix.GetLength(1)];
             for (int j = 0; j < kurtosis.Length; j++)
             {
                 double sum = 0.0;
@@ -930,7 +922,7 @@ namespace Accord.Statistics
                     sum += System.Math.Pow(matrix[i, j] - means[j], 4);
                 }
 
-                kurtosis[j] = sum / (n * System.Math.Pow(standardDeviations[j], 4)) - 3.0;
+                kurtosis[j] = sum/(n*System.Math.Pow(standardDeviations[j], 4)) - 3.0;
             }
 
             return kurtosis;
@@ -955,11 +947,11 @@ namespace Accord.Statistics
         /// <returns>Returns the standard error vector for the matrix.</returns>
         public static double[] StandardError(int samples, double[] standardDeviations)
         {
-            double[] standardErrors = new double[standardDeviations.Length];
+            var standardErrors = new double[standardDeviations.Length];
             double sqrt = System.Math.Sqrt(samples);
             for (int i = 0; i < standardDeviations.Length; i++)
             {
-                standardErrors[i] = standardDeviations[i] / sqrt;
+                standardErrors[i] = standardDeviations[i]/sqrt;
             }
             return standardErrors;
         }
@@ -1095,17 +1087,18 @@ namespace Accord.Statistics
 
             if (dimension == 0)
             {
-                if (means.Length != cols) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of columns", "means");
+                if (means.Length != cols)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of columns", "means");
 
-                cov = new double[cols, cols];
+                cov = new double[cols,cols];
                 for (int i = 0; i < cols; i++)
                 {
                     for (int j = i; j < cols; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < rows; k++)
-                            s += (matrix[k, j] - means[j]) * (matrix[k, i] - means[i]);
+                            s += (matrix[k, j] - means[j])*(matrix[k, i] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1114,17 +1107,18 @@ namespace Accord.Statistics
             }
             else if (dimension == 1)
             {
-                if (means.Length != rows) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of rows", "means");
+                if (means.Length != rows)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of rows", "means");
 
-                cov = new double[rows, rows];
+                cov = new double[rows,rows];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = i; j < rows; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < cols; k++)
-                            s += (matrix[j, k] - means[j]) * (matrix[i, k] - means[i]);
+                            s += (matrix[j, k] - means[j])*(matrix[i, k] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1263,7 +1257,7 @@ namespace Accord.Statistics
         {
             double sw = 1.0;
             for (int i = 0; i < weights.Length; i++)
-                sw -= weights[i] * weights[i];
+                sw -= weights[i]*weights[i];
 
             return Scatter(matrix, means, sw, 0, weights);
         }
@@ -1285,27 +1279,29 @@ namespace Accord.Statistics
         /// <param name="weights">An unit vector containing the importance of each sample
         /// in <see param="values"/>. The sum of this array elements should add up to 1.</param>
         /// <returns>The covariance matrix.</returns>
-        public static double[,] Scatter(double[][] matrix, double[] means, double divisor, int dimension, double[] weights)
+        public static double[,] Scatter(double[][] matrix, double[] means, double divisor, int dimension,
+                                        double[] weights)
         {
             int rows = matrix.Length;
-            if (rows == 0) return new double[0, 0];
+            if (rows == 0) return new double[0,0];
             int cols = matrix[0].Length;
 
             double[,] cov;
 
             if (dimension == 0)
             {
-                if (means.Length != cols) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of columns", "means");
+                if (means.Length != cols)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of columns", "means");
 
-                cov = new double[cols, cols];
+                cov = new double[cols,cols];
                 for (int i = 0; i < cols; i++)
                 {
                     for (int j = i; j < cols; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < rows; k++)
-                            s += weights[k] * (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
+                            s += weights[k]*(matrix[k][j] - means[j])*(matrix[k][i] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1314,17 +1310,18 @@ namespace Accord.Statistics
             }
             else if (dimension == 1)
             {
-                if (means.Length != rows) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of rows", "means");
+                if (means.Length != rows)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of rows", "means");
 
-                cov = new double[rows, rows];
+                cov = new double[rows,rows];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = i; j < rows; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < cols; k++)
-                            s += weights[k] * (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
+                            s += weights[k]*(matrix[j][k] - means[j])*(matrix[i][k] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1357,24 +1354,25 @@ namespace Accord.Statistics
         public static double[,] Scatter(double[][] matrix, double[] means, double divisor, int dimension)
         {
             int rows = matrix.Length;
-            if (rows == 0) return new double[0, 0];
+            if (rows == 0) return new double[0,0];
             int cols = matrix[0].Length;
 
             double[,] cov;
 
             if (dimension == 0)
             {
-                if (means.Length != cols) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of columns", "means");
+                if (means.Length != cols)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of columns", "means");
 
-                cov = new double[cols, cols];
+                cov = new double[cols,cols];
                 for (int i = 0; i < cols; i++)
                 {
                     for (int j = i; j < cols; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < rows; k++)
-                            s += (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
+                            s += (matrix[k][j] - means[j])*(matrix[k][i] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1383,17 +1381,18 @@ namespace Accord.Statistics
             }
             else if (dimension == 1)
             {
-                if (means.Length != rows) throw new ArgumentException(
-                    "Length of the mean vector should equal the number of rows", "means");
+                if (means.Length != rows)
+                    throw new ArgumentException(
+                        "Length of the mean vector should equal the number of rows", "means");
 
-                cov = new double[rows, rows];
+                cov = new double[rows,rows];
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = i; j < rows; j++)
                     {
                         double s = 0.0;
                         for (int k = 0; k < cols; k++)
-                            s += (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
+                            s += (matrix[j][k] - means[j])*(matrix[i][k] - means[i]);
                         s /= divisor;
                         cov[i, j] = s;
                         cov[j, i] = s;
@@ -1443,14 +1442,14 @@ namespace Accord.Statistics
             int cols = matrix.GetLength(1);
 
             double N = rows;
-            double[,] cor = new double[cols, cols];
+            var cor = new double[cols,cols];
             for (int i = 0; i < cols; i++)
             {
                 for (int j = i; j < cols; j++)
                 {
                     double c = 0.0;
                     for (int k = 0; k < rows; k++)
-                        c += scores[k, j] * scores[k, i];
+                        c += scores[k, j]*scores[k, i];
                     c /= N - 1.0;
                     cor[i, j] = c;
                     cor[j, i] = c;
@@ -1477,7 +1476,7 @@ namespace Accord.Statistics
         /// <returns>The Z-Scores for the matrix.</returns>
         public static double[,] ZScores(double[,] matrix, double[] means, double[] standardDeviations)
         {
-            double[,] m = (double[,])matrix.Clone();
+            var m = (double[,]) matrix.Clone();
 
             Center(m, means);
             Standardize(m, standardDeviations);
@@ -1501,7 +1500,7 @@ namespace Accord.Statistics
         /// <returns>The Z-Scores for the matrix.</returns>
         public static double[][] ZScores(double[][] matrix, double[] means, double[] standardDeviations)
         {
-            double[][] m = (double[][])matrix.Clone();
+            var m = (double[][]) matrix.Clone();
 
             Center(m, means);
             Standardize(m, standardDeviations);
@@ -1595,13 +1594,11 @@ namespace Accord.Statistics
                     row[j] /= standardDeviations[j];
             }
         }
+
         #endregion
 
-
-        // ------------------------------------------------------------
-
-
         #region Summarizing, grouping and extending operations
+
         /// <summary>
         ///   Calculates the prevalence of a class.
         /// </summary>
@@ -1610,9 +1607,9 @@ namespace Accord.Statistics
         /// <returns>An array containing the proportion of the first class over the total of occurances.</returns>
         public static double[] Proportions(int[] positives, int[] negatives)
         {
-            double[] r = new double[positives.Length];
+            var r = new double[positives.Length];
             for (int i = 0; i < r.Length; i++)
-                r[i] = (double)positives[i] / (positives[i] + negatives[i]);
+                r[i] = (double) positives[i]/(positives[i] + negatives[i]);
             return r;
         }
 
@@ -1625,9 +1622,9 @@ namespace Accord.Statistics
         /// <returns>An array containing the proportion of the first class over the total of occurances.</returns>
         public static double[] Proportions(int[][] data, int positiveColumn, int negativeColumn)
         {
-            double[] r = new double[data.Length];
+            var r = new double[data.Length];
             for (int i = 0; i < r.Length; i++)
-                r[i] = (double)data[i][positiveColumn] / (data[i][positiveColumn] + data[i][negativeColumn]);
+                r[i] = (double) data[i][positiveColumn]/(data[i][positiveColumn] + data[i][negativeColumn]);
             return r;
         }
 
@@ -1664,7 +1661,7 @@ namespace Accord.Statistics
                         }
                     }
 
-                    groupings.Add(new int[] { group, positives, negatives });
+                    groupings.Add(new[] {group, positives, negatives});
                 }
             }
 
@@ -1684,15 +1681,15 @@ namespace Accord.Statistics
         /// <returns>A full sized observation matrix.</returns>
         public static int[][] Extend(int[] group, int[] positives, int[] negatives)
         {
-            List<int[]> rows = new List<int[]>();
+            var rows = new List<int[]>();
 
             for (int i = 0; i < group.Length; i++)
             {
                 for (int j = 0; j < positives[i]; j++)
-                    rows.Add(new int[] { group[i], 1 });
+                    rows.Add(new[] {group[i], 1});
 
                 for (int j = 0; j < negatives[i]; j++)
-                    rows.Add(new int[] { group[i], 0 });
+                    rows.Add(new[] {group[i], 0});
             }
 
             return rows.ToArray();
@@ -1711,15 +1708,15 @@ namespace Accord.Statistics
         /// <returns>A full sized observation matrix.</returns>
         public static int[][] Extend(int[][] data, int labelColumn, int positiveColumn, int negativeColumn)
         {
-            List<int[]> rows = new List<int[]>();
+            var rows = new List<int[]>();
 
             for (int i = 0; i < data.Length; i++)
             {
                 for (int j = 0; j < data[i][positiveColumn]; j++)
-                    rows.Add(new int[] { data[i][labelColumn], 1 });
+                    rows.Add(new[] {data[i][labelColumn], 1});
 
                 for (int j = 0; j < data[i][negativeColumn]; j++)
-                    rows.Add(new int[] { data[i][labelColumn], 0 });
+                    rows.Add(new[] {data[i][labelColumn], 0});
             }
 
             return rows.ToArray();
@@ -1727,8 +1724,8 @@ namespace Accord.Statistics
 
         #endregion
 
-
         #region Determination and performance measures
+
         /// <summary>
         ///   Gets the coefficient of determination, as known as the R-Squared (R²)
         /// </summary>
@@ -1762,25 +1759,26 @@ namespace Accord.Statistics
             for (int i = 0; i < N; i++)
             {
                 d = expected[i] - actual[i];
-                SSe += d * d;
+                SSe += d*d;
 
                 d = expected[i] - avg;
-                SSt += d * d;
+                SSt += d*d;
             }
 
             // Calculate R-Squared
-            return 1.0 - (SSe / SSt);
+            return 1.0 - (SSe/SSt);
         }
+
         #endregion
 
-
         #region Permutations and combinatorials
+
         /// <summary>
         ///   Returns a random sample of size k from a population of size n.
         /// </summary>
         public static int[] Random(int n, int k)
         {
-            int[] idx = Tools.Random(n);
+            int[] idx = Random(n);
             return idx.Submatrix(k);
         }
 
@@ -1789,9 +1787,9 @@ namespace Accord.Statistics
         /// </summary>
         public static int[] Random(int n)
         {
-            Random random = Accord.Math.Tools.Random;
+            Random random = Math.Tools.Random;
 
-            double[] x = new double[n];
+            var x = new double[n];
             int[] idx = Matrix.Indexes(0, n);
 
             for (int i = 0; i < n; i++)
@@ -1807,7 +1805,7 @@ namespace Accord.Statistics
         /// </summary>
         public static void Shuffle(int[] array)
         {
-            Random random = Accord.Math.Tools.Random;
+            Random random = Math.Tools.Random;
 
             // i is the number of items remaining to be shuffled.
             for (int i = array.Length; i > 1; i--)
@@ -1816,13 +1814,17 @@ namespace Accord.Statistics
                 int j = random.Next(i);
 
                 // Swap array elements.
-                var aux = array[j];
+                int aux = array[j];
                 array[j] = array[i - 1];
                 array[i - 1] = aux;
             }
         }
+
         #endregion
 
+        // ------------------------------------------------------------
+
+        // ------------------------------------------------------------
 
         // ------------------------------------------------------------
 
@@ -1845,21 +1847,22 @@ namespace Accord.Statistics
 
             int cols = value.GetLength(1);
 
-            double[,] cov = Tools.Covariance(value);
+            double[,] cov = value.Covariance();
 
             // Diagonalizes the covariance matrix
-            SingularValueDecomposition svd = new SingularValueDecomposition(cov,
-                true,  // compute left vectors (to become a transformation matrix)
-                false, // do not compute right vectors since they aren't necessary
-                true,  // transpose if necessary to avoid erroneous assumptions in SVD
-                true); // perform operation in-place, reducing memory usage
+            var svd = new SingularValueDecomposition(cov,
+                                                     true, // compute left vectors (to become a transformation matrix)
+                                                     false, // do not compute right vectors since they aren't necessary
+                                                     true,
+                                                     // transpose if necessary to avoid erroneous assumptions in SVD
+                                                     true); // perform operation in-place, reducing memory usage
 
 
             // Retrieve the transformation matrix
             transformMatrix = svd.LeftSingularVectors;
 
             // Perform scaling to have unit variance
-            var singularValues = svd.Diagonal;
+            double[] singularValues = svd.Diagonal;
             for (int i = 0; i < cols; i++)
                 for (int j = 0; j < cols; j++)
                     transformMatrix[i, j] /= System.Math.Sqrt(singularValues[j]);
@@ -1867,7 +1870,5 @@ namespace Accord.Statistics
             // Return the transformed data
             return value.Multiply(transformMatrix);
         }
-
     }
 }
-

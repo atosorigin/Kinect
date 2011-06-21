@@ -9,10 +9,10 @@
 // http://www.exocortex.org/dsp/
 //
 
+using System;
+
 namespace AForge.Math
 {
-    using System;
-
     /// <summary>
     /// Fourier transformation.
     /// </summary>
@@ -22,6 +22,8 @@ namespace AForge.Math
     /// 
     public static class FourierTransform
     {
+        #region Direction enum
+
         /// <summary>
         /// Fourier transformation direction.
         /// </summary>
@@ -36,7 +38,9 @@ namespace AForge.Math
             /// Backward direction of Fourier transformation.
             /// </summary>
             Backward = -1
-        };
+        } ;
+
+        #endregion
 
         /// <summary>
         /// One dimensional Discrete Fourier Transform.
@@ -49,23 +53,23 @@ namespace AForge.Math
         {
             int n = data.Length;
             double arg, cos, sin;
-            Complex[] dst = new Complex[n];
+            var dst = new Complex[n];
 
             // for each destination element
             for (int i = 0; i < n; i++)
             {
                 dst[i] = Complex.Zero;
 
-                arg = -(int)direction * 2.0 * System.Math.PI * (double)i / (double)n;
+                arg = -(int) direction*2.0*System.Math.PI*i/n;
 
                 // sum source elements
                 for (int j = 0; j < n; j++)
                 {
-                    cos = System.Math.Cos(j * arg);
-                    sin = System.Math.Sin(j * arg);
+                    cos = System.Math.Cos(j*arg);
+                    sin = System.Math.Sin(j*arg);
 
-                    dst[i].Re += (data[j].Re * cos - data[j].Im * sin);
-                    dst[i].Im += (data[j].Re * sin + data[j].Im * cos);
+                    dst[i].Re += (data[j].Re*cos - data[j].Im*sin);
+                    dst[i].Im += (data[j].Re*sin + data[j].Im*cos);
                 }
             }
 
@@ -75,8 +79,8 @@ namespace AForge.Math
                 // devide also for forward transform
                 for (int i = 0; i < n; i++)
                 {
-                    data[i].Re = dst[i].Re / n;
-                    data[i].Im = dst[i].Im / n;
+                    data[i].Re = dst[i].Re/n;
+                    data[i].Im = dst[i].Im/n;
                 }
             }
             else
@@ -98,10 +102,10 @@ namespace AForge.Math
         /// 
         public static void DFT2(Complex[,] data, Direction direction)
         {
-            int n = data.GetLength(0);	// rows
-            int m = data.GetLength(1);	// columns
+            int n = data.GetLength(0); // rows
+            int m = data.GetLength(1); // columns
             double arg, cos, sin;
-            Complex[] dst = new Complex[System.Math.Max(n, m)];
+            var dst = new Complex[System.Math.Max(n, m)];
 
             // process rows
             for (int i = 0; i < n; i++)
@@ -110,16 +114,16 @@ namespace AForge.Math
                 {
                     dst[j] = Complex.Zero;
 
-                    arg = -(int)direction * 2.0 * System.Math.PI * (double)j / (double)m;
+                    arg = -(int) direction*2.0*System.Math.PI*j/m;
 
                     // sum source elements
                     for (int k = 0; k < m; k++)
                     {
-                        cos = System.Math.Cos(k * arg);
-                        sin = System.Math.Sin(k * arg);
+                        cos = System.Math.Cos(k*arg);
+                        sin = System.Math.Sin(k*arg);
 
-                        dst[j].Re += (data[i, k].Re * cos - data[i, k].Im * sin);
-                        dst[j].Im += (data[i, k].Re * sin + data[i, k].Im * cos);
+                        dst[j].Re += (data[i, k].Re*cos - data[i, k].Im*sin);
+                        dst[j].Im += (data[i, k].Re*sin + data[i, k].Im*cos);
                     }
                 }
 
@@ -129,8 +133,8 @@ namespace AForge.Math
                     // devide also for forward transform
                     for (int j = 0; j < m; j++)
                     {
-                        data[i, j].Re = dst[j].Re / m;
-                        data[i, j].Im = dst[j].Im / m;
+                        data[i, j].Re = dst[j].Re/m;
+                        data[i, j].Im = dst[j].Im/m;
                     }
                 }
                 else
@@ -150,16 +154,16 @@ namespace AForge.Math
                 {
                     dst[i] = Complex.Zero;
 
-                    arg = -(int)direction * 2.0 * System.Math.PI * (double)i / (double)n;
+                    arg = -(int) direction*2.0*System.Math.PI*i/n;
 
                     // sum source elements
                     for (int k = 0; k < n; k++)
                     {
-                        cos = System.Math.Cos(k * arg);
-                        sin = System.Math.Sin(k * arg);
+                        cos = System.Math.Cos(k*arg);
+                        sin = System.Math.Sin(k*arg);
 
-                        dst[i].Re += (data[k, j].Re * cos - data[k, j].Im * sin);
-                        dst[i].Im += (data[k, j].Re * sin + data[k, j].Im * cos);
+                        dst[i].Re += (data[k, j].Re*cos - data[k, j].Im*sin);
+                        dst[i].Im += (data[k, j].Re*sin + data[k, j].Im*cos);
                     }
                 }
 
@@ -169,8 +173,8 @@ namespace AForge.Math
                     // devide also for forward transform
                     for (int i = 0; i < n; i++)
                     {
-                        data[i, j].Re = dst[i].Re / n;
-                        data[i, j].Im = dst[i].Im / n;
+                        data[i, j].Re = dst[i].Re/n;
+                        data[i, j].Im = dst[i].Im/n;
                     }
                 }
                 else
@@ -210,7 +214,7 @@ namespace AForge.Math
 
             for (int k = 1; k <= m; k++)
             {
-                Complex[] rotation = FourierTransform.GetComplexRotation(k, direction);
+                Complex[] rotation = GetComplexRotation(k, direction);
 
                 tm = tn;
                 tn <<= 1;
@@ -225,8 +229,8 @@ namespace AForge.Math
                         Complex ce = data[even];
                         Complex co = data[odd];
 
-                        double tr = co.Re * t.Re - co.Im * t.Im;
-                        double ti = co.Re * t.Im + co.Im * t.Re;
+                        double tr = co.Re*t.Re - co.Im*t.Im;
+                        double ti = co.Re*t.Im + co.Im*t.Re;
 
                         data[even].Re += tr;
                         data[even].Im += ti;
@@ -241,8 +245,8 @@ namespace AForge.Math
             {
                 for (int i = 0; i < n; i++)
                 {
-                    data[i].Re /= (double)n;
-                    data[i].Im /= (double)n;
+                    data[i].Re /= n;
+                    data[i].Im /= n;
                 }
             }
         }
@@ -277,7 +281,7 @@ namespace AForge.Math
             }
 
             // process rows
-            Complex[] row = new Complex[n];
+            var row = new Complex[n];
 
             for (int i = 0; i < k; i++)
             {
@@ -285,14 +289,14 @@ namespace AForge.Math
                 for (int j = 0; j < n; j++)
                     row[j] = data[i, j];
                 // transform it
-                FourierTransform.FFT(row, direction);
+                FFT(row, direction);
                 // copy back
                 for (int j = 0; j < n; j++)
                     data[i, j] = row[j];
             }
 
             // process columns
-            Complex[] col = new Complex[k];
+            var col = new Complex[k];
 
             for (int j = 0; j < n; j++)
             {
@@ -300,7 +304,7 @@ namespace AForge.Math
                 for (int i = 0; i < k; i++)
                     col[i] = data[i, j];
                 // transform it
-                FourierTransform.FFT(col, direction);
+                FFT(col, direction);
                 // copy back
                 for (int i = 0; i < k; i++)
                     data[i, j] = col[i];
@@ -313,8 +317,8 @@ namespace AForge.Math
         private const int maxLength = 16384;
         private const int minBits = 1;
         private const int maxBits = 14;
-        private static int[][] reversedBits = new int[maxBits][];
-        private static Complex[,][] complexRotation = new Complex[maxBits, 2][];
+        private static readonly int[][] reversedBits = new int[maxBits][];
+        private static readonly Complex[,][] complexRotation = new Complex[maxBits,2][];
 
         // Get array, indicating which data members should be swapped before FFT
         private static int[] GetReversedBits(int numberOfBits)
@@ -326,7 +330,7 @@ namespace AForge.Math
             if (reversedBits[numberOfBits - 1] == null)
             {
                 int n = Tools.Pow2(numberOfBits);
-                int[] rBits = new int[n];
+                var rBits = new int[n];
 
                 // calculate the array
                 for (int i = 0; i < n; i++)
@@ -357,17 +361,17 @@ namespace AForge.Math
                 int n = 1 << (numberOfBits - 1);
                 double uR = 1.0;
                 double uI = 0.0;
-                double angle = System.Math.PI / n * (int)direction;
+                double angle = System.Math.PI/n*(int) direction;
                 double wR = System.Math.Cos(angle);
                 double wI = System.Math.Sin(angle);
                 double t;
-                Complex[] rotation = new Complex[n];
+                var rotation = new Complex[n];
 
                 for (int i = 0; i < n; i++)
                 {
                     rotation[i] = new Complex(uR, uI);
-                    t = uR * wI + uI * wR;
-                    uR = uR * wR - uI * wI;
+                    t = uR*wI + uI*wR;
+                    uR = uR*wR - uI*wI;
                     uI = t;
                 }
 

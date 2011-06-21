@@ -9,7 +9,6 @@
 
 namespace Accord.Statistics.Models.Markov.Topology
 {
-
     /// <summary>
     ///   Hidden Markov model topology (architecture) specification.
     /// </summary>
@@ -49,7 +48,6 @@ namespace Accord.Statistics.Models.Markov.Topology
     /// 
     public interface ITopology
     {
-
         /// <summary>
         ///   Gets the number of states in this topology.
         /// </summary>
@@ -60,6 +58,5 @@ namespace Accord.Statistics.Models.Markov.Topology
         ///   initial state probabilities for this topology.
         /// </summary>
         int Create(out double[,] transitionMatrix, out double[] initialState);
-
     }
 }

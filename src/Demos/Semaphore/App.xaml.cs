@@ -11,10 +11,10 @@ namespace Kinect.Semaphore
     /// </summary>
     public partial class App : Application
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(App));
+        private static readonly ILog log = LogManager.GetLogger(typeof (App));
 
+        private static BindableTraceListener traceListener;
         private SemaphoreGames _semaphoreGames;
-        static BindableTraceListener traceListener;
 
         public App()
         {

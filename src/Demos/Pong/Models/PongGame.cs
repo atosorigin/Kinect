@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Drawing;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Threading;
 
@@ -10,10 +10,12 @@ namespace Kinect.Pong.Models
     public class PongGame
     {
         #region EventHandlers
+
         public event EventHandler Updated;
+
         protected virtual void OnUpdated()
         {
-            var handler = this.Updated;
+            EventHandler handler = Updated;
 
             if (handler != null)
             {
@@ -22,20 +24,21 @@ namespace Kinect.Pong.Models
         }
 
         public event EventHandler<ScoreEventArgs> Scored;
+
         protected virtual void OnScored(Paddle.Side side, Ball ball)
         {
-            var handler = this.Scored;
+            EventHandler<ScoreEventArgs> handler = Scored;
 
             if (handler != null)
             {
                 handler(this, new ScoreEventArgs(side, ball));
             }
         }
+
         #endregion
 
-        #region PongGame Members
-        public Rectangle Boundry { get; set; }
         private DispatcherTimer _gameLoop;
+        public Rectangle Boundry { get; set; }
         public ObservableCollection<Ball> Balls { get; set; }
         public ObservableCollection<Paddle> Paddles { get; set; }
         public int ScoreLeft { get; set; }
@@ -45,20 +48,21 @@ namespace Kinect.Pong.Models
         {
             get { return _gameLoop.IsEnabled; }
         }
-        #endregion
 
         #region Singleton
+
         private static readonly PongGame _instance = new PongGame();
 
         private PongGame()
         {
-            this.Initialize();
+            Initialize();
         }
 
         public static PongGame Instance
         {
             get { return _instance; }
         }
+
         #endregion
 
         public void Start()
@@ -82,7 +86,7 @@ namespace Kinect.Pong.Models
             _gameLoop.Tick += _gameLoop_Process;
         }
 
-        void _gameLoop_Process(object sender, EventArgs e)
+        private void _gameLoop_Process(object sender, EventArgs e)
         {
             Paddles.AsParallel().ForAll(p => p.Move());
             Balls.AsParallel().ForAll(b => b.Move());
@@ -91,7 +95,7 @@ namespace Kinect.Pong.Models
 
         public void AddBall()
         {
-            var ball = new Ball(25, new Random(DateTime.Now.Millisecond).Next(360),2);
+            var ball = new Ball(25, new Random(DateTime.Now.Millisecond).Next(360), 2);
             Balls.Add(ball);
             ball.Scored += ball_Scored;
         }
@@ -105,7 +109,7 @@ namespace Kinect.Pong.Models
             ScoreRight = 0;
         }
 
-        void ball_Scored(object sender, ScoreEventArgs e)
+        private void ball_Scored(object sender, ScoreEventArgs e)
         {
             if (e.Side == Paddle.Side.Left)
             {
@@ -117,10 +121,10 @@ namespace Kinect.Pong.Models
             }
             OnScored(e.Side, e.Ball);
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                Balls.Remove(e.Ball);
-                AddBall();
-            });
+                                                      {
+                                                          Balls.Remove(e.Ball);
+                                                          AddBall();
+                                                      });
         }
 
         public void AddPaddle(Paddle.Side _side, bool isComputerControlled, int kinectUserId)
@@ -128,6 +132,5 @@ namespace Kinect.Pong.Models
             var x = new Paddle(_side, isComputerControlled, kinectUserId);
             Paddles.Add(x);
         }
-
     }
 }

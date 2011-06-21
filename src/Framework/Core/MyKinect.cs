@@ -10,6 +10,7 @@ using log4net;
 using Microsoft.Research.Kinect.Nui;
 
 #pragma warning disable 1591
+
 namespace Kinect.Core
 {
     /// <summary>
@@ -49,22 +50,22 @@ namespace Kinect.Core
     /// </summary>
     public sealed class MyKinect : INotifyPropertyChanged
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(MyKinect));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (MyKinect));
 
         private static readonly object SyncRoot = new object();
         private static readonly MyKinect _instance = new MyKinect();
+
+        private static bool _running;
+        private readonly Camera _camera = new Camera();
+        private readonly Runtime _context = new Runtime();
+        private List<User> _activeUsers = new List<User>(2);
+        private KinectState _kinectstate = KinectState.Stopped;
+        private int _nrOfUsers;
 
         private MyKinect()
         {
             SingleUserMode = false;
         }
-
-        private static bool _running = false;
-        private readonly Runtime _context = new Runtime();
-        private KinectState _kinectstate = KinectState.Stopped;
-        private int _nrOfUsers;
-        private readonly Camera _camera = new Camera();
-        private List<User> _activeUsers = new List<User>(2);
 
         ///<summary>
         ///</summary>
@@ -77,10 +78,7 @@ namespace Kinect.Core
         ///</summary>
         public KinectState KinectState
         {
-            get
-            {
-                return _kinectstate;
-            }
+            get { return _kinectstate; }
             private set
             {
                 if (_kinectstate != value)
@@ -109,6 +107,12 @@ namespace Kinect.Core
 
         public bool SingleUserMode { get; set; }
 
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
         public event EventHandler<KinectMessageEventArgs> CameraMessage;
 
         public event EventHandler<KinectEventArgs> KinectStarted;
@@ -117,7 +121,7 @@ namespace Kinect.Core
 
         public event EventHandler<KinectCameraEventArgs> CameraDataUpdated
         {
-            add { _camera.CameraUpdated += value; } 
+            add { _camera.CameraUpdated += value; }
             remove { _camera.CameraUpdated -= value; }
         }
 
@@ -125,13 +129,11 @@ namespace Kinect.Core
 
         public event EventHandler<KinectUserEventArgs> UserRemoved;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public void StartKinect()
         {
             lock (SyncRoot)
             {
-                if (_running || 
+                if (_running ||
                     (KinectState.ContextOpen | KinectState.Running | KinectState.Initializing).Has(KinectState))
                 {
                     //Kinect is already running
@@ -168,9 +170,9 @@ namespace Kinect.Core
                     {
                         _context.NuiCamera.ElevationAngle = 10;
                         _context.VideoStream.Open(ImageStreamType.Video, 2, ImageResolution.Resolution640x480,
-                                                    ImageType.Color);
+                                                  ImageType.Color);
                         _context.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
-                                                    ImageType.DepthAndPlayerIndex);
+                                                  ImageType.DepthAndPlayerIndex);
                     }
                     catch (Exception ex)
                     {
@@ -216,13 +218,13 @@ namespace Kinect.Core
             }
         }
 
-        void context_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        private void context_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             lock (SyncRoot)
             {
-                foreach(var skeleton in e.SkeletonFrame.Skeletons)
+                foreach (SkeletonData skeleton in e.SkeletonFrame.Skeletons)
                 {
-                    var user = GetUser(skeleton.UserIndex);
+                    User user = GetUser(skeleton.UserIndex);
                     if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                     {
                         //First check if it is a new user
@@ -276,24 +278,24 @@ namespace Kinect.Core
 
             float depthX, depthY;
             _context.SkeletonEngine.SkeletonToDepthImage(joint.Position, out depthX, out depthY);
-            depthX = Math.Max(0, Math.Min(depthX * 640, 640));  //convert to 640, 480 space
-            depthY = Math.Max(0, Math.Min(depthY * 480, 480));  //convert to 640, 480 space
+            depthX = Math.Max(0, Math.Min(depthX*640, 640)); //convert to 640, 480 space
+            depthY = Math.Max(0, Math.Min(depthY*480, 480)); //convert to 640, 480 space
 
             return new Point3D(depthX, depthY, 0);
         }
 
         private void OnCameraMessage(string message)
         {
-            var handler = this.CameraMessage;
+            EventHandler<KinectMessageEventArgs> handler = CameraMessage;
             if (handler != null)
             {
-                handler(this, new KinectMessageEventArgs { Message = message });
+                handler(this, new KinectMessageEventArgs {Message = message});
             }
         }
 
         private void OnKinectStarted()
         {
-            var handler = this.KinectStarted;
+            EventHandler<KinectEventArgs> handler = KinectStarted;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -302,7 +304,7 @@ namespace Kinect.Core
 
         private void OnKinectStopped()
         {
-            var handler = this.KinectStopped;
+            EventHandler<KinectEventArgs> handler = KinectStopped;
             if (handler != null)
             {
                 handler(this, new KinectEventArgs());
@@ -311,7 +313,7 @@ namespace Kinect.Core
 
         private void OnUserCreated(IUserChangedEvent userEvent)
         {
-            var handler = this.UserCreated;
+            EventHandler<KinectUserEventArgs> handler = UserCreated;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(userEvent));
@@ -320,7 +322,7 @@ namespace Kinect.Core
 
         private void OnUserRemoved(IUserChangedEvent userEvent)
         {
-            var handler = this.UserRemoved;
+            EventHandler<KinectUserEventArgs> handler = UserRemoved;
             if (handler != null)
             {
                 handler(this, new KinectUserEventArgs(userEvent));
@@ -329,7 +331,7 @@ namespace Kinect.Core
 
         private void OnPropertyChanged(string propertyName)
         {
-            var handler = this.PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -340,17 +342,16 @@ namespace Kinect.Core
         {
             lock (SyncRoot)
             {
-
                 Log.IfInfo("Stopping Kinect");
                 _context.Uninitialize();
                 _running = false;
-                if (this._camera != null)
+                if (_camera != null)
                 {
-                    this._camera.Running = false;
+                    _camera.Running = false;
                 }
-                this.KinectState = KinectState.Stopped;
+                KinectState = KinectState.Stopped;
             }
-            this.OnKinectStopped();
+            OnKinectStopped();
         }
 
         public User GetUser(int userId)
@@ -368,7 +369,7 @@ namespace Kinect.Core
         {
             try
             {
-                var newAngle = _context.NuiCamera.ElevationAngle + angle;
+                int newAngle = _context.NuiCamera.ElevationAngle + angle;
                 if (newAngle > Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum)
                 {
                     newAngle = Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum;
@@ -377,16 +378,15 @@ namespace Kinect.Core
             }
             catch (InvalidOperationException ex)
             {
-                OnCameraMessage(string.Concat("Couldn't change the angle of the motor up: ",ex.Message));
+                OnCameraMessage(string.Concat("Couldn't change the angle of the motor up: ", ex.Message));
             }
-            
         }
 
         public void MotorDown(int angle)
         {
             try
             {
-                var newAngle = _context.NuiCamera.ElevationAngle - angle;
+                int newAngle = _context.NuiCamera.ElevationAngle - angle;
                 if (newAngle < Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum)
                 {
                     newAngle = Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum;
@@ -398,7 +398,7 @@ namespace Kinect.Core
                 OnCameraMessage(string.Concat("Couldn't change the angle of the motor down: ", ex.Message));
             }
         }
-      
+
         private void _camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "FPS")
@@ -408,4 +408,5 @@ namespace Kinect.Core
         }
     }
 }
+
 #pragma warning restore 1591

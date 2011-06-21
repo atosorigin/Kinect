@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Kinect.Core.Eventing;
-using Kinect.Core.Filters;
+using System.Windows.Media.Media3D;
 using System.Xml.Linq;
 using Kinect.Common;
+using Kinect.Core.Eventing;
+using Kinect.Core.Filters;
+using Kinect.Core.Gestures.Helper;
 using log4net;
-using System.Windows.Media.Media3D;
 using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Core.Gestures
@@ -17,7 +18,7 @@ namespace Kinect.Core.Gestures
     //Make singleton
     public static class GestureFactory
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(GestureFactory));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (GestureFactory));
 
         public static SemaphoreGesture AddSemaphoreTouchGesture(this User user)
         {
@@ -44,21 +45,21 @@ namespace Kinect.Core.Gestures
                 throw new ArgumentException("At least 2 joints are expected for a SelfTouchGesture", "joints");
             }
 
-            var xmlDoc = XDocument.Load(Helper.GestureXmlFiles.GesturesXmlFile);
-            var selfTouchGestureNodes = xmlDoc.Root.Descendants("SelfTouchGesture");
+            XDocument xmlDoc = XDocument.Load(GestureXmlFiles.GesturesXmlFile);
+            IEnumerable<XElement> selfTouchGestureNodes = xmlDoc.Root.Descendants("SelfTouchGesture");
 
-            List<SelfTouchGesture> selfTouchGestures = new List<SelfTouchGesture>(selfTouchGestureNodes.Count());
+            var selfTouchGestures = new List<SelfTouchGesture>(selfTouchGestureNodes.Count());
             SelfTouchGesture selfTouchGesture = null;
             List<Filter<IUserChangedEvent>> filters;
 
-            foreach (var node in selfTouchGestureNodes)
+            foreach (XElement node in selfTouchGestureNodes)
             {
                 if (!Convert.ToBoolean(node.Attribute(XName.Get("Active")).Value))
                 {
                     continue;
                 }
 
-                if(!AreJointsMatching(node.Element(XName.Get("PointsToCheck")),joints))
+                if (!AreJointsMatching(node.Element(XName.Get("PointsToCheck")), joints))
                 {
                     continue;
                 }
@@ -88,28 +89,30 @@ namespace Kinect.Core.Gestures
                 }
 
                 int historyCount = 10;
-                var history = node.Attribute(XName.Get("History")).Value;
+                string history = node.Attribute(XName.Get("History")).Value;
                 int.TryParse(history, out historyCount);
-                selfTouchGesture = new SelfTouchGesture() { 
-                                            HistoryCount = historyCount, 
-                                            Joints = joints };
+                selfTouchGesture = new SelfTouchGesture
+                                       {
+                                           HistoryCount = historyCount,
+                                           Joints = joints
+                                       };
 
                 filters[filters.Count - 1].AttachPipeline(selfTouchGesture);
             }
 
             if (selfTouchGesture == null)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.Append("No SelfTouch configuration in \"");
-                sb.Append(Helper.GestureXmlFiles.GesturesXmlFile);
+                sb.Append(GestureXmlFiles.GesturesXmlFile);
                 sb.Append("\" found for joints: ");
 
-                for (int i = 1; i < joints.Length+1; i++)
+                for (int i = 1; i < joints.Length + 1; i++)
                 {
                     sb.Append("{i}");
                 }
                 _log.IfErrorFormat(sb.ToString(), joints);
-                throw new NullReferenceException(string.Format(sb.ToString(),joints));
+                throw new NullReferenceException(string.Format(sb.ToString(), joints));
             }
 
             return selfTouchGesture;
@@ -117,11 +120,11 @@ namespace Kinect.Core.Gestures
 
         public static List<SelfTouchGesture> AddSelfTouchGestures(this User user)
         {
-            var xmlDoc = XDocument.Load(Helper.GestureXmlFiles.GesturesXmlFile);
-            var selfTouchGestureNodes = xmlDoc.Root.Descendants("SelfTouchGesture");
+            XDocument xmlDoc = XDocument.Load(GestureXmlFiles.GesturesXmlFile);
+            IEnumerable<XElement> selfTouchGestureNodes = xmlDoc.Root.Descendants("SelfTouchGesture");
 
-            List<SelfTouchGesture> selfTouchGestures = new List<SelfTouchGesture>(selfTouchGestureNodes.Count());
-            foreach (var node in selfTouchGestureNodes)
+            var selfTouchGestures = new List<SelfTouchGesture>(selfTouchGestureNodes.Count());
+            foreach (XElement node in selfTouchGestureNodes)
             {
                 if (!Convert.ToBoolean(node.Attribute(XName.Get("Active")).Value))
                 {
@@ -150,15 +153,15 @@ namespace Kinect.Core.Gestures
 
                     SelfTouchGesture gesture = null;
                     int historyCount;
-                    var history = node.Attribute(XName.Get("History")).Value;
+                    string history = node.Attribute(XName.Get("History")).Value;
 
                     if (int.TryParse(history, out historyCount))
                     {
-                        gesture = new SelfTouchGesture() { HistoryCount = historyCount, Joints = joints };
+                        gesture = new SelfTouchGesture {HistoryCount = historyCount, Joints = joints};
                     }
                     else
                     {
-                        gesture = new SelfTouchGesture() { HistoryCount = 10, Joints = joints };
+                        gesture = new SelfTouchGesture {HistoryCount = 10, Joints = joints};
                     }
 
                     filters[filters.Count - 1].AttachPipeline(gesture);
@@ -185,7 +188,8 @@ namespace Kinect.Core.Gestures
         }
 
         ////TODO: Remove this after implementing full factory
-        private static Filter<IUserChangedEvent> GetParentFilter(this EventPublisher<IUserChangedEvent> publisher, GestureBase gesture)
+        private static Filter<IUserChangedEvent> GetParentFilter(this EventPublisher<IUserChangedEvent> publisher,
+                                                                 GestureBase gesture)
         {
             foreach (Filter<IUserChangedEvent> parentFilter in publisher._pipelines)
             {
@@ -236,11 +240,11 @@ namespace Kinect.Core.Gestures
 
         private static bool AreJointsMatching(XElement pointsToCheck, params JointID[] givenJoints)
         {
-            var xmlJoints = GetJoints(pointsToCheck);
+            List<JointID> xmlJoints = GetJoints(pointsToCheck);
 
             if (xmlJoints != null && xmlJoints.Count == givenJoints.Length)
             {
-                foreach (var joint in givenJoints)
+                foreach (JointID joint in givenJoints)
                 {
                     xmlJoints.Remove(joint);
                 }
@@ -266,11 +270,11 @@ namespace Kinect.Core.Gestures
 
         private static List<JointID> GetJoints(XElement pointsToCheck)
         {
-            var points = pointsToCheck.Descendants();
-            List<JointID> joints = new List<JointID>(points.Count());
-            foreach (var point in points)
+            IEnumerable<XElement> points = pointsToCheck.Descendants();
+            var joints = new List<JointID>(points.Count());
+            foreach (XElement point in points)
             {
-                var joint = point.Attribute(XName.Get("SkeletonJoint"));
+                XAttribute joint = point.Attribute(XName.Get("SkeletonJoint"));
                 JointID skeletonJoint;
                 if (Enum.TryParse(joint.Value, out skeletonJoint))
                 {
@@ -286,18 +290,18 @@ namespace Kinect.Core.Gestures
 
         private static List<Filter<IUserChangedEvent>> GetFilters(XElement filters, params JointID[] joints)
         {
-            var myFilters = from node in filters.Descendants()
-                            orderby node.Attribute(XName.Get("Sequence")).Value ascending
-                            select node;
+            IOrderedEnumerable<XElement> myFilters = from node in filters.Descendants()
+                                                     orderby node.Attribute(XName.Get("Sequence")).Value ascending
+                                                     select node;
 
-            List<Filter<IUserChangedEvent>> filterCollection = new List<Filter<IUserChangedEvent>>(myFilters.Count());
-            foreach (var filter in myFilters)
+            var filterCollection = new List<Filter<IUserChangedEvent>>(myFilters.Count());
+            foreach (XElement filter in myFilters)
             {
                 Filter<IUserChangedEvent> createdFilter = null;
                 if (filter.Name == "FramesFilter")
                 {
                     int fpsCount;
-                    var fps = filter.Attribute(XName.Get("FPS")).Value;
+                    string fps = filter.Attribute(XName.Get("FPS")).Value;
                     if (int.TryParse(fps, out fpsCount))
                     {
                         createdFilter = new FramesFilter(fpsCount);
@@ -310,9 +314,9 @@ namespace Kinect.Core.Gestures
                 else if (filter.Name == "CollisionFilter")
                 {
                     int x, y, z;
-                    var xValue = filter.Attribute(XName.Get("MarginX")).Value;
-                    var yValue = filter.Attribute(XName.Get("MarginY")).Value;
-                    var zValue = filter.Attribute(XName.Get("MarginZ")).Value;
+                    string xValue = filter.Attribute(XName.Get("MarginX")).Value;
+                    string yValue = filter.Attribute(XName.Get("MarginY")).Value;
+                    string zValue = filter.Attribute(XName.Get("MarginZ")).Value;
 
                     if (int.TryParse(xValue, out x) && int.TryParse(yValue, out y) && int.TryParse(zValue, out z))
                     {
@@ -321,41 +325,40 @@ namespace Kinect.Core.Gestures
                     else
                     {
                         var exception = new ArgumentException("You need to provide the XYZ margins");
-                        
+
                         _log.IfError(string.Empty, exception);
-                        
+
                         throw exception;
                     }
                 }
                 else if (filter.Name == "CorrectionFilter")
                 {
-                    Point3D correction = new Point3D();
+                    var correction = new Point3D();
                     correction.X = SafeFloatParse(filter.Attribute(XName.Get("MarginX")));
                     correction.Y = SafeFloatParse(filter.Attribute(XName.Get("MarginY")));
                     correction.Z = SafeFloatParse(filter.Attribute(XName.Get("MarginZ")));
                     JointID joint;
 
                     //TODO better catch if XML isn't correct? DTD
-                    if (Enum.TryParse<JointID>(filter.Attribute(XName.Get("SkeletonJoint")).Value, out joint))
+                    if (Enum.TryParse(filter.Attribute(XName.Get("SkeletonJoint")).Value, out joint))
                     {
                         createdFilter = new CorrectionFilter(joint, correction);
                     }
                     else
                     {
-                        var exception =  new ArgumentException("You need to provide a SkeletonJoint to correct");
-                        
+                        var exception = new ArgumentException("You need to provide a SkeletonJoint to correct");
+
                         _log.IfError(string.Empty, exception);
-                        
+
                         throw exception;
                     }
                 }
                 else
                 {
-
                     var exception = new ArgumentException("The provided filter isn't supported");
-                    
+
                     _log.IfError(string.Empty, exception);
-                    
+
                     throw exception;
                 }
 

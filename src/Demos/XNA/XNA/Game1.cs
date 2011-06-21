@@ -1,27 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Windows;
+using Kinect.Core;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using System.Windows;
 
 namespace Kinect.XNA
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game
+    public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
-        private List<User.User> _users = new List<User.User>();
-        private Kinect.Core.MyKinect _kinect = null;
+        private readonly List<User.User> _users = new List<User.User>();
+        private readonly GraphicsDeviceManager graphics;
+        private MyKinect _kinect;
+        private SpriteBatch spriteBatch;
 
         public Game1()
         {
@@ -37,6 +32,7 @@ namespace Kinect.XNA
             }
             base.OnExiting(sender, args);
         }
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -46,22 +42,23 @@ namespace Kinect.XNA
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _kinect = Kinect.Core.MyKinect.Instance;
+            _kinect = MyKinect.Instance;
             _kinect.StartKinect();
             _kinect.UserCreated += _kinect_UserCreated;
             _kinect.UserRemoved += _kinect_UserRemoved;
             base.Initialize();
         }
 
-        void _kinect_UserRemoved(object sender, Core.KinectUserEventArgs e)
+        private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
         {
             //Delete user
         }
 
-        void _kinect_UserCreated(object sender, Core.KinectUserEventArgs e)
+        private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
-            var kinect_user = _kinect.GetUser(e.User.ID);
-            var xnaUser = new User.User(kinect_user, Content, new Size(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+            Core.User kinect_user = _kinect.GetUser(e.User.ID);
+            var xnaUser = new User.User(kinect_user, Content,
+                                        new Size(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
             _users.Add(xnaUser);
         }
 
@@ -95,7 +92,7 @@ namespace Kinect.XNA
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+                Exit();
 
             // TODO: Add your update logic here
 
@@ -110,7 +107,7 @@ namespace Kinect.XNA
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            foreach (var user in _users)
+            foreach (User.User user in _users)
             {
                 user.Draw(spriteBatch);
             }

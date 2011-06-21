@@ -7,17 +7,16 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Learning
 {
-    using System;
-
     /// <summary>
     ///   Common interface for unsupervised learning algorithms for
     ///   hidden Markov models such as the Baum-Welch learning algorithm.
     /// </summary>
     public interface IUnsupervisedLearning
     {
-
         /// <summary>
         ///   Runs the learning algorithm.
         /// </summary>
@@ -27,6 +26,5 @@ namespace Accord.Statistics.Models.Markov.Learning
         ///   HMM parameters M = (A, B, pi) that best fit training data. 
         /// </remarks>
         double Run(Array[] observations);
-
     }
 }

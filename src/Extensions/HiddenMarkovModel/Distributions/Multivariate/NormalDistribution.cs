@@ -7,12 +7,13 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+using Accord.Math.Decompositions;
+using AForge.Math.Random;
+
 namespace Accord.Statistics.Distributions.Multivariate
 {
-    using Accord.Math;
-    using Accord.Math.Decompositions;
-    using System;
-
     /// <summary>
     ///   Multivariate Normal (Gaussian) distribution.
     /// </summary>
@@ -25,14 +26,13 @@ namespace Accord.Statistics.Distributions.Multivariate
     [Serializable]
     public class NormalDistribution : MultivariateContinuousDistribution
     {
-
         // Distribution parameters
-        private double[] mean;
-        private double[,] covariance;
 
         private CholeskyDecomposition chol;
-        private SingularValueDecomposition svd;
         private double constant;
+        private double[,] covariance;
+        private double[] mean;
+        private SingularValueDecomposition svd;
         private double[] variance;
 
 
@@ -56,17 +56,17 @@ namespace Accord.Statistics.Distributions.Multivariate
 
             this.mean = mean;
             this.covariance = covariance;
-            this.variance = Matrix.Diagonal(covariance);
+            variance = covariance.Diagonal();
 
             double detSqrt = System.Math.Sqrt(System.Math.Abs(covariance.Determinant()));
-            this.constant = 1.0 / (System.Math.Pow(2.0 * System.Math.PI, k / 2.0) * detSqrt);
+            constant = 1.0/(System.Math.Pow(2.0*System.Math.PI, k/2.0)*detSqrt);
 
-            this.chol = new CholeskyDecomposition(covariance, true);
+            chol = new CholeskyDecomposition(covariance, true);
 
             if (chol.Determinant == 0)
             {
                 // The covariance matrix is singular, use pseudo-inverse
-                this.svd = new SingularValueDecomposition(covariance);
+                svd = new SingularValueDecomposition(covariance);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Accord.Statistics.Distributions.Multivariate
 
             double b = a.InnerProduct(z);
 
-            double r = constant * System.Math.Exp(-0.5 * b);
+            double r = constant*System.Math.Exp(-0.5*b);
 
             return r > 1.0 ? 1.0 : r;
         }
@@ -151,10 +151,10 @@ namespace Accord.Statistics.Distributions.Multivariate
                     throw new Exception("Invalid numbers in the weight vector.");
 #endif
             // Compute weighted mean vector
-            double[] means = Statistics.Tools.Mean(observations, weights);
+            double[] means = Tools.Mean(observations, weights);
 
             // Compute weighted covariance matrix
-            double[,] cov = Statistics.Tools.Covariance(observations, means, weights);
+            double[,] cov = Tools.Covariance(observations, means, weights);
 
             // return the newly fitted distribution.
             return new NormalDistribution(means, cov);
@@ -169,14 +169,14 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </returns>
         public override object Clone()
         {
-            var clone = new NormalDistribution(this.Dimension);
+            var clone = new NormalDistribution(Dimension);
             clone.constant = constant;
-            clone.covariance = (double[,])covariance.Clone();
-            clone.mean = (double[])mean.Clone();
-            clone.variance = (double[])variance.Clone();
+            clone.covariance = (double[,]) covariance.Clone();
+            clone.mean = (double[]) mean.Clone();
+            clone.variance = (double[]) variance.Clone();
 
-            clone.chol = (CholeskyDecomposition)chol.Clone();
-            clone.svd = (svd != null) ? (SingularValueDecomposition)svd.Clone() : null;
+            clone.chol = (CholeskyDecomposition) chol.Clone();
+            clone.svd = (svd != null) ? (SingularValueDecomposition) svd.Clone() : null;
 
             return clone;
         }
@@ -189,13 +189,13 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// <returns>A random vector of observations drawn from this distribution.</returns>
         public double[][] Generate(int samples)
         {
-            var r = new AForge.Math.Random.StandardGenerator();
+            var r = new StandardGenerator();
             double[,] A = chol.LeftTriangularFactor;
 
-            double[][] data = new double[samples][];
+            var data = new double[samples][];
             for (int i = 0; i < data.Length; i++)
             {
-                double[] sample = new double[Dimension];
+                var sample = new double[Dimension];
                 for (int j = 0; j < sample.Length; j++)
                     sample[j] = r.Next();
 
@@ -204,6 +204,5 @@ namespace Accord.Statistics.Distributions.Multivariate
 
             return data;
         }
-
     }
 }

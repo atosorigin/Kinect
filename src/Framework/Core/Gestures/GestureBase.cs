@@ -9,17 +9,17 @@ namespace Kinect.Core.Gestures
     public abstract class GestureBase : IPipeline<IUserChangedEvent>
     {
         /// <summary>
+        /// Locking object for syncing multiple threads
+        /// </summary>
+        protected static object SyncRoot = new object();
+
+        /// <summary>
         /// Gets the name of the gesture.
         /// </summary>
         /// <value>
         /// The name of the gesture.
         /// </value>
         protected abstract string GestureName { get; }
-
-        /// <summary>
-        /// Locking object for syncing multiple threads
-        /// </summary>
-        protected static object SyncRoot = new object();
 
         /// <summary>
         /// Gets or sets the history count.
@@ -29,41 +29,17 @@ namespace Kinect.Core.Gestures
         /// </value>
         internal int HistoryCount { get; set; }
 
+        #region IPipeline<IUserChangedEvent> Members
+
         /// <summary>
         /// Occurs when [processing event].
         /// </summary>
         public event EventHandler<ProcessEventArgs<IUserChangedEvent>> ProcessingEvent;
 
         /// <summary>
-        /// Called when [processing event].
-        /// </summary>
-        /// <param name="evt">The evt.</param>
-        protected virtual void OnProcessingEvent(IUserChangedEvent evt)
-        {
-            var handler = ProcessingEvent;
-            if (handler != null)
-            {
-                handler(this, new ProcessEventArgs<IUserChangedEvent>(evt));
-            }
-        }
-
-        /// <summary>
         /// Occurs when [processed event].
         /// </summary>
         public event EventHandler<ProcessEventArgs<IUserChangedEvent>> ProcessedEvent;
-
-        /// <summary>
-        /// Called when [processed event].
-        /// </summary>
-        /// <param name="evt">The evt.</param>
-        protected virtual void OnProcessedEvent(IUserChangedEvent evt)
-        {
-            var handler = ProcessedEvent;
-            if (handler != null)
-            {
-                handler(this, new ProcessEventArgs<IUserChangedEvent>(evt));
-            }
-        }
 
         /// <summary>
         /// Processes the specified evt.
@@ -74,6 +50,34 @@ namespace Kinect.Core.Gestures
             OnProcessingEvent(evt);
             Process(evt);
             OnProcessedEvent(evt);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Called when [processing event].
+        /// </summary>
+        /// <param name="evt">The evt.</param>
+        protected virtual void OnProcessingEvent(IUserChangedEvent evt)
+        {
+            EventHandler<ProcessEventArgs<IUserChangedEvent>> handler = ProcessingEvent;
+            if (handler != null)
+            {
+                handler(this, new ProcessEventArgs<IUserChangedEvent>(evt));
+            }
+        }
+
+        /// <summary>
+        /// Called when [processed event].
+        /// </summary>
+        /// <param name="evt">The evt.</param>
+        protected virtual void OnProcessedEvent(IUserChangedEvent evt)
+        {
+            EventHandler<ProcessEventArgs<IUserChangedEvent>> handler = ProcessedEvent;
+            if (handler != null)
+            {
+                handler(this, new ProcessEventArgs<IUserChangedEvent>(evt));
+            }
         }
 
         /// <summary>

@@ -7,18 +7,17 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Learning
 {
-    using System;
-
     /// <summary>
     ///   Baum-Welch learning algorithm for discrete density Hidden Markov Models.
     /// </summary>
     /// 
     public class BaumWelchLearning : BaumWelchLearningBase, IUnsupervisedLearning
     {
-
-        private HiddenMarkovModel model;
+        private readonly HiddenMarkovModel model;
 
         private int[][] discreteObservations;
 
@@ -32,26 +31,7 @@ namespace Accord.Statistics.Models.Markov.Learning
             this.model = model;
         }
 
-
-        /// <summary>
-        ///   Runs the Baum-Welch learning algorithm for hidden Markov models.
-        /// </summary>
-        /// <param name="observations">An array of observation sequences to be used to train the model.</param>
-        /// <returns>
-        ///   The average log-likelihood for the observations after the model has been trained.
-        /// </returns>
-        /// <remarks>
-        ///   Learning problem. Given some training observation sequences O = {o1, o2, ..., oK}
-        ///   and general structure of HMM (numbers of hidden and visible states), determine
-        ///   HMM parameters M = (A, B, pi) that best fit training data.
-        /// </remarks>
-        public double Run(params int[][] observations)
-        {
-            this.discreteObservations = observations;
-
-            return base.Run(discreteObservations);
-        }
-
+        #region IUnsupervisedLearning Members
 
         /// <summary>
         ///   Runs the Baum-Welch learning algorithm for hidden Markov models.
@@ -72,6 +52,27 @@ namespace Accord.Statistics.Models.Markov.Learning
             return Run(observations as int[][]);
         }
 
+        #endregion
+
+        /// <summary>
+        ///   Runs the Baum-Welch learning algorithm for hidden Markov models.
+        /// </summary>
+        /// <param name="observations">An array of observation sequences to be used to train the model.</param>
+        /// <returns>
+        ///   The average log-likelihood for the observations after the model has been trained.
+        /// </returns>
+        /// <remarks>
+        ///   Learning problem. Given some training observation sequences O = {o1, o2, ..., oK}
+        ///   and general structure of HMM (numbers of hidden and visible states), determine
+        ///   HMM parameters M = (A, B, pi) that best fit training data.
+        /// </remarks>
+        public double Run(params int[][] observations)
+        {
+            discreteObservations = observations;
+
+            return base.Run(discreteObservations);
+        }
+
         /// <summary>
         ///   Computes the forward and backward probabilities matrices
         ///   for a given observation referenced by its index in the
@@ -81,7 +82,8 @@ namespace Accord.Statistics.Models.Markov.Learning
         /// <param name="fwd">Returns the computed forward probabilities matrix.</param>
         /// <param name="bwd">Returns the computed backward probabilities matrix.</param>
         /// <param name="scaling">Returns the scaling parameters used during calculations.</param>
-        protected override void ComputeForwardBackward(int index, out double[,] fwd, out double[,] bwd, out double[] scaling)
+        protected override void ComputeForwardBackward(int index, out double[,] fwd, out double[,] bwd,
+                                                       out double[] scaling)
         {
             fwd = ForwardBackwardAlgorithm.Forward(model, discreteObservations[index], out scaling);
             bwd = ForwardBackwardAlgorithm.Backward(model, discreteObservations[index], scaling);
@@ -97,7 +99,7 @@ namespace Accord.Statistics.Models.Markov.Learning
         /// </remarks>
         protected override void UpdateEmissions()
         {
-            var B = model.Emissions;
+            double[,] B = model.Emissions;
             int states = model.States;
             int symbols = model.Symbols;
 
@@ -110,7 +112,7 @@ namespace Accord.Statistics.Models.Markov.Learning
                     for (int k = 0; k < discreteObservations.Length; k++)
                     {
                         int T = discreteObservations[k].Length;
-                        var gammak = Gamma[k];
+                        double[,] gammak = Gamma[k];
 
                         for (int l = 0; l < T; l++)
                         {
@@ -124,7 +126,7 @@ namespace Accord.Statistics.Models.Markov.Learning
                     // avoid locking a parameter in zero.
                     if (num == 0) num = 1e-10;
 
-                    B[i, j] = (sum != 0) ? num / sum : num;
+                    B[i, j] = (sum != 0) ? num/sum : num;
                 }
             }
         }
@@ -140,23 +142,23 @@ namespace Accord.Statistics.Models.Markov.Learning
         protected override void ComputeKsi(int index, double[,] fwd, double[,] bwd, double[] scaling)
         {
             int states = model.States;
-            var A = model.Transitions;
-            var B = model.Emissions;
+            double[,] A = model.Transitions;
+            double[,] B = model.Emissions;
 
-            var sequence = discreteObservations[index];
-            var ksi = Ksi[index];
+            int[] sequence = discreteObservations[index];
+            double[][,] ksi = Ksi[index];
 
 
             for (int t = 0; t < sequence.Length - 1; t++)
             {
                 double s = 0;
                 double c = scaling[t + 1];
-                var x = sequence[t + 1];
-                var ksit = ksi[t];
+                int x = sequence[t + 1];
+                double[,] ksit = ksi[t];
 
                 for (int k = 0; k < states; k++)
                     for (int l = 0; l < states; l++)
-                        s += ksit[k, l] = c * fwd[t, k] * A[k, l] * bwd[t + 1, l] * B[l, x];
+                        s += ksit[k, l] = c*fwd[t, k]*A[k, l]*bwd[t + 1, l]*B[l, x];
 
                 if (s != 0) // Scaling
                 {

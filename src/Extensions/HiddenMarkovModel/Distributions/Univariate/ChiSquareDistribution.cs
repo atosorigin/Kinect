@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Univariate
 {
-    using System;
-    using Accord.Math;
-
     /// <summary>
     ///   Chi-Square (χ²) probability distribution
     /// </summary>
@@ -34,7 +34,7 @@ namespace Accord.Statistics.Distributions.Univariate
     public class ChiSquareDistribution : UnivariateContinuousDistribution
     {
         //  Distribution parameters
-        private int degreesOfFreedom;
+        private readonly int degreesOfFreedom;
 
         /// <summary>
         ///   Constructs a new Chi-Square distribution
@@ -51,6 +51,37 @@ namespace Accord.Statistics.Distributions.Univariate
         public int DegreesOfFreedom
         {
             get { return degreesOfFreedom; }
+        }
+
+
+        /// <summary>
+        ///   Gets the mean for this distribution.
+        /// </summary>
+        public override double Mean
+        {
+            get { return degreesOfFreedom; }
+        }
+
+        /// <summary>
+        ///   Gets the variance for this distribution.
+        /// </summary>
+        public override double Variance
+        {
+            get { return 2.0*degreesOfFreedom; }
+        }
+
+        /// <summary>
+        ///   Gets the entropy for this distribution.
+        /// </summary>
+        public override double Entropy
+        {
+            get
+            {
+                double kd2 = degreesOfFreedom/2.0;
+                double m1 = System.Math.Log(2.0*Special.Gamma(kd2));
+                double m2 = (1.0 - kd2)*Special.Digamma(kd2);
+                return kd2 + m1 + m2;
+            }
         }
 
         /// <summary>
@@ -76,10 +107,10 @@ namespace Accord.Statistics.Distributions.Univariate
         public override double ProbabilityDensityFunction(double x)
         {
             double v = degreesOfFreedom;
-            double m1 = System.Math.Pow(x, (v - 2.0) / 2.0);
-            double m2 = System.Math.Exp(-x / 2.0);
-            double m3 = System.Math.Pow(2, v / 2.0) * Special.Gamma(v / 2.0);
-            return (m1 * m2) / m3;
+            double m1 = System.Math.Pow(x, (v - 2.0)/2.0);
+            double m2 = System.Math.Exp(-x/2.0);
+            double m3 = System.Math.Pow(2, v/2.0)*Special.Gamma(v/2.0);
+            return (m1*m2)/m3;
         }
 
         /// <summary>
@@ -104,43 +135,12 @@ namespace Accord.Statistics.Distributions.Univariate
             return Special.ChiSqc(degreesOfFreedom, x);
         }
 
-
-        /// <summary>
-        ///   Gets the mean for this distribution.
-        /// </summary>
-        public override double Mean
-        {
-            get { return degreesOfFreedom; }
-        }
-
-        /// <summary>
-        ///   Gets the variance for this distribution.
-        /// </summary>
-        public override double Variance
-        {
-            get { return 2.0 * degreesOfFreedom; }
-        }
-
-        /// <summary>
-        ///   Gets the entropy for this distribution.
-        /// </summary>
-        public override double Entropy
-        {
-            get
-            {
-                double kd2 = degreesOfFreedom / 2.0;
-                double m1 = System.Math.Log(2.0 * Special.Gamma(kd2));
-                double m2 = (1.0 - kd2) * Special.Digamma(kd2);
-                return kd2 + m1 + m2;
-            }
-        }
-
         /// <summary>
         ///   This method is not supported.
         /// </summary>
         public override IDistribution Fit(double[] observations, double[] weights)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -154,5 +154,4 @@ namespace Accord.Statistics.Distributions.Univariate
             return new ChiSquareDistribution(degreesOfFreedom);
         }
     }
-
 }

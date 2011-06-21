@@ -1,16 +1,14 @@
-using System;
-
 namespace Kinect.XNA
 {
 #if WINDOWS || XBOX
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            using (Game1 game = new Game1())
+            using (var game = new Game1())
             {
                 game.Run();
             }
@@ -18,4 +16,3 @@ namespace Kinect.XNA
     }
 #endif
 }
-

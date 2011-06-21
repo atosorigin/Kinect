@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using PowerPoint = Microsoft.Office.Interop.PowerPoint;
-using Office = Microsoft.Office.Core;
 using GalaSoft.MvvmLight.Threading;
-using Kinect.Plugins.Common;
 using Kinect.Plugins.Common.Views;
+using Microsoft.Office.Interop.PowerPoint;
+using Office = Microsoft.Office.Core;
 
 namespace Kinect.Plugins.PowerPoint2010
 {
@@ -15,7 +10,7 @@ namespace Kinect.Plugins.PowerPoint2010
     {
         private PresentationOverlay _overlay;
 
-        private void ThisAddIn_Startup(object sender, System.EventArgs e)
+        private void ThisAddIn_Startup(object sender, EventArgs e)
         {
             if (Application.Version == "14.0")
             {
@@ -29,7 +24,7 @@ namespace Kinect.Plugins.PowerPoint2010
             }
         }
 
-        private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+        private void ThisAddIn_Shutdown(object sender, EventArgs e)
         {
             UnSubscribeEvents();
         }
@@ -46,14 +41,14 @@ namespace Kinect.Plugins.PowerPoint2010
             Application.SlideShowEnd -= Application_SlideShowEnd;
         }
 
-        private void Application_SlideShowBegin(PowerPoint.SlideShowWindow Wn)
+        private void Application_SlideShowBegin(SlideShowWindow Wn)
         {
             _overlay = new PresentationOverlay();
-            _overlay.DataContext = new PresentationOverlayViewModel() { SlideShowWindow = Wn };
+            _overlay.DataContext = new PresentationOverlayViewModel {SlideShowWindow = Wn};
             _overlay.Show();
         }
 
-        private void Application_SlideShowEnd(PowerPoint.Presentation Pres)
+        private void Application_SlideShowEnd(Presentation Pres)
         {
             _overlay.Close();
             _overlay = null;
@@ -67,10 +62,10 @@ namespace Kinect.Plugins.PowerPoint2010
         /// </summary>
         private void InternalStartup()
         {
-            this.Startup += new System.EventHandler(ThisAddIn_Startup);
-            this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+            Startup += ThisAddIn_Startup;
+            Shutdown += ThisAddIn_Shutdown;
         }
-        
+
         #endregion
     }
 }

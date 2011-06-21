@@ -12,10 +12,10 @@
 //  http://www.aisto.com/roeder/dotnet
 //
 
+using System;
+
 namespace Accord.Math.Decompositions
 {
-    using System;
-
     /// <summary>
     ///		Cholesky Decomposition of a symmetric, positive definite matrix.
     ///	</summary>
@@ -41,14 +41,13 @@ namespace Accord.Math.Decompositions
     [Serializable]
     public sealed class CholeskyDecomposition : ICloneable, ISolverDecomposition
     {
-
-        private double[,] L;
         private double[] D;
+        private double[,] L;
         private int n;
 
-        private bool symmetric;
         private bool positiveDefinite;
         private bool robust;
+        private bool symmetric;
 
         /// <summary>Constructs a new Cholesky Decomposition.</summary>
         /// <param name="value">The matrix to be decomposed.</param>
@@ -97,23 +96,27 @@ namespace Accord.Math.Decompositions
                 symmetric = true;
         }
 
+        private CholeskyDecomposition()
+        {
+        }
+
 
         /// <summary>Returns <see langword="true"/> if the matrix is symmetric.</summary>
         public bool Symmetric
         {
-            get { return this.symmetric; }
+            get { return symmetric; }
         }
 
         /// <summary>Returns <see langword="true"/> if the matrix is positive definite.</summary>
         public bool PositiveDefinite
         {
-            get { return this.positiveDefinite; }
+            get { return positiveDefinite; }
         }
 
         /// <summary>Returns the left triangular factor <c>L</c> so that <c>A = L * D * L'</c>.</summary>
         public double[,] LeftTriangularFactor
         {
-            get { return this.L; }
+            get { return L; }
         }
 
         /// <summary>Returns the block diagonal matrix of diagonal elements in a LDLt decomposition.</summary>		
@@ -133,7 +136,7 @@ namespace Accord.Math.Decompositions
         {
             get
             {
-                if (!this.symmetric)
+                if (!symmetric)
                     throw new InvalidOperationException("Matrix is not symmetric.");
 
                 double detL = 1.0, detD = 1.0;
@@ -143,101 +146,33 @@ namespace Accord.Math.Decompositions
                     detD *= D[i];
                 }
 
-                return detL * detL * detD;
+                return detL*detL*detD;
             }
         }
 
+        #region ICloneable Members
 
-
-        private unsafe void LLt(double[,] value)
+        /// <summary>
+        ///   Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>
+        ///   A new object that is a copy of this instance.
+        /// </returns>
+        public object Clone()
         {
-            n = value.GetLength(0);
-            L = new double[n, n];
-            D = Matrix.Vector(n, 1.0);
-            robust = false;
-
-            double[,] a = value;
-
-            this.positiveDefinite = true;
-            this.symmetric = true;
-
-            fixed (double* ptrL = L)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    double* Lrowj = ptrL + j * n;
-                    double d = 0.0;
-                    for (int k = 0; k < j; k++)
-                    {
-                        double* Lrowk = ptrL + k * n;
-
-                        double s = 0.0;
-                        for (int i = 0; i < k; i++)
-                            s += Lrowk[i] * Lrowj[i];
-
-                        Lrowj[k] = s = (a[j, k] - s) / Lrowk[k];
-                        d += s * s;
-
-                        this.symmetric = this.symmetric & (a[k, j] == a[j, k]);
-                    }
-
-                    d = a[j, j] - d;
-
-                    this.positiveDefinite = this.positiveDefinite & (d > 0.0);
-                    Lrowj[j] = System.Math.Sqrt(System.Math.Max(d, 0.0));
-
-                    for (int k = j + 1; k < n; k++)
-                        Lrowj[k] = 0.0;
-                }
-            }
+            var clone = new CholeskyDecomposition();
+            clone.L = (double[,]) L.Clone();
+            clone.D = (double[]) D.Clone();
+            clone.n = n;
+            clone.robust = robust;
+            clone.positiveDefinite = positiveDefinite;
+            clone.symmetric = symmetric;
+            return clone;
         }
 
-        private unsafe void LDLt(double[,] value)
-        {
-            n = value.GetLength(0);
-            L = new double[n, n];
-            D = new double[n];
-            robust = true;
+        #endregion
 
-            double[,] a = value;
-
-            double[] v = new double[n];
-            this.positiveDefinite = true;
-            this.symmetric = true;
-
-            double d = D[0] = v[0] = a[0, 0];
-            for (int j = 1; j < n; j++)
-                L[j, 0] = a[j, 0] / d;
-
-            for (int j = 1; j < n; j++)
-            {
-                d = 0.0;
-                for (int k = 0; k < j; k++)
-                {
-                    v[k] = L[j, k] * D[k];
-                    d += L[j, k] * v[k];
-                }
-
-                d = D[j] = v[j] = a[j, j] - d;
-
-                this.positiveDefinite = this.positiveDefinite & (d > 0.0);
-
-                for (int k = j + 1; k < n; k++)
-                {
-                    double s = 0.0;
-                    for (int i = 0; i < j; i++)
-                        s += L[k, i] * v[i];
-
-                    L[k, j] = (a[k, j] - s) / d;
-
-                    this.symmetric = this.symmetric & (a[k, j] == a[j, k]);
-                }
-            }
-
-            for (int i = 0; i < n; i++)
-                L[i, i] += 1.0;
-        }
-
+        #region ISolverDecomposition Members
 
         /// <summary>Solves a set of equation systems of type <c>A * X = B</c>.</summary>
         /// <param name="value">Right hand side matrix with as many rows as <c>A</c> and any number of columns.</param>
@@ -248,6 +183,108 @@ namespace Accord.Math.Decompositions
         {
             return Solve(value, false);
         }
+
+        /// <summary>Solves a set of equation systems of type <c>A * X = B</c>.</summary>
+        /// <param name="value">Right hand side matrix with as many rows as <c>A</c> and any number of columns.</param>
+        /// <returns>Matrix <c>X</c> so that <c>L * L' * X = B</c>.</returns>
+        /// <exception cref="T:System.ArgumentException">Matrix dimensions do not match.</exception>
+        /// <exception cref="T:System.InvalidOperationException">Matrix is not symmetric and positive definite.</exception>
+        public double[] Solve(double[] value)
+        {
+            return Solve(value, false);
+        }
+
+        #endregion
+
+        private unsafe void LLt(double[,] value)
+        {
+            n = value.GetLength(0);
+            L = new double[n,n];
+            D = Matrix.Vector(n, 1.0);
+            robust = false;
+
+            double[,] a = value;
+
+            positiveDefinite = true;
+            symmetric = true;
+
+            fixed (double* ptrL = L)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    double* Lrowj = ptrL + j*n;
+                    double d = 0.0;
+                    for (int k = 0; k < j; k++)
+                    {
+                        double* Lrowk = ptrL + k*n;
+
+                        double s = 0.0;
+                        for (int i = 0; i < k; i++)
+                            s += Lrowk[i]*Lrowj[i];
+
+                        Lrowj[k] = s = (a[j, k] - s)/Lrowk[k];
+                        d += s*s;
+
+                        symmetric = symmetric & (a[k, j] == a[j, k]);
+                    }
+
+                    d = a[j, j] - d;
+
+                    positiveDefinite = positiveDefinite & (d > 0.0);
+                    Lrowj[j] = System.Math.Sqrt(System.Math.Max(d, 0.0));
+
+                    for (int k = j + 1; k < n; k++)
+                        Lrowj[k] = 0.0;
+                }
+            }
+        }
+
+        private void LDLt(double[,] value)
+        {
+            n = value.GetLength(0);
+            L = new double[n,n];
+            D = new double[n];
+            robust = true;
+
+            double[,] a = value;
+
+            var v = new double[n];
+            positiveDefinite = true;
+            symmetric = true;
+
+            double d = D[0] = v[0] = a[0, 0];
+            for (int j = 1; j < n; j++)
+                L[j, 0] = a[j, 0]/d;
+
+            for (int j = 1; j < n; j++)
+            {
+                d = 0.0;
+                for (int k = 0; k < j; k++)
+                {
+                    v[k] = L[j, k]*D[k];
+                    d += L[j, k]*v[k];
+                }
+
+                d = D[j] = v[j] = a[j, j] - d;
+
+                positiveDefinite = positiveDefinite & (d > 0.0);
+
+                for (int k = j + 1; k < n; k++)
+                {
+                    double s = 0.0;
+                    for (int i = 0; i < j; i++)
+                        s += L[k, i]*v[i];
+
+                    L[k, j] = (a[k, j] - s)/d;
+
+                    symmetric = symmetric & (a[k, j] == a[j, k]);
+                }
+            }
+
+            for (int i = 0; i < n; i++)
+                L[i, i] += 1.0;
+        }
+
 
         /// <summary>Solves a set of equation systems of type <c>A * X = B</c>.</summary>
         /// <param name="value">Right hand side matrix with as many rows as <c>A</c> and any number of columns.</param>
@@ -267,12 +304,12 @@ namespace Accord.Math.Decompositions
                 throw new ArgumentException("Matrix dimensions do not match.");
             }
 
-            if (!this.symmetric)
+            if (!symmetric)
             {
                 throw new InvalidOperationException("Matrix is not symmetric.");
             }
 
-            if (!robust && !this.positiveDefinite)
+            if (!robust && !positiveDefinite)
             {
                 throw new InvalidOperationException("Matrix is not positive definite.");
             }
@@ -280,7 +317,7 @@ namespace Accord.Math.Decompositions
             int dimension = L.GetLength(0);
             int count = value.GetLength(1);
 
-            double[,] B = inPlace ? value : (double[,])value.Clone();
+            double[,] B = inPlace ? value : (double[,]) value.Clone();
 
 
             // Solve L*Y = B;
@@ -289,7 +326,7 @@ namespace Accord.Math.Decompositions
                 for (int j = 0; j < count; j++)
                 {
                     for (int i = 0; i < k; i++)
-                        B[k, j] -= B[i, j] * L[k, i];
+                        B[k, j] -= B[i, j]*L[k, i];
 
                     B[k, j] /= L[k, k];
                 }
@@ -308,23 +345,13 @@ namespace Accord.Math.Decompositions
                 for (int j = 0; j < count; j++)
                 {
                     for (int i = k + 1; i < dimension; i++)
-                        B[k, j] -= B[i, j] * L[i, k];
+                        B[k, j] -= B[i, j]*L[i, k];
 
                     B[k, j] /= L[k, k];
                 }
             }
 
             return B;
-        }
-
-        /// <summary>Solves a set of equation systems of type <c>A * X = B</c>.</summary>
-        /// <param name="value">Right hand side matrix with as many rows as <c>A</c> and any number of columns.</param>
-        /// <returns>Matrix <c>X</c> so that <c>L * L' * X = B</c>.</returns>
-        /// <exception cref="T:System.ArgumentException">Matrix dimensions do not match.</exception>
-        /// <exception cref="T:System.InvalidOperationException">Matrix is not symmetric and positive definite.</exception>
-        public double[] Solve(double[] value)
-        {
-            return Solve(value, false);
         }
 
         /// <summary>Solves a set of equation systems of type <c>A * x = b</c>.</summary>
@@ -345,26 +372,26 @@ namespace Accord.Math.Decompositions
                 throw new ArgumentException("Matrix dimensions do not match.");
             }
 
-            if (!this.symmetric)
+            if (!symmetric)
             {
                 throw new InvalidOperationException("Matrix is not symmetric.");
             }
 
-            if (!robust && !this.positiveDefinite)
+            if (!robust && !positiveDefinite)
             {
                 throw new InvalidOperationException("Matrix is not positive definite.");
             }
 
             int dimension = L.GetLength(0);
 
-            double[] B = inPlace ? value : (double[])value.Clone();
+            double[] B = inPlace ? value : (double[]) value.Clone();
 
 
             // Solve L*Y = B;
             for (int k = 0; k < dimension; k++)
             {
                 for (int i = 0; i < k; i++)
-                    B[k] -= B[i] * L[k, i];
+                    B[k] -= B[i]*L[k, i];
 
                 B[k] /= L[k, k];
             }
@@ -379,7 +406,7 @@ namespace Accord.Math.Decompositions
             for (int k = dimension - 1; k >= 0; k--)
             {
                 for (int i = k + 1; i < dimension; i++)
-                    B[k] -= B[i] * L[i, k];
+                    B[k] -= B[i]*L[i, k];
 
                 B[k] /= L[k, k];
             }
@@ -392,12 +419,12 @@ namespace Accord.Math.Decompositions
         /// </summary>
         public double[,] Inverse()
         {
-            if (!this.symmetric)
+            if (!symmetric)
             {
                 throw new InvalidOperationException("Matrix is not symmetric.");
             }
 
-            if (!robust && !this.positiveDefinite)
+            if (!robust && !positiveDefinite)
             {
                 throw new InvalidOperationException("Matrix is not positive definite.");
             }
@@ -413,7 +440,7 @@ namespace Accord.Math.Decompositions
                 for (int j = 0; j < k; j++)
                 {
                     for (int i = 0; i < k; i++)
-                        B[k, j] -= B[i, j] * L[k, i];
+                        B[k, j] -= B[i, j]*L[k, i];
 
                     B[k, j] /= L[k, k];
                 }
@@ -432,7 +459,7 @@ namespace Accord.Math.Decompositions
                 for (int j = 0; j < dimension; j++)
                 {
                     for (int i = k + 1; i < dimension; i++)
-                        B[k, j] -= B[i, j] * L[i, k];
+                        B[k, j] -= B[i, j]*L[i, k];
 
                     B[k, j] /= L[k, k];
                 }
@@ -440,34 +467,5 @@ namespace Accord.Math.Decompositions
 
             return B;
         }
-
-
-
-        #region ICloneable Members
-
-        private CholeskyDecomposition()
-        {
-        }
-
-        /// <summary>
-        ///   Creates a new object that is a copy of the current instance.
-        /// </summary>
-        /// <returns>
-        ///   A new object that is a copy of this instance.
-        /// </returns>
-        public object Clone()
-        {
-            var clone = new CholeskyDecomposition();
-            clone.L = (double[,])L.Clone();
-            clone.D = (double[])D.Clone();
-            clone.n = n;
-            clone.robust = robust;
-            clone.positiveDefinite = positiveDefinite;
-            clone.symmetric = symmetric;
-            return clone;
-        }
-
-        #endregion
-
     }
 }

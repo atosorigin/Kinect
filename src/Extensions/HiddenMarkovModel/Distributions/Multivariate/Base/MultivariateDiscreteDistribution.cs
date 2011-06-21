@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Math;
+
 namespace Accord.Statistics.Distributions.Multivariate
 {
-    using Accord.Math;
-    using System;
-
     /// <summary>
     ///   Abstract class for multivariate discrete probability distributions.
     /// </summary>
@@ -44,8 +44,7 @@ namespace Accord.Statistics.Distributions.Multivariate
     [Serializable]
     public abstract class MultivariateDiscreteDistribution : IDistribution, IMultivariateDistribution
     {
-
-        private int dimension;
+        private readonly int dimension;
 
         /// <summary>
         ///   Constructs a new MultivariateDiscreteDistribution class.
@@ -55,10 +54,27 @@ namespace Accord.Statistics.Distributions.Multivariate
             this.dimension = dimension;
         }
 
+        #region IDistribution Members
+
+        /// <summary>
+        ///   Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>
+        ///   A new object that is a copy of this instance.
+        /// </returns>
+        public abstract object Clone();
+
+        #endregion
+
+        #region IMultivariateDistribution Members
+
         /// <summary>
         ///   Gets the number of variables for this distribution.
         /// </summary>
-        public int Dimension { get { return dimension; } }
+        public int Dimension
+        {
+            get { return dimension; }
+        }
 
         /// <summary>
         ///   Gets the mean for this distribution.
@@ -75,7 +91,7 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </summary>
         public abstract double[,] Covariance { get; }
 
-
+        #endregion
 
         #region IDistribution explicit members
 
@@ -90,7 +106,7 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// 
         double IDistribution.DistributionFunction(params double[] x)
         {
-            return DistributionFunction(Array.ConvertAll<double,int>(x, Convert.ToInt32));
+            return DistributionFunction(Array.ConvertAll(x, Convert.ToInt32));
         }
 
         /// <summary>
@@ -112,7 +128,7 @@ namespace Accord.Statistics.Distributions.Multivariate
         ///   
         double IDistribution.ProbabilityFunction(params double[] x)
         {
-            return ProbabilityMassFunction(Array.ConvertAll<double, int>(x, Convert.ToInt32));
+            return ProbabilityMassFunction(Array.ConvertAll(x, Convert.ToInt32));
         }
 
         /// <summary>
@@ -137,10 +153,10 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </returns>
         IDistribution IDistribution.Fit(Array observations, double[] weights)
         {
-            double[][] multivariate = observations as double[][];
+            var multivariate = observations as double[][];
             if (multivariate != null) return Fit(multivariate, weights);
 
-            double[] univariate = observations as double[];
+            var univariate = observations as double[];
             if (univariate != null) return Fit(univariate.Split(dimension), weights);
 
             throw new ArgumentException("Unsupported parameter type.", "observations");
@@ -165,15 +181,15 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </returns>
         IDistribution IDistribution.Fit(Array observations)
         {
-            double[] weights = new double[observations.Length];
+            var weights = new double[observations.Length];
 
             for (int i = 0; i < weights.Length; i++)
-                weights[i] = 1.0 / weights.Length;
+                weights[i] = 1.0/weights.Length;
 
             return (this as IDistribution).Fit(observations, weights);
         }
-        #endregion
 
+        #endregion
 
         /// <summary>
         ///   Gets the cumulative distribution function (cdf) for
@@ -228,22 +244,12 @@ namespace Accord.Statistics.Distributions.Multivariate
         /// </returns>
         public virtual IDistribution Fit(double[][] observations)
         {
-            double[] w = new double[observations.Length];
+            var w = new double[observations.Length];
 
             for (int i = 0; i < w.Length; i++)
-                w[i] = 1.0 / w.Length;
+                w[i] = 1.0/w.Length;
 
             return Fit(observations, w);
         }
-
-        /// <summary>
-        ///   Creates a new object that is a copy of the current instance.
-        /// </summary>
-        /// <returns>
-        ///   A new object that is a copy of this instance.
-        /// </returns>
-        public abstract object Clone();
-
     }
-
 }

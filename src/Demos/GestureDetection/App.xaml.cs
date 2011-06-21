@@ -8,7 +8,6 @@ namespace Kinect.GestureDetection
     /// </summary>
     public partial class App : Application
     {
-
         public App()
         {
             Initialize();

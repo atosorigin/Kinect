@@ -7,11 +7,11 @@
 // http://www.crsouza.com
 //
 
+using System;
+using Accord.Statistics.Models.Markov.Topology;
+
 namespace Accord.Statistics.Models.Markov
 {
-    using System;
-    using Accord.Statistics.Models.Markov.Topology;
-
     /// <summary>
     ///   Base class for Hidden Markov Models.
     /// </summary>
@@ -19,15 +19,11 @@ namespace Accord.Statistics.Models.Markov
     [Serializable]
     public abstract class HiddenMarkovModelBase
     {
-
-        private int states;  // number of states
-        private object tag;
-
-
         // Model is defined as M = (A, B, pi)
-        private double[,] A; // Transition probabilities
-        private double[] pi; // Initial state probabilities
-
+        private readonly double[,] A; // Transition probabilities
+        private readonly double[] pi; // Initial state probabilities
+        private readonly int states; // number of states
+        private object tag;
 
 
         /// <summary>
@@ -35,9 +31,8 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         protected HiddenMarkovModelBase(ITopology topology)
         {
-            this.states = topology.Create(out A, out pi);
+            states = topology.Create(out A, out pi);
         }
-
 
 
         /// <summary>
@@ -45,7 +40,7 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         public int States
         {
-            get { return this.states; }
+            get { return states; }
         }
 
         /// <summary>
@@ -53,7 +48,7 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         public double[] Probabilities
         {
-            get { return this.pi; }
+            get { return pi; }
         }
 
         /// <summary>
@@ -61,7 +56,7 @@ namespace Accord.Statistics.Models.Markov
         /// </summary>
         public double[,] Transitions
         {
-            get { return this.A; }
+            get { return A; }
         }
 
         /// <summary>
@@ -72,8 +67,5 @@ namespace Accord.Statistics.Models.Markov
             get { return tag; }
             set { tag = value; }
         }
-
-
     }
-
 }

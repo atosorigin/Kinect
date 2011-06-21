@@ -7,17 +7,16 @@
 // http://www.crsouza.com
 //
 
+using System;
+
 namespace Accord.Statistics.Models.Markov.Learning
 {
-    using System;
-
     /// <summary>
     ///   Common interface for supervised learning algorithms for
     ///   hidden Markov models such as the Viterbi-learning algorithm.
     /// </summary>
     public interface ISupervisedLearning
     {
-
         /// <summary>
         ///   Runs the learning algorithm.
         /// </summary>
@@ -28,6 +27,5 @@ namespace Accord.Statistics.Models.Markov.Learning
         ///   determine HMM parameters M = (A, B, pi) that best fit training data. 
         /// </remarks>
         double Run(Array[] observations, int[] states);
-
     }
 }
