@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Media3D;
+﻿using System;
+using System.Windows.Media.Media3D;
 
 namespace Kinect.Core
 {
@@ -7,7 +8,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets the id Kinect assigns to the user
         /// </summary>
-        uint ID { get; }
+        int ID { get; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users head
@@ -23,7 +24,7 @@ namespace Kinect.Core
         /// Gets three dimensional coordinate of the users torso
         /// </summary>
         Point3D Torso { get; }
-
+        
         /// <summary>
         /// Gets three dimensional coordinate of the users left elbow
         /// </summary>

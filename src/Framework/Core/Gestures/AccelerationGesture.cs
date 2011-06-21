@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Kinect.Core.Gestures
 {
@@ -31,13 +34,12 @@ namespace Kinect.Core.Gestures
         {
             if (evt != null)
             {
-                double predictedarmlength = evt.RightShoulder.Y - evt.RightHip.Y -
-                                            ((evt.RightHip.Y - evt.RightKnee.Y)/2);
+                double predictedarmlength = evt.RightShoulder.Y - evt.RightHip.Y - ((evt.RightHip.Y - evt.RightKnee.Y) / 2);
                 double maxposition = evt.RightShoulder.Y + predictedarmlength;
                 double minposition = evt.RightShoulder.Y - predictedarmlength;
                 double position = evt.RightHand.Y - evt.RightShoulder.Y;
-                double ratio = (maxposition - minposition)/2;
-                double normalPosition = position/ratio;
+                double ratio = (maxposition - minposition) / 2;
+                double normalPosition = position / ratio;
 
                 //double predictedarmlength = evt.RightHip.Y - evt.RightShoulder.Y - ((evt.RightKnee.Y - evt.RightHip.Y) / 2);
                 //double maxposition = evt.RightShoulder.Y - predictedarmlength;
@@ -55,9 +57,9 @@ namespace Kinect.Core.Gestures
         /// </summary>
         /// <param name="userId">The user id.</param>
         /// <param name="deltaY">The delta Y.</param>
-        protected virtual void OnAccelerationCalculated(uint userId, double deltaY)
+        protected virtual void OnAccelerationCalculated(int userId, double deltaY)
         {
-            EventHandler<AccelerationEventArgs> handler = AccelerationCalculated;
+            var handler = this.AccelerationCalculated;
             if (handler != null)
             {
                 handler(this, new AccelerationEventArgs(userId, deltaY));

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Runtime.Serialization;
 
 namespace Kinect.Core.Exceptions
@@ -13,7 +16,9 @@ namespace Kinect.Core.Exceptions
         /// Initializes a new instance of the <see cref="CameraException"/> class.
         /// </summary>
         public CameraException()
+            : base()
         {
+
         }
 
         /// <summary>
@@ -23,6 +28,7 @@ namespace Kinect.Core.Exceptions
         public CameraException(string message)
             : base(message)
         {
+
         }
 
         /// <summary>
@@ -31,8 +37,9 @@ namespace Kinect.Core.Exceptions
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
         public CameraException(string message, Exception innerException)
-            : base(message, innerException)
+            :base(message, innerException)
         {
+        
         }
 
         /// <summary>
@@ -44,8 +51,9 @@ namespace Kinect.Core.Exceptions
         ///   
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0). </exception>
         protected CameraException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+            :base(info, context)
         {
+        
         }
     }
 }

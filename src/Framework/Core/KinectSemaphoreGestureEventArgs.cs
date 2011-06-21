@@ -4,12 +4,12 @@ namespace Kinect.Core
 {
     public class KinectSemaphoreGestureEventArgs : KinectGestureEventArgs
     {
+        public Semaphore Semafoor { get; private set; }
+
         public KinectSemaphoreGestureEventArgs(IUserChangedEvent userEvent, Semaphore semafoor)
             : base(userEvent)
         {
-            Semafoor = semafoor;
+            this.Semafoor = semafoor;
         }
-
-        public Semaphore Semafoor { get; private set; }
     }
 }

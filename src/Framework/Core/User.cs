@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using Kinect.Core.Eventing;
+using System.Windows.Media.Media3D;
 
 namespace Kinect.Core
 {
@@ -14,9 +14,9 @@ namespace Kinect.Core
         /// Initializes a new instance of the <see cref="User"/> class.
         /// </summary>
         /// <param name="id">userId assigned by Kinect</param>
-        public User(uint id)
+        public User(int id)
         {
-            ID = id;
+            this.ID = id;
         }
 
         /// <summary>
@@ -25,41 +25,38 @@ namespace Kinect.Core
         /// <param name="evt">The IUserChangedEvent data</param>
         public User(IUserChangedEvent evt)
         {
-            ID = evt.ID;
-            Head = evt.Head;
-            Neck = evt.Neck;
-            Torso = evt.Torso;
-            LeftElbow = evt.LeftElbow;
-            RightElbow = evt.RightElbow;
-            LeftShoulder = evt.LeftShoulder;
-            RightShoulder = evt.RightShoulder;
-            LeftHand = evt.LeftHand;
-            RightHand = evt.RightHand;
-            LeftFingertip = evt.LeftFingertip;
-            RightFingertip = evt.RightFingertip;
-            LeftHip = evt.LeftHip;
-            RightHip = evt.RightHip;
-            LeftKnee = evt.LeftKnee;
-            RightKnee = evt.RightKnee;
-            LeftAnkle = evt.LeftAnkle;
-            RightAnkle = evt.RightAnkle;
-            LeftFoot = evt.LeftFoot;
-            RightFoot = evt.RightFoot;
-            Waist = evt.Waist;
+            this.ID = evt.ID;
+            this.Head = evt.Head;
+            this.Neck = evt.Neck;
+            this.Torso = evt.Torso;
+            this.LeftElbow = evt.LeftElbow;
+            this.RightElbow = evt.RightElbow;
+            this.LeftShoulder = evt.LeftShoulder;
+            this.RightShoulder = evt.RightShoulder;
+            this.LeftHand = evt.LeftHand;
+            this.RightHand = evt.RightHand;
+            this.LeftFingertip = evt.LeftFingertip;
+            this.RightFingertip = evt.RightFingertip;
+            this.LeftHip = evt.LeftHip;
+            this.RightHip = evt.RightHip;
+            this.LeftKnee = evt.LeftKnee;
+            this.RightKnee = evt.RightKnee;
+            this.LeftAnkle = evt.LeftAnkle;
+            this.RightAnkle = evt.RightAnkle;
+            this.LeftFoot = evt.LeftFoot;
+            this.RightFoot = evt.RightFoot;
+            this.Waist = evt.Waist;
         }
 
         /// <summary>
-        /// Gets Color assigned to user,
-        /// meant for drawing the user on the screen and for the colored depthimage
+        /// Event will notify if user is updated
         /// </summary>
-        public Color Color { get; internal set; }
-
-        #region IUserChangedEvent Members
-
+        public event EventHandler<ProcessEventArgs<IUserChangedEvent>> Updated;
+        
         /// <summary>
         /// Gets the id Kinect assigns to the user
         /// </summary>
-        public uint ID { get; private set; }
+        public int ID { get; private set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users head
@@ -161,16 +158,11 @@ namespace Kinect.Core
         /// </summary>
         public Point3D Waist { get; internal set; }
 
-        #endregion
-
-        #region IUserUpdated Members
-
         /// <summary>
-        /// Event will notify if user is updated
+        /// Gets Color assigned to user,
+        /// meant for drawing the user on the screen and for the colored depthimage
         /// </summary>
-        public event EventHandler<ProcessEventArgs<IUserChangedEvent>> Updated;
-
-        #endregion
+        public Color Color { get; internal set; }
 
         /// <summary>
         /// Update coordinates and publish event
@@ -186,7 +178,7 @@ namespace Kinect.Core
         /// </summary>
         protected virtual void OnUpdated()
         {
-            EventHandler<ProcessEventArgs<IUserChangedEvent>> handler = Updated;
+            var handler = this.Updated;
             if (handler != null)
             {
                 handler(this, new ProcessEventArgs<IUserChangedEvent>(this));

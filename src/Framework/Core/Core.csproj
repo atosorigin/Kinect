@@ -73,6 +73,7 @@
     <Compile Include="Gestures\SemaphoreGesture.cs" />
     <Compile Include="IUserChangedEvent.cs" />
     <Compile Include="IUserUpdated.cs" />
+    <Compile Include="KinectCameraEventArgs.cs" />
     <Compile Include="KinectEventArgs.cs" />
     <Compile Include="KinectGestureEventArgs.cs" />
     <Compile Include="KinectMessageEventArgs.cs" />

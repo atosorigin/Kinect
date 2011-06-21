@@ -1,34 +1,39 @@
 ﻿using System;
-using xn;
+using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Core.Gestures
 {
     public class SelfTouchGesture : GestureBase
     {
-        private int _selfTouchCount;
+        private int _selfTouchCount = 0;
 
-        internal SkeletonJoint[] Joints { get; set; }
+        public SelfTouchGesture()
+            : base()
+        {
+        }
+
+        public event EventHandler<SelfTouchEventArgs> SelfTouchDetected;
+
+        internal JointID[] Joints { get; set; }
 
         protected override string GestureName
         {
             get { return "SelfTouchGesture"; }
         }
 
-        public event EventHandler<SelfTouchEventArgs> SelfTouchDetected;
-
         public override void Process(IUserChangedEvent evt)
         {
-            _selfTouchCount++;
-            if (_selfTouchCount > HistoryCount)
+            this._selfTouchCount++;
+            if (this._selfTouchCount > this.HistoryCount)
             {
-                OnSelfTouchDetected(evt.ID, Joints);
-                _selfTouchCount = 0;
+                this.OnSelfTouchDetected(evt.ID,this.Joints);
+                this._selfTouchCount = 0;
             }
         }
 
-        protected virtual void OnSelfTouchDetected(uint userid, SkeletonJoint[] joints)
+        protected virtual void OnSelfTouchDetected(int userid, JointID[] joints)
         {
-            EventHandler<SelfTouchEventArgs> handler = SelfTouchDetected;
+            var handler = this.SelfTouchDetected;
             if (handler != null)
             {
                 handler(this, new SelfTouchEventArgs(userid, joints));

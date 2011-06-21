@@ -13,8 +13,6 @@ namespace Kinect.Core.Eventing
         //TODO: Set back to private after implementing the factory
         internal List<IPipeline<T>> _pipelines = new List<IPipeline<T>>();
 
-        #region IFilter<T> Members
-
         /// <summary>
         /// Event will notify if the event is processing
         /// </summary>
@@ -48,7 +46,7 @@ namespace Kinect.Core.Eventing
         {
             if (pipeline != null)
             {
-                _pipelines.Add(pipeline);
+                this._pipelines.Add(pipeline);
             }
         }
 
@@ -60,7 +58,7 @@ namespace Kinect.Core.Eventing
         {
             if (pipeline != null)
             {
-                _pipelines.Remove(pipeline);
+                this._pipelines.Remove(pipeline);
             }
         }
 
@@ -75,15 +73,13 @@ namespace Kinect.Core.Eventing
             OnProcessedEvent(evt);
         }
 
-        #endregion
-
         /// <summary>
         /// Processes the event
         /// </summary>
         /// <param name="evt">The event to process</param>
         public virtual void Process(T evt)
         {
-            _pipelines.AsParallel().ForAll(p => p.Process(evt));
+            this._pipelines.AsParallel().ForAll(p => p.Process(evt));
         }
 
         /// <summary>
@@ -92,7 +88,7 @@ namespace Kinect.Core.Eventing
         /// <param name="evt">The event being processed</param>
         protected virtual void OnProcessingEvent(T evt)
         {
-            EventHandler<ProcessEventArgs<T>> handler = ProcessingEvent;
+            var handler = this.ProcessingEvent;
             if (handler != null)
             {
                 handler(this, new ProcessEventArgs<T>(evt));
@@ -105,7 +101,7 @@ namespace Kinect.Core.Eventing
         /// <param name="evt">The processed event</param>
         protected virtual void OnProcessedEvent(T evt)
         {
-            EventHandler<ProcessEventArgs<T>> handler = ProcessedEvent;
+            var handler = this.ProcessedEvent;
             if (handler != null)
             {
                 handler(this, new ProcessEventArgs<T>(evt));
@@ -118,7 +114,7 @@ namespace Kinect.Core.Eventing
         /// <param name="filterEventArgs">The event being filtered</param>
         protected virtual void OnFilteringEvent(FilterEventArgs filterEventArgs)
         {
-            EventHandler<FilterEventArgs> handler = Filtering;
+            var handler = this.Filtering;
             if (handler != null)
             {
                 handler(this, filterEventArgs);
@@ -131,7 +127,7 @@ namespace Kinect.Core.Eventing
         /// <param name="filterEventArgs">The filtered event</param>
         protected virtual void OnFilteredEvent(FilterEventArgs filterEventArgs)
         {
-            EventHandler<FilterEventArgs> handler = Filtered;
+            var handler = this.Filtered;
             if (handler != null)
             {
                 handler(this, filterEventArgs);

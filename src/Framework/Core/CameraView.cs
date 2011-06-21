@@ -1,4 +1,5 @@
-﻿namespace Kinect.Core
+﻿
+namespace Kinect.Core
 {
     /// <summary>
     /// Type of Camera View

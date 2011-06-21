@@ -12,7 +12,14 @@ namespace Kinect.Core.Eventing
         //TODO: Set back to private after implementing the factory
         internal List<IPipeline<T>> _pipelines = new List<IPipeline<T>>();
 
-        #region IEventPublisher<T> Members
+        /// <summary>
+        /// Process the event to all pipelines
+        /// </summary>
+        /// <param name="evt">The event to publish</param>
+        protected void PublishEvent(T evt)
+        {
+            this._pipelines.AsParallel().ForAll(p => p.Process(evt));
+        }
 
         /// <summary>
         /// Registers a new pipeline component to the eventpublisher
@@ -22,7 +29,7 @@ namespace Kinect.Core.Eventing
         {
             if (pipeline != null)
             {
-                _pipelines.Add(pipeline);
+                this._pipelines.Add(pipeline);
             }
         }
 
@@ -34,19 +41,8 @@ namespace Kinect.Core.Eventing
         {
             if (pipeline != null)
             {
-                _pipelines.Remove(pipeline);
+                this._pipelines.Remove(pipeline);
             }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Process the event to all pipelines
-        /// </summary>
-        /// <param name="evt">The event to publish</param>
-        protected void PublishEvent(T evt)
-        {
-            _pipelines.AsParallel().ForAll(p => p.Process(evt));
         }
     }
 }

@@ -8,19 +8,6 @@ namespace Kinect.Core.Filters
     public class FramesFilterEventArgs : FilterEventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FramesFilterEventArgs"/> class.
-        /// </summary>
-        /// <param name="currentFps">The current FPS.</param>
-        /// <param name="fpsToFilter">The FPS to filter.</param>
-        /// <param name="currentFrame">The current frame.</param>
-        public FramesFilterEventArgs(int currentFps, int fpsToFilter, int currentFrame)
-        {
-            CurrentFps = currentFps;
-            FpsToFilter = fpsToFilter;
-            CurrentFrame = currentFrame;
-        }
-
-        /// <summary>
         /// Name of the filter
         /// </summary>
         public override string Name
@@ -42,5 +29,18 @@ namespace Kinect.Core.Filters
         /// Gets the current frame.
         /// </summary>
         public int CurrentFrame { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FramesFilterEventArgs"/> class.
+        /// </summary>
+        /// <param name="currentFps">The current FPS.</param>
+        /// <param name="fpsToFilter">The FPS to filter.</param>
+        /// <param name="currentFrame">The current frame.</param>
+        public FramesFilterEventArgs(int currentFps, int fpsToFilter, int currentFrame)
+        {
+            CurrentFps = currentFps;
+            FpsToFilter = fpsToFilter;
+            CurrentFrame = currentFrame;
+        }
     }
 }

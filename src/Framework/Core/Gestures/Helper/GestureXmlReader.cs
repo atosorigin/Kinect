@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using System.Xml;
-using Kinect.Common;
+using System.Reflection;
+using System.Diagnostics;
 using log4net;
+using Kinect.Common;
 
 namespace Kinect.Core.Gestures.Helper
 {
@@ -13,7 +13,7 @@ namespace Kinect.Core.Gestures.Helper
     /// </summary>
     public static class GestureXmlReader
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (GestureXmlReader));
+        private static readonly ILog _log = LogManager.GetLogger(typeof(GestureXmlReader));
 
         /// <summary>
         /// Reads the nodes to list.
@@ -23,11 +23,11 @@ namespace Kinect.Core.Gestures.Helper
         /// <returns></returns>
         public static List<T> ReadNodesToList<T>(string filename) where T : new()
         {
-            var reader = new XmlTextReader(filename);
+            XmlTextReader reader = new XmlTextReader(filename);
 
-            var list = new List<T>();
-            Type type = typeof (T);
-            PropertyInfo[] properties = type.GetProperties();
+            List<T> list = new List<T>();
+            var type = typeof(T);
+            var properties = type.GetProperties();
 
             while (reader.Read())
             {
@@ -35,20 +35,20 @@ namespace Kinect.Core.Gestures.Helper
                 {
                     try
                     {
-                        var instance = new T();
+                        T instance = new T();
 
-                        foreach (PropertyInfo prop in properties)
+                        foreach (var prop in properties)
                         {
-                            string value = reader.GetAttribute(prop.Name);
+                            var value = reader.GetAttribute(prop.Name);
 
-                            if (prop.PropertyType == typeof (string))
+                            if (prop.PropertyType == typeof(string))
                             {
                                 prop.SetValue(instance, value, null);
                             }
                             else
                             {
-                                MethodInfo mi = prop.PropertyType.GetMethod("Parse", new[] {typeof (string)});
-                                object ovalue = mi.Invoke(null, new object[] {value});
+                                MethodInfo mi = prop.PropertyType.GetMethod("Parse", new Type[] { typeof(string) });
+                                object ovalue = mi.Invoke(null, new object[] { value });
                                 prop.SetValue(instance, ovalue, null);
                             }
                         }
@@ -75,13 +75,13 @@ namespace Kinect.Core.Gestures.Helper
         /// <returns></returns>
         public static string ReadSpecificValue(string filename, string element, string attribute)
         {
-            var reader = new XmlTextReader(filename);
+            XmlTextReader reader = new XmlTextReader(filename);
 
             while (reader.ReadToFollowing(element))
             {
                 if (reader.HasAttributes)
                 {
-                    string value = reader.GetAttribute(attribute);
+                    var value = reader.GetAttribute(attribute);
 
                     if (!string.IsNullOrEmpty(value))
                     {
@@ -103,21 +103,21 @@ namespace Kinect.Core.Gestures.Helper
         /// <returns></returns>
         public static T ReadSpecificValue<T>(string filename, string element, string attribute)
         {
-            var reader = new XmlTextReader(filename);
-
+            XmlTextReader reader = new XmlTextReader(filename);
+            
             while (reader.ReadToFollowing(element))
             {
                 if (reader.HasAttributes)
                 {
-                    string value = reader.GetAttribute(attribute);
+                    var value = reader.GetAttribute(attribute);
 
                     if (!string.IsNullOrEmpty(value))
                     {
                         try
                         {
-                            MethodInfo mi = typeof (T).GetMethod("Parse", new[] {typeof (string)});
-                            object ovalue = mi.Invoke(null, new object[] {value});
-                            return (T) ovalue;
+                            MethodInfo mi = typeof(T).GetMethod("Parse", new Type[] { typeof(string) });
+                            object ovalue = mi.Invoke(null, new object[] { value });
+                            return (T)ovalue;
                         }
                         catch (Exception ex)
                         {

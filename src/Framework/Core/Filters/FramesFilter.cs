@@ -7,10 +7,18 @@ namespace Kinect.Core.Filters
     /// </summary>
     public class FramesFilter : Filter<IUserChangedEvent>
     {
-        private readonly int _FpxToFilter = 30;
         private int _currentFps = 30;
-        private int _currentFrame;
+        private int _FpxToFilter = 30;
+        private int _currentFrame = 0;
         private int _filter = 1;
+
+        /// <summary>
+        /// Gets the name.
+        /// </summary>
+        public override string Name
+        {
+            get { return "FramesFilter"; }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FramesFilter"/> class.
@@ -22,14 +30,6 @@ namespace Kinect.Core.Filters
         }
 
         /// <summary>
-        /// Gets the name.
-        /// </summary>
-        public override string Name
-        {
-            get { return "FramesFilter"; }
-        }
-
-        /// <summary>
         /// Processes the specified evt.
         /// </summary>
         /// <param name="evt">The evt.</param>
@@ -37,16 +37,16 @@ namespace Kinect.Core.Filters
         {
             _currentFrame++;
 
-            OnFilteringEvent(new FramesFilterEventArgs(_currentFps, _FpxToFilter, _currentFrame));
-
-            _filter = _currentFps/_FpxToFilter;
+             OnFilteringEvent(new FramesFilterEventArgs(_currentFps, _FpxToFilter, _currentFrame));
+            
+            _filter = (int)_currentFps / _FpxToFilter;
 
             if (_filter < 1)
             {
                 _filter = 1;
             }
 
-            if (_currentFrame%_filter == 0)
+            if (_currentFrame % _filter == 0)
             {
                 base.Process(evt);
             }

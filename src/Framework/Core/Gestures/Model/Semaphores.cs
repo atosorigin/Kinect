@@ -6,8 +6,7 @@ namespace Kinect.Core.Gestures.Model
 {
     public static class Semaphores
     {
-        internal static List<Semaphore> SemafoorGestures =
-            GestureXmlReader.ReadNodesToList<Semaphore>(GestureXmlFiles.GesturesXmlFile);
+        internal static List<Semaphore> SemafoorGestures = GestureXmlReader.ReadNodesToList<Semaphore>(GestureXmlFiles.GesturesXmlFile);
 
         public static Semaphore GetSemaphore(char character)
         {

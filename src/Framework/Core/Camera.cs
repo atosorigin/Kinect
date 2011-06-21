@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Common.ColorHelpers;
 using Kinect.Common.ColorHelpers;
-using Kinect.Core.Exceptions;
-using xn;
+using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Core
 {
@@ -17,35 +17,39 @@ namespace Kinect.Core
         /// <summary>
         /// Colors for colored depthview
         /// </summary>
-        private readonly Color[] _colors = {
-                                               Colors.Red, Colors.Blue, Colors.ForestGreen, Colors.Yellow, Colors.Orange,
-                                               Colors.Purple
-                                           };
-
-        /// <summary>
-        /// Frames per second
-        /// </summary>
-        private int _fps;
-
-        /// <summary>
-        /// Holds the framecount
-        /// </summary>
-        private int _frames;
-
-        /// <summary>
-        /// Instance of imagegenerator
-        /// </summary>
-        private ImageGenerator _image;
+        private readonly Color[] _colors = { Colors.Red, Colors.Blue, Colors.ForestGreen, Colors.Yellow, Colors.Orange, Colors.Purple };
 
         /// <summary>
         /// Holds last frames log time
         /// </summary>
-        private int _lastFPSlog;
+        private int _lastFPSlog = 0;
+
+        /// <summary>
+        /// Holds the framecount
+        /// </summary>
+        private int _frames = 0;
+
+        /// <summary>
+        /// Frames per second
+        /// </summary>
+        private int _fps = 0;
+
+        /// <summary>
+        /// Instance of imagegenerator
+        /// </summary>
+        //private ImageGenerator _image;
+
+        /// <summary>
+        /// Event for notifying if a property changes
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<KinectCameraEventArgs> CameraUpdated;
 
         /// <summary>
         /// Gets or sets The Kinect context
         /// </summary>
-        public Context Context { get; set; }
+        public Runtime Context { get; set; }
 
         /// <summary>
         /// Gets or sets type of CameraView
@@ -58,16 +62,6 @@ namespace Kinect.Core
         public BitmapSource View { get; private set; }
 
         /// <summary>
-        /// Gets the imagedepthgenerator
-        /// </summary>
-        public DepthGenerator Depth { get; private set; }
-
-        /// <summary>
-        /// Gets the usergenerator
-        /// </summary>
-        public UserGenerator UserGenerator { get; private set; }
-
-        /// <summary>
         /// Gets or sets wether Kinect is Running
         /// </summary>
         public bool Running { get; set; }
@@ -77,91 +71,67 @@ namespace Kinect.Core
         /// </summary>
         public int Fps
         {
-            get { return _fps; }
+            get
+            {
+                return this._fps;
+            }
             private set
             {
-                if (value != _fps)
+                if (value != this._fps)
                 {
-                    _fps = value;
-                    OnPropertyChanged("Fps");
+                    this._fps = value;
+                    this.OnPropertyChanged("Fps");
                 }
             }
         }
 
-        #region INotifyPropertyChanged Members
-
-        /// <summary>
-        /// Event for notifying if a property changes
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
-        /// <summary>
-        /// Gets the view.
-        /// </summary>
-        /// <returns>The CamerView</returns>
-        public BitmapSource GetView()
-        {
-            return GetView(ViewType);
-        }
-
-        /// <summary>
-        /// Gets the view.
-        /// </summary>
-        /// <param name="viewType">Type of the view.</param>
-        /// <returns>The CameraView</returns>
-        public BitmapSource GetView(CameraView viewType)
-        {
-            ViewType = viewType;
-            if (!Running || ViewType == CameraView.None)
-            {
-                return null;
-            }
-
-            switch (ViewType)
-            {
-                case CameraView.Color:
-                    View = GetColorImage();
-                    break;
-                case CameraView.Depth:
-                    View = GetDepthImage();
-                    break;
-                case CameraView.ColoredDepth:
-                    View = GetColoredDepthWithImage();
-                    break;
-                default:
-                    break;
-            }
-
-            return View;
-        }
+        private const int RED_IDX = 2;
+        private const int GREEN_IDX = 1;
+        private const int BLUE_IDX = 0;
+        private readonly byte[] _depthFrame32 = new byte[320 * 240 * 4];
 
         /// <summary>
         /// Initializes the specified usergenerator.
         /// </summary>
-        /// <param name="usergenerator">The usergenerator.</param>
-        internal void Initialize(UserGenerator usergenerator)
+        internal void Initialize()
         {
             var generator = new ColorGenerator();
-            for (int i = 0; i < _colors.Length; i++)
+            for (int i = 0; i < this._colors.Length; i++)
             {
-                _colors[i] = generator.NextColor();
+                this._colors[i] = generator.NextColor();
             }
 
-            UserGenerator = usergenerator;
+            Context.DepthFrameReady += Context_DepthFrameReady;
+            Context.VideoFrameReady += new EventHandler<ImageFrameReadyEventArgs>(Context_VideoFrameReady);
+        }
 
-            Depth = Context.FindExistingNode(NodeType.Depth) as DepthGenerator;
-            if (Depth == null)
+        private void Context_VideoFrameReady(object sender, ImageFrameReadyEventArgs e)
+        {
+            if (!ViewType.HasFlag(CameraView.Color))
             {
-                throw new CameraException("Viewer must have a depth node!");
+                return;
             }
+            // 32-bit per pixel, RGBA image
+            PlanarImage image = e.ImageFrame.Image;
+            var bitmap = BitmapSource.Create(
+                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, image.Bits, image.Width * image.BytesPerPixel);
+            OnCameraUpdated(bitmap,CameraView.Color);
+        }
 
-            _image = Context.FindExistingNode(NodeType.Image) as ImageGenerator;
-            if (_image == null)
+        private void Context_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
+        {
+            if (!(ViewType.HasFlag(CameraView.Depth) || ViewType.HasFlag(CameraView.ColoredDepth)))
             {
-                throw new CameraException("Viewer must have a image node!");
+                //We don't need the depth camera
+                return;
             }
+            //TODO: Depth view beter uitwerken
+            //Aan de hand van de examples
+            PlanarImage image = e.ImageFrame.Image;
+            byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth)); 
+            var bitmap = BitmapSource.Create(
+                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width * 4);
+            OnCameraUpdated(bitmap, ViewType);
         }
 
         /// <summary>
@@ -169,9 +139,9 @@ namespace Kinect.Core
         /// </summary>
         /// <param name="id">The id.</param>
         /// <param name="color">The color.</param>
-        internal void SetUserColor(uint id, Color color)
+        internal void SetUserColor(int id, Color color)
         {
-            _colors[id%_colors.Length] = color;
+            this._colors[id % this._colors.Length] = color;
         }
 
         /// <summary>
@@ -179,9 +149,9 @@ namespace Kinect.Core
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        internal Color GetUserColor(uint id)
+        internal Color GetUserColor(int id)
         {
-            return _colors[id%_colors.Length];
+            return this._colors[id % this._colors.Length];
         }
 
         /// <summary>
@@ -189,13 +159,13 @@ namespace Kinect.Core
         /// </summary>
         internal void CalculateFPS()
         {
-            _frames++;
-            int time = Environment.TickCount;
-            if (time > _lastFPSlog + 1000)
+            this._frames++;
+            int time = System.Environment.TickCount;
+            if (time > this._lastFPSlog + 1000)
             {
-                Fps = _frames;
-                _frames = 0;
-                _lastFPSlog = time;
+                this.Fps = this._frames;
+                this._frames = 0;
+                this._lastFPSlog = time;
             }
         }
 
@@ -205,7 +175,7 @@ namespace Kinect.Core
         /// <param name="propertyName">Name of the property.</param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -213,173 +183,238 @@ namespace Kinect.Core
         }
 
         /// <summary>
-        /// Gets the depth image bytes.
+        /// Called when the correct camera image is updated
         /// </summary>
-        /// <param name="colorUsers">if set to <c>true</c> [color users].</param>
-        /// <param name="resolutionX">The resolution X.</param>
-        /// <param name="resolutionY">The resolution Y.</param>
-        /// <returns>The depthimage bytes </returns>
-        private byte[] GetDepthImageBytes(bool colorUsers, out int resolutionX, out int resolutionY)
+        protected virtual void OnCameraUpdated(BitmapSource source, CameraView view)
         {
-            resolutionX = 0;
-            resolutionY = 0;
-            if (!Running || Depth == null || (colorUsers && UserGenerator == null))
+            var handler = this.CameraUpdated;
+            if (handler != null)
             {
-                return null;
+                handler(this, new KinectCameraEventArgs(source,view));
             }
+        }
 
-            ushort[] depths = GetDepths(out resolutionX, out resolutionY);
-            if (depths == null)
+        ///// <summary>
+        ///// Gets the depth image bytes.
+        ///// </summary>
+        ///// <param name="colorUsers">if set to <c>true</c> [color users].</param>
+        ///// <param name="resolutionX">The resolution X.</param>
+        ///// <param name="resolutionY">The resolution Y.</param>
+        ///// <returns>The depthimage bytes </returns>
+        //private byte[] GetDepthImageBytes(bool colorUsers, out int resolutionX, out int resolutionY)
+        //{
+        //    resolutionX = 0;
+        //    resolutionY = 0;
+        //    if (!this.Running || this.Depth == null || (colorUsers && this.UserGenerator == null))
+        //    {
+        //        return null;
+        //    }
+
+        //    ushort[] depths = this.GetDepths(out resolutionX, out resolutionY);
+        //    if (depths == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    const int BytesPerPixel = 3;
+
+        //    ushort[] usermap = new ushort[1];
+        //    ////Only get the information if the user needs to be coloured
+        //    if (colorUsers)
+        //    {
+        //        usermap = this.GetUserColors();
+        //    }
+        //    //// convert the depths to a grayscale image
+        //    byte[] bytes = new byte[depths.Length * BytesPerPixel];
+        //    for (int depthIndex = 0; depthIndex < depths.Length; depthIndex++)
+        //    {
+        //        int pixelIndex = depthIndex * BytesPerPixel;
+        //        ushort singleDepth = depths[depthIndex];
+        //        ushort gray = (ushort)(singleDepth == 0 ? 0x00 : (0xFF - (singleDepth >> 4)));
+
+        //        ushort user = 0;
+        //        ////Only get the information if the user needs to be coloured
+        //        if (colorUsers)
+        //        {
+        //            user = usermap[depthIndex];
+        //        }
+
+        //        if (user != 0)
+        //        {
+        //            Color labelColor = this._colors[user % this._colors.Length];
+        //            bytes[pixelIndex] = (byte)(gray * (labelColor.B / 256.0));
+        //            bytes[pixelIndex + 1] = (byte)(gray * (labelColor.G / 256.0));
+        //            bytes[pixelIndex + 2] = (byte)(gray * (labelColor.R / 256.0));
+        //        }
+        //        else
+        //        {
+        //            bytes[pixelIndex] = (byte)gray;
+        //            bytes[pixelIndex + 1] = (byte)gray;
+        //            bytes[pixelIndex + 2] = (byte)gray;
+        //        }
+        //    }
+
+        //    return bytes;
+        //}
+
+        // Converts a 16-bit grayscale depth frame which includes player indexes into a 32-bit frame
+        // that displays different players in different colors
+        private byte[] ConvertDepthFrame(IList<byte> depthFrame16, bool colorUsers)
+        {
+            for (int i16 = 0, i32 = 0; i16 < depthFrame16.Count && i32 < _depthFrame32.Length; i16 += 2, i32 += 4)
             {
-                return null;
-            }
+                var player = depthFrame16[i16] & 0x07;
+                var realDepth = (depthFrame16[i16 + 1] << 5) | (depthFrame16[i16] >> 3);
+                // transform 13-bit depth information into an 8-bit intensity appropriate
+                // for display (we disregard information in most significant bit)
+                var intensity = (byte)(255 - (255 * realDepth / 0x0fff));
 
-            const int BytesPerPixel = 3;
+                _depthFrame32[i32 + RED_IDX] = 0;
+                _depthFrame32[i32 + GREEN_IDX] = 0;
+                _depthFrame32[i32 + BLUE_IDX] = 0;
 
-            var usermap = new ushort[1];
-            ////Only get the information if the user needs to be coloured
-            if (colorUsers)
-            {
-                usermap = GetUserColors();
-            }
-            //// convert the depths to a grayscale image
-            var bytes = new byte[depths.Length*BytesPerPixel];
-            for (int depthIndex = 0; depthIndex < depths.Length; depthIndex++)
-            {
-                int pixelIndex = depthIndex*BytesPerPixel;
-                ushort singleDepth = depths[depthIndex];
-                var gray = (ushort) (singleDepth == 0 ? 0x00 : (0xFF - (singleDepth >> 4)));
-
-                ushort user = 0;
-                ////Only get the information if the user needs to be coloured
-                if (colorUsers)
+                if (!colorUsers)
                 {
-                    user = usermap[depthIndex];
+                    //IF the users don't need to get specific colors, please continue
+                    continue;
                 }
 
-                if (user != 0)
+                // choose different display colors based on player
+                switch (player)
                 {
-                    Color labelColor = _colors[user%_colors.Length];
-                    bytes[pixelIndex] = (byte) (gray*(labelColor.B/256.0));
-                    bytes[pixelIndex + 1] = (byte) (gray*(labelColor.G/256.0));
-                    bytes[pixelIndex + 2] = (byte) (gray*(labelColor.R/256.0));
+                    case 0:
+                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + BLUE_IDX] = (byte)(intensity / 2);
+                        break;
+                    case 1:
+                        _depthFrame32[i32 + RED_IDX] = intensity;
+                        break;
+                    case 2:
+                        _depthFrame32[i32 + GREEN_IDX] = intensity;
+                        break;
+                    case 3:
+                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 4);
+                        _depthFrame32[i32 + GREEN_IDX] = intensity;
+                        _depthFrame32[i32 + BLUE_IDX] = intensity;
+                        break;
+                    case 4:
+                        _depthFrame32[i32 + RED_IDX] = intensity;
+                        _depthFrame32[i32 + GREEN_IDX] = intensity;
+                        _depthFrame32[i32 + BLUE_IDX] = (byte)(intensity / 4);
+                        break;
+                    case 5:
+                        _depthFrame32[i32 + RED_IDX] = intensity;
+                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 4);
+                        _depthFrame32[i32 + BLUE_IDX] = intensity;
+                        break;
+                    case 6:
+                        _depthFrame32[i32 + RED_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte)(intensity / 2);
+                        _depthFrame32[i32 + BLUE_IDX] = intensity;
+                        break;
+                    case 7:
+                        _depthFrame32[i32 + RED_IDX] = (byte)(255 - intensity);
+                        _depthFrame32[i32 + GREEN_IDX] = (byte)(255 - intensity);
+                        _depthFrame32[i32 + BLUE_IDX] = (byte)(255 - intensity);
+                        break;
                 }
-                else
-                {
-                    bytes[pixelIndex] = (byte) gray;
-                    bytes[pixelIndex + 1] = (byte) gray;
-                    bytes[pixelIndex + 2] = (byte) gray;
-                }
             }
-
-            return bytes;
+            return _depthFrame32;
         }
 
-        /// <summary>
-        /// Gets the depth image.
-        /// </summary>
-        /// <returns>The depth image bitmapsource</returns>
-        private BitmapSource GetDepthImage()
-        {
-            int resolutionX;
-            int resolutionY;
-            byte[] bytes = GetDepthImageBytes(false, out resolutionX, out resolutionY);
+        ///// <summary>
+        ///// Gets the depth image.
+        ///// </summary>
+        ///// <returns>The depth image bitmapsource</returns>
+        //private BitmapSource GetDepthImage()
+        //{
+        //    PlanarImage image = e.ImageFrame.Image;
+        //    byte[] convertedDepthFrame = convertDepthFrame(image.Bits, false);
 
-            if (bytes == null)
-            {
-                return null;
-            }
+        //    return BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgr32, BitmapPalettes.Gray256, convertedDepthFrame, image.Width * 4);
+        //}
 
-            return BitmapSource.Create(resolutionX, resolutionY, 96, 96, PixelFormats.Rgb24, null, bytes, resolutionX*3);
-        }
+        ///// <summary>
+        ///// Gets the colored depth with image.
+        ///// </summary>
+        ///// <returns>The colored depth image bitmapsource</returns>
+        //private BitmapSource GetColoredDepthWithImage()
+        //{
+        //    PlanarImage image = e.ImageFrame.Image;
+        //    byte[] convertedDepthFrame = convertDepthFrame(image.Bits, true);
 
-        /// <summary>
-        /// Gets the colored depth with image.
-        /// </summary>
-        /// <returns>The colored depth image bitmapsource</returns>
-        private BitmapSource GetColoredDepthWithImage()
-        {
-            int resolutionX;
-            int resolutionY;
-            byte[] bytes = GetDepthImageBytes(true, out resolutionX, out resolutionY);
+        //    return BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgr32, BitmapPalettes.WebPalette, convertedDepthFrame, image.Width * 4);
+        //}
 
-            if (bytes == null)
-            {
-                return null;
-            }
+        ///// <summary>
+        ///// Gets the color image.
+        ///// </summary>
+        ///// <returns>The colored image bitmapsource</returns>
+        //private BitmapSource GetColorImage()
+        //{
+        //    ImageMetaData metadata = this._image.GetMetaData();
+        //    const int BytesPerPixel = 3;
+        //    int totalPixels = metadata.XRes * metadata.YRes;
 
-            return BitmapSource.Create(resolutionX, resolutionY, 96, 96, PixelFormats.Rgb24, null, bytes, resolutionX*3);
-        }
+        //    IntPtr imageMapPtr = this._image.GetImageMapPtr();
 
-        /// <summary>
-        /// Gets the color image.
-        /// </summary>
-        /// <returns>The colored image bitmapsource</returns>
-        private BitmapSource GetColorImage()
-        {
-            ImageMetaData metadata = _image.GetMetaData();
-            const int BytesPerPixel = 3;
-            int totalPixels = metadata.XRes*metadata.YRes;
+        //    return BitmapSource.Create(metadata.XRes, metadata.YRes, 96, 96, PixelFormats.Rgb24, null, imageMapPtr, totalPixels * BytesPerPixel, metadata.XRes * BytesPerPixel);
+        //}
+        
+        ///// <summary>
+        ///// Gets the depths.
+        ///// </summary>
+        ///// <param name="resolutionX">The resolution X.</param>
+        ///// <param name="resolutionY">The resolution Y.</param>
+        ///// <returns>The image depths</returns>
+        //private ushort[] GetDepths(out int resolutionX, out int resolutionY)
+        //{
+        //    resolutionX = 0;
+        //    resolutionY = 0;
 
-            IntPtr imageMapPtr = _image.GetImageMapPtr();
+        //    if (this.Depth == null || !this.Running)
+        //    {
+        //        return null;
+        //    }
 
-            return BitmapSource.Create(metadata.XRes, metadata.YRes, 96, 96, PixelFormats.Rgb24, null, imageMapPtr,
-                                       totalPixels*BytesPerPixel, metadata.XRes*BytesPerPixel);
-        }
+        //    // calculate the core metadata
+        //    DepthMetaData metadata = this.Depth.GetMetaData();
+        //    resolutionX = metadata.XRes;
+        //    resolutionY = metadata.YRes;
+        //    int totalDepths = metadata.XRes * metadata.YRes;
 
-        /// <summary>
-        /// Gets the depths.
-        /// </summary>
-        /// <param name="resolutionX">The resolution X.</param>
-        /// <param name="resolutionY">The resolution Y.</param>
-        /// <returns>The image depths</returns>
-        private ushort[] GetDepths(out int resolutionX, out int resolutionY)
-        {
-            resolutionX = 0;
-            resolutionY = 0;
+        //    // copy the depths
+        //    // TODO: Is there a better way to marshal ushorts from an IntPtr?
+        //    IntPtr depthMapPtr = this.Depth.GetDepthMapPtr();
+        //    short[] depthsTemp = new short[totalDepths];
+        //    Marshal.Copy(depthMapPtr, depthsTemp, 0, depthsTemp.Length);
+        //    ushort[] depths = new ushort[totalDepths];
+        //    Buffer.BlockCopy(depthsTemp, 0, depths, 0, totalDepths * metadata.BytesPerPixel);
 
-            if (Depth == null || !Running)
-            {
-                return null;
-            }
+        //    return depths;
+        //}
 
-            // calculate the core metadata
-            DepthMetaData metadata = Depth.GetMetaData();
-            resolutionX = metadata.XRes;
-            resolutionY = metadata.YRes;
-            int totalDepths = metadata.XRes*metadata.YRes;
+        ///// <summary>
+        ///// Gets the user colors.
+        ///// </summary>
+        ///// <returns>The user colors</returns>
+        //private ushort[] GetUserColors()
+        //{
+        //    if (!this.Running)
+        //    {
+        //        return null;
+        //    }
 
-            // copy the depths
-            // TODO: Is there a better way to marshal ushorts from an IntPtr?
-            IntPtr depthMapPtr = Depth.GetDepthMapPtr();
-            var depthsTemp = new short[totalDepths];
-            Marshal.Copy(depthMapPtr, depthsTemp, 0, depthsTemp.Length);
-            var depths = new ushort[totalDepths];
-            Buffer.BlockCopy(depthsTemp, 0, depths, 0, totalDepths*metadata.BytesPerPixel);
+        //    var sceneMetaData = this.UserGenerator.GetUserPixels(0);
 
-            return depths;
-        }
+        //    int size = sceneMetaData.XRes * sceneMetaData.YRes;
+        //    short[] úsersTemp = new short[size];
+        //    Marshal.Copy(sceneMetaData.SceneMapPtr, úsersTemp, 0, úsersTemp.Length);
+        //    ushort[] users = new ushort[size];
+        //    Buffer.BlockCopy(úsersTemp, 0, users, 0, size * sceneMetaData.BytesPerPixel);
 
-        /// <summary>
-        /// Gets the user colors.
-        /// </summary>
-        /// <returns>The user colors</returns>
-        private ushort[] GetUserColors()
-        {
-            if (UserGenerator == null || !Running)
-            {
-                return null;
-            }
-
-            SceneMetaData sceneMetaData = UserGenerator.GetUserPixels(0);
-
-            int size = sceneMetaData.XRes*sceneMetaData.YRes;
-            var úsersTemp = new short[size];
-            Marshal.Copy(sceneMetaData.SceneMapPtr, úsersTemp, 0, úsersTemp.Length);
-            var users = new ushort[size];
-            Buffer.BlockCopy(úsersTemp, 0, users, 0, size*sceneMetaData.BytesPerPixel);
-
-            return users;
-        }
+        //    return users;
+        //}
     }
 }

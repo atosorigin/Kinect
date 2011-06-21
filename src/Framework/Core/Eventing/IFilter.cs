@@ -9,11 +9,6 @@ namespace Kinect.Core.Eventing
     public interface IFilter<T> : IEventPublisher<T>, IPipeline<T>
     {
         /// <summary>
-        /// Gets the name of the filter
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Event will notify if event is filtering
         /// </summary>
         event EventHandler<FilterEventArgs> Filtering;
@@ -22,5 +17,10 @@ namespace Kinect.Core.Eventing
         /// Event will notify if event is filtered
         /// </summary>
         event EventHandler<FilterEventArgs> Filtered;
+
+        /// <summary>
+        /// Gets the name of the filter
+        /// </summary>
+        string Name { get; }
     }
 }

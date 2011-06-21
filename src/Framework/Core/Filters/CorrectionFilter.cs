@@ -1,24 +1,13 @@
 ﻿using Kinect.Core.Eventing;
 using Kinect.Core.Filters.Helper;
-using xn;
-using Point3D = System.Windows.Media.Media3D.Point3D;
+using System.Windows.Media.Media3D;
+using Microsoft.Research.Kinect.Nui;
 
 namespace Kinect.Core.Filters
 {
     public class CorrectionFilter : Filter<IUserChangedEvent>
     {
         private const string _name = "CorrectionFilter";
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CorrectionFilter"/> class.
-        /// </summary>
-        /// <param name="jointToCorrect">The joint to correct.</param>
-        /// <param name="correction">The correction.</param>
-        public CorrectionFilter(SkeletonJoint jointToCorrect, Point3D correction)
-        {
-            JointToCorrect = jointToCorrect;
-            Correction = correction;
-        }
 
         /// <summary>
         /// Gets the name.
@@ -30,7 +19,18 @@ namespace Kinect.Core.Filters
 
         public Point3D Correction { get; internal set; }
 
-        public SkeletonJoint JointToCorrect { get; internal set; }
+        public JointID JointToCorrect { get; internal set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CorrectionFilter"/> class.
+        /// </summary>
+        /// <param name="jointToCorrect">The joint to correct.</param>
+        /// <param name="correction">The correction.</param>
+        public CorrectionFilter(JointID jointToCorrect, Point3D correction)
+        {
+            JointToCorrect = jointToCorrect;
+            Correction = correction;
+        }
 
         /// <summary>
         /// Processes the specified evt.
@@ -38,7 +38,7 @@ namespace Kinect.Core.Filters
         /// <param name="evt">The evt.</param>
         public override void Process(IUserChangedEvent evt)
         {
-            Point3D point = evt.GetPoint(JointToCorrect);
+            var point = FilterHelper.GetPoint(evt, JointToCorrect);
             OnFilteringEvent(new CorrectionFilterEventArgs(JointToCorrect, point, Correction));
             point.X += Correction.X;
             point.Y += Correction.Y;

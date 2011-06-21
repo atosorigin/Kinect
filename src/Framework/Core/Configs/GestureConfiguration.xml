@@ -1,96 +1,95 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Gestures>
-  <Semaphores AngleMargin="21" HistoryCount="6" Active="True">
-    <!-- 90 degrees is UP; 0 is left; 180 is right; 270 is down -->
-    <!--Round one Left angle = Right Hand from persons view / Right angle = Left Hand from persons view-->
-    <Semaphore Char="A" LeftAngle="315" RightAngle="270" />
-    <Semaphore Char="B" LeftAngle="0" RightAngle="270" />
-    <Semaphore Char="C" LeftAngle="45" RightAngle="270" />
-    <Semaphore Char="D" LeftAngle="90" RightAngle="270" />
-    <Semaphore Char="D" LeftAngle="270" RightAngle="90" />
-    <Semaphore Char="E" LeftAngle="270" RightAngle="135" />
-    <Semaphore Char="F" LeftAngle="270" RightAngle="180" />
-    <Semaphore Char="G" LeftAngle="270" RightAngle="225" />
-    <!--Round Two-->
-    <Semaphore Char="H" LeftAngle="0" RightAngle="315" />
-    <Semaphore Char="H" LeftAngle="315" RightAngle="0" />
-    <Semaphore Char="I" LeftAngle="45" RightAngle="315" />
-    <Semaphore Char="I" LeftAngle="315" RightAngle="45" />
-    <Semaphore Char="K" LeftAngle="315" RightAngle="90" />
-    <Semaphore Char="L" LeftAngle="315" RightAngle="135" />
-    <Semaphore Char="M" LeftAngle="315" RightAngle="180" />
-    <Semaphore Char="N" LeftAngle="315" RightAngle="225" />
-    <!--Round Three-->
-    <Semaphore Char="O" LeftAngle="0" RightAngle="45" />
-    <Semaphore Char="O" LeftAngle="45" RightAngle="0" />
-    <Semaphore Char="P" LeftAngle="0" RightAngle="90" />
-    <Semaphore Char="Q" LeftAngle="0" RightAngle="135" />
-    <Semaphore Char="R" LeftAngle="0" RightAngle="180" />
-    <Semaphore Char="S" LeftAngle="0" RightAngle="225" />
-    <!-- Round Four-->
-    <Semaphore Char="T" LeftAngle="45" RightAngle="90" />
-    <Semaphore Char="U" LeftAngle="45" RightAngle="135" />
-    <Semaphore Char="Y" LeftAngle="45" RightAngle="180" />
-    <!-- Round Five-->
-    <Semaphore Char="J" LeftAngle="90" RightAngle="180" />
-    <Semaphore Char="V" LeftAngle="90" RightAngle="225" />
-    <!-- Round Six-->
-    <Semaphore Char="W" LeftAngle="135" RightAngle="180" />
-    <Semaphore Char="X" LeftAngle="135" RightAngle="225" />
-    <Semaphore Char="W" LeftAngle="180" RightAngle="135" />
-    <Semaphore Char="X" LeftAngle="225" RightAngle="135" />
-    <!-- Round Seven-->
-    <Semaphore Char="Z" LeftAngle="225" RightAngle="180" />
-    <Semaphore Char="Z" LeftAngle="180" RightAngle="225" />
-    <!-- Extra-->
-    <Semaphore Char="#" LeftAngle="90" RightAngle="135" Name="Numbers" />
-    <Semaphore Char="%" LeftAngle="45" RightAngle="225" Name="Cancel" />
-    <Semaphore Char="!" LeftAngle="270" RightAngle="270" Name="Ready" />
-    <Semaphore Char=" " LeftAngle="315" RightAngle="90" Name="Space" />
-  </Semaphores>
-  <SelfTouchGesture History="2" Active="True">
-    <PointsToCheck>
-      <Point SkeletonJoint="LeftHand" />
-      <Point SkeletonJoint="RightShoulder" />
-    </PointsToCheck>
-    <Filters>
-      <FramesFilter FPS="6" Sequence="0" />
-      <CorrectionFilter SkeletonJoint="RightShoulder" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
-    </Filters>
-  </SelfTouchGesture>
-  <SelfTouchGesture History="2" Active="True">
-    <PointsToCheck>
-      <Point SkeletonJoint="RightHand" />
-      <Point SkeletonJoint="LeftShoulder" />
-    </PointsToCheck>
-    <Filters>
-      <FramesFilter FPS="6" Sequence="0" />
-      <CorrectionFilter SkeletonJoint="LeftShoulder" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
-    </Filters>
-  </SelfTouchGesture>
-  <SelfTouchGesture History="2" Active="True">
-    <PointsToCheck>
-      <Point SkeletonJoint="LeftHand" />
-      <Point SkeletonJoint="RightHip" />
-    </PointsToCheck>
-    <Filters>
-      <FramesFilter FPS="6" Sequence="0" />
-      <CorrectionFilter SkeletonJoint="RightHip" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
-    </Filters>
-  </SelfTouchGesture>
-  <SelfTouchGesture History="2" Active="True">
-    <PointsToCheck>
-      <Point SkeletonJoint="RightHand" />
-      <Point SkeletonJoint="Head" />
-    </PointsToCheck>
-    <Filters>
-      <FramesFilter FPS="6" Sequence="0" />
-      <CorrectionFilter SkeletonJoint="Head" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
-    </Filters>
-  </SelfTouchGesture>
+	<Semaphores AngleMargin="21" HistoryCount="6" Active="True">
+		<!-- 90 degrees is UP; 0 is left; 180 is right; 270 is down -->
+		<!--Round one Left angle = Right Hand from persons view / Right angle = Left Hand from persons view-->
+		<Semaphore Char="A" LeftAngle="315" RightAngle="270"/>
+		<Semaphore Char="B" LeftAngle="0"   RightAngle="270"/>
+		<Semaphore Char="C" LeftAngle="45"  RightAngle="270"/>
+		<Semaphore Char="D" LeftAngle="90"  RightAngle="270"/>
+		<Semaphore Char="D" LeftAngle="270" RightAngle="90"/>
+		<Semaphore Char="E" LeftAngle="270" RightAngle="135"/>
+		<Semaphore Char="F" LeftAngle="270" RightAngle="180"/>
+		<Semaphore Char="G" LeftAngle="270" RightAngle="225"/>
+		<!--Round Two-->
+		<Semaphore Char="H" LeftAngle="0" RightAngle="315"/>
+		<Semaphore Char="H" LeftAngle="315" RightAngle="0"/>
+		<Semaphore Char="I" LeftAngle="45" RightAngle="315"/>
+		<Semaphore Char="I" LeftAngle="315" RightAngle="45"/>
+		<Semaphore Char="K" LeftAngle="315" RightAngle="90"/>
+		<Semaphore Char="L" LeftAngle="315" RightAngle="135"/>
+		<Semaphore Char="M" LeftAngle="315" RightAngle="180"/>
+		<Semaphore Char="N" LeftAngle="315" RightAngle="225"/>
+		<!--Round Three-->
+		<Semaphore Char="O" LeftAngle="0"   RightAngle="45"/>
+		<Semaphore Char="O" LeftAngle="45"   RightAngle="0"/>
+		<Semaphore Char="P" LeftAngle="0"   RightAngle="90"/>
+		<Semaphore Char="Q" LeftAngle="0"   RightAngle="135"/>
+		<Semaphore Char="R" LeftAngle="0"   RightAngle="180"/>
+		<Semaphore Char="S" LeftAngle="0"   RightAngle="225"/>
+		<!-- Round Four-->
+		<Semaphore Char="T" LeftAngle="45"  RightAngle="90"/>
+		<Semaphore Char="U" LeftAngle="45"  RightAngle="135"/>
+		<Semaphore Char="Y" LeftAngle="45"  RightAngle="180"/>
+		<!-- Round Five-->
+		<Semaphore Char="J" LeftAngle="90"  RightAngle="180"/>
+		<Semaphore Char="V" LeftAngle="90"  RightAngle="225"/>
+		<!-- Round Six-->
+		<Semaphore Char="W" LeftAngle="135" RightAngle="180"/>
+		<Semaphore Char="X" LeftAngle="135" RightAngle="225"/>
+		<Semaphore Char="W" LeftAngle="180" RightAngle="135"/>
+		<Semaphore Char="X" LeftAngle="225" RightAngle="135"/>
+		<!-- Round Seven-->
+		<Semaphore Char="Z" LeftAngle="225" RightAngle="180"/>
+		<Semaphore Char="Z" LeftAngle="180" RightAngle="225"/>
+		<!-- Extra-->
+		<Semaphore Char="#" LeftAngle="90"  RightAngle="135" Name="Numbers" />
+		<Semaphore Char="%" LeftAngle="45"  RightAngle="225" Name="Cancel" />
+		<Semaphore Char="!" LeftAngle="270" RightAngle="270" Name="Ready" />
+		<Semaphore Char=" " LeftAngle="315" RightAngle="90"  Name="Space" />
+	</Semaphores>
+	<SelfTouchGesture History="2" Active="True">
+		<PointsToCheck>
+			<Point SkeletonJoint="LeftHand" />
+			<Point SkeletonJoint="RightShoulder" />
+		</PointsToCheck>
+		<Filters>
+			<FramesFilter FPS="6" Sequence="0" />
+			<CorrectionFilter SkeletonJoint="RightShoulder" Sequence="1" />
+			<CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+		</Filters>
+	</SelfTouchGesture>
+	<SelfTouchGesture History="2" Active="True">
+		<PointsToCheck>
+			<Point SkeletonJoint="RightHand" />
+			<Point SkeletonJoint="LeftShoulder" />
+		</PointsToCheck>
+		<Filters>
+			<FramesFilter FPS="6" Sequence="0" />
+			<CorrectionFilter SkeletonJoint="LeftShoulder" Sequence="1" />
+			<CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+		</Filters>
+	</SelfTouchGesture>
+	<SelfTouchGesture History="2" Active="True">
+		<PointsToCheck>
+			<Point SkeletonJoint="LeftHand" />
+			<Point SkeletonJoint="RightHip" />
+		</PointsToCheck>
+		<Filters>
+			<FramesFilter FPS="6" Sequence="0" />
+			<CorrectionFilter SkeletonJoint="RightHip" Sequence="1" />
+			<CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+		</Filters>
+	</SelfTouchGesture>
+	<SelfTouchGesture History="2" Active="True">
+		<PointsToCheck>
+			<Point SkeletonJoint="RightHand" />
+			<Point SkeletonJoint="Head" />
+		</PointsToCheck>
+		<Filters>
+			<FramesFilter FPS="6" Sequence="0" />
+			<CorrectionFilter SkeletonJoint="Head" Sequence="1" />
+			<CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+		</Filters>
+	</SelfTouchGesture>
 </Gestures>
