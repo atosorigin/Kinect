@@ -107,9 +107,9 @@ namespace Kinect.Core.Gestures
                 sb.Append(GestureXmlFiles.GesturesXmlFile);
                 sb.Append("\" found for joints: ");
 
-                for (int i = 1; i < joints.Length + 1; i++)
+                for (int i = 0; i < joints.Length; i++)
                 {
-                    sb.Append("{i}");
+                    sb.Append("{"+i+"}");
                 }
                 _log.IfErrorFormat(sb.ToString(), joints);
                 throw new NullReferenceException(string.Format(sb.ToString(), joints));
