@@ -8,6 +8,7 @@ using System.Windows.Media.Media3D;
 using Kinect.Common;
 using log4net;
 using Microsoft.Research.Kinect.Nui;
+using System.Threading;
 
 #pragma warning disable 1591
 
@@ -56,6 +57,7 @@ namespace Kinect.Core
         private static readonly MyKinect _instance = new MyKinect();
 
         private static bool _running;
+        private static Thread _kinectThread;
         private readonly Camera _camera = new Camera();
         private readonly Runtime _context = new Runtime();
         private List<User> _activeUsers = new List<User>(2);
@@ -130,6 +132,19 @@ namespace Kinect.Core
         public event EventHandler<KinectUserEventArgs> UserRemoved;
 
         public void StartKinect()
+        {
+            if (_running ||
+                (KinectState.ContextOpen | KinectState.Running | KinectState.Initializing).Has(KinectState))
+            {
+                //Kinect is already running
+                return;
+            }
+            var start = new ThreadStart(StartKinectThread);
+            _kinectThread = new Thread(start);
+            _kinectThread.Start();
+        }
+
+        private void StartKinectThread()
         {
             lock (SyncRoot)
             {
@@ -217,6 +232,16 @@ namespace Kinect.Core
                     _running = false;
                     _camera.Running = false;
                 }
+            }
+
+            while (_running && _context != null)
+            {
+                Thread.Sleep(10);
+            }
+
+            if (_context != null)
+            {
+                _context.Uninitialize();
             }
         }
 
@@ -345,12 +370,12 @@ namespace Kinect.Core
             lock (SyncRoot)
             {
                 Log.IfInfo("Stopping Kinect");
-                _context.Uninitialize();
-                _running = false;
+                //_context.Uninitialize();
                 if (_camera != null)
                 {
                     _camera.Running = false;
                 }
+                _running = false;
                 KinectState = KinectState.Stopped;
             }
             OnKinectStopped();

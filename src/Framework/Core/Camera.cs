@@ -118,6 +118,7 @@ namespace Kinect.Core
             PlanarImage image = e.ImageFrame.Image;
             BitmapSource bitmap = BitmapSource.Create(
                 image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, image.Bits, image.Width*image.BytesPerPixel);
+            bitmap.Freeze();
             OnCameraUpdated(bitmap, CameraView.Color);
         }
 
@@ -134,6 +135,7 @@ namespace Kinect.Core
             byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth));
             BitmapSource bitmap = BitmapSource.Create(
                 image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width*4);
+            bitmap.Freeze();
             OnCameraUpdated(bitmap, ViewType);
         }
 
