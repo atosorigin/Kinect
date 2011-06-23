@@ -304,11 +304,12 @@ namespace Kinect.Core
             //}
 
             float depthX, depthY;
-            _context.SkeletonEngine.SkeletonToDepthImage(joint.Position, out depthX, out depthY);
-            depthX = Math.Max(0, Math.Min(depthX*640, 640)); //convert to 640, 480 space
-            depthY = Math.Max(0, Math.Min(depthY*480, 480)); //convert to 640, 480 space
-
-            return new Point3D(depthX, depthY, 0);
+            short depthZ;
+            _context.SkeletonEngine.SkeletonToDepthImage(joint.Position, out depthX, out depthY, out depthZ);
+            depthX = Math.Max(0, Math.Min(depthX * 320, 320)); //convert to 640, 480 space
+            depthY = Math.Max(0, Math.Min(depthY * 240, 240)); //convert to 640, 480 space
+            //Make it milimeters
+            return new Point3D(depthX, depthY, depthZ / 10);
         }
 
         private void OnCameraMessage(string message)
