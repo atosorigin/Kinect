@@ -1,5 +1,5 @@
 #Atos Origin Kinect
-This Kinect application framework and demo apps are made by [Marco Franssen][1] and [Jan Saris][3]. During competence development at their company Atos Origin they started on februari 2011 by creating some apps and a framework with Microsoft Kinect. They started with a implementation in c#/WPF using the PrimeSense drivers and OpenNI SDK.
+This Kinect application framework and demo apps are made by [Marco Franssen][1] and [Jan Saris][3]. During competence development at their company [Atos Origin][9] they started on februari 2011 by creating some apps and a framework with Microsoft Kinect. They started with a implementation in c#/WPF using the PrimeSense drivers and OpenNI SDK.
 
 #Contributors
 * [Marco Franssen][1] - Founder
@@ -49,3 +49,4 @@ Don't forget to do a [pull request][6] when you have added value to the project.
 [6]: http://github.com/guides/pull-requests "Pull request guide"
 [7]: https://github.com/atosorigin/Kinect "Atos Origin Kinect Repository"
 [8]: https://github.com/atosorigin/Kinect/tree/master/lib/Third%20Party/Microsoft%20Kinect%20SDK "Microsoft SDK's"
+[9]: http://www.atosorigin.com/ "Atos Origin Homepage"
