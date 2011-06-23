@@ -27,7 +27,7 @@
     </i:Interaction.Triggers>
     <Grid>
         <Label Content="{Binding WindowMessage, Mode=OneWay}"
-               FontSize="32" />
+               FontSize="32" Background="White" />
         <Image Source="{Binding CameraView, Mode=OneWay}"
                Visibility="{Binding CameraVisibility}"
                Width="640"

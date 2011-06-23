@@ -7,7 +7,9 @@ using System.Windows.Media.Media3D;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Filters;
 using Kinect.Core.Gestures;
 using log4net;
 using Microsoft.Research.Kinect.Nui;
@@ -18,13 +20,19 @@ namespace Kinect.MouseControl.ViewModels
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (MainViewModel));
         private static readonly object _syncRoot = new object();
+        private const int EventIntervalInMilliseconds = 750;
 
         public RelayCommand<KeyEventArgs> KeyPress { get; set; }
         public RelayCommand<CancelEventArgs> Closing { get; set; }
         private MyKinect _kinect;
         private User _activeUser;
-        private SelfTouchGesture clapGesture;
         private bool _controlMouse = false;
+        private bool _mouseDown = false;
+
+        private DateTime _clapHit = DateTime.Now;
+        private DateTime _clapFilter = DateTime.Now;
+        private DateTime _headHit = DateTime.Now;
+        
 
         private string _windowMessage;
         public string WindowMessage
@@ -199,30 +207,73 @@ namespace Kinect.MouseControl.ViewModels
                 _activeUser = _kinect.GetUser(e.User.ID);
                 _activeUser.Updated += _activeUser_Updated;
                 _activeUser.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandRight, JointID.Head).SelfTouchDetected += gesture_SelfTouchDetected;
-                clapGesture = _activeUser.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft, JointID.HandRight);
+                
+                var framesFilter  = new FramesFilter(6);
+                var clapFilter = new CollisionFilter(new Point3D(50,50,300), JointID.HandLeft, JointID.HandRight);
+                clapFilter.Filtered += clapFilter_Filtered;
+                var clapGesture = new SelfTouchGesture(1);
                 clapGesture.SelfTouchDetected += clapGesture_SelfTouchDetected;
+                _activeUser.AttachPipeline(framesFilter);
+                framesFilter.AttachPipeline(clapFilter);
+                clapFilter.AttachPipeline(clapGesture);
+
+            }
+        }
+
+        void clapFilter_Filtered(object sender, Core.Eventing.FilterEventArgs e)
+        {
+            //Hands are not on each other
+            lock (_syncRoot)
+            {
+                //First check the time interval to ignore most of the messages
+                if (CheckEventInterval(ref _clapFilter) && _mouseDown)
+                {
+                    WindowMessage = "Mouse up";
+                    _mouseDown = false;
+                    MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
+                }
             }
         }
 
         void clapGesture_SelfTouchDetected(object sender, SelfTouchEventArgs e)
         {
-            //Left button down
-            WindowMessage = "Mouse down";
+            lock (_syncRoot)
+            {            
+                //Left button down
+                if (CheckEventInterval(ref _clapHit))
+                {
+                    WindowMessage = "Mouse down";
+                    _mouseDown = true;
+                    MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
+                }
+            }
         }
 
         void gesture_SelfTouchDetected(object sender, SelfTouchEventArgs e)
         {
-            WindowMessage = "Enable / Dissable mouse";
-            //Enable/Disable mouse
-            _controlMouse = !_controlMouse;
+            lock (_syncRoot)
+            {
+                if (CheckEventInterval(ref _headHit))
+                {
+                    WindowMessage = "Enable / Dissable mouse";
+                    //Enable/Disable mouse
+                    _controlMouse = !_controlMouse;
+                }
+            }
         }
 
         void _activeUser_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
         {
+            //WindowMessage = e.Event.Head.Z.ToString();
             if (!_controlMouse)
             {
                 return;
             }
+            var screen = new Size(System.Windows.SystemParameters.PrimaryScreenWidth,
+                                  System.Windows.SystemParameters.PrimaryScreenHeight);
+
+            var point = e.Event.RightHand.ToScreenPosition(new Size(320, 240), screen,new Point(50,50),new Size(160,120));
+            MouseSimulator.Position = new Point(point.X,point.Y);
         }
 
         private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
@@ -231,6 +282,16 @@ namespace Kinect.MouseControl.ViewModels
             {
                 CameraView = e.Image;
             }
+        }
+
+        private bool CheckEventInterval(ref DateTime lastHit)
+        {
+            if ((DateTime.Now - lastHit).TotalMilliseconds > EventIntervalInMilliseconds)
+            {
+                lastHit = DateTime.Now;
+                return true;
+            }
+            return false;
         }
     }
 }
