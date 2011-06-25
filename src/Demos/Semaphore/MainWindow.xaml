@@ -1,127 +1,226 @@
-﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4" xmlns:UserControls="clr-namespace:Kinect.Semaphore.UserControls" xmlns:kUtils="clr-namespace:Kinect.Semaphore.Utils" mc:Ignorable="d" x:Class="Kinect.Semaphore.MainWindow" Title="{Binding AppTitle}" Height="453" Width="705" WindowState="Maximized" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None">
-	<Window.Background>
-		<ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bg1.jpg" Stretch="UniformToFill" TileMode="None" />
-	</Window.Background>
-	<Window.DataContext>
-		<Binding Mode="OneWay" Source="{StaticResource MainViewModelDataSource}" />
-	</Window.DataContext>
-	<Window.Resources>
-		<Style x:Key="ListViewItemContainerStyle" TargetType="{x:Type ListViewItem}">
-			<Setter Property="kUtils:ListViewItemBehaviour.IsBroughtIntoViewWhenSelected" Value="true" />
-		</Style>
-	</Window.Resources>
-	<i:Interaction.Triggers>
-		<i:EventTrigger EventName="KeyDown">
-			<GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding KeyPress}" PassEventArgsToCommand="True" />
-		</i:EventTrigger>
-		<i:EventTrigger EventName="Closing">
-			<GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding Closing}" PassEventArgsToCommand="True" />
-		</i:EventTrigger>
-	</i:Interaction.Triggers>
-	<DockPanel>
-		<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Users}">
-			<ItemsControl.Background>
-				<ImageBrush ImageSource="/Kinect.Semaphore;component/Images/top.jpg" />
-			</ItemsControl.Background>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal" Margin="30, 0, 30, 0">
-						<TextBlock Text="{Binding ID}" Foreground="White" FontSize="26" FontWeight="Heavy"></TextBlock>
-						<TextBlock Text=": " Foreground="White" FontSize="26" FontWeight="Heavy" Margin="0, 0, 10, 0"></TextBlock>
-						<TextBlock Text="{Binding StopWatch,StringFormat=hh\\:mm\\:ss}" Foreground="White" FontSize="26"></TextBlock>
-					</StackPanel>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-		</ItemsControl>
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
+        xmlns:UserControls="clr-namespace:Kinect.Semaphore.UserControls"
+        xmlns:kUtils="clr-namespace:Kinect.Semaphore.Utils"
+        mc:Ignorable="d"
+        x:Class="Kinect.Semaphore.MainWindow"
+        Title="{Binding AppTitle}"
+        Height="453"
+        Width="705"
+        WindowState="Maximized"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None">
+    <Window.Background>
+        <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bg1.jpg"
+                    Stretch="UniformToFill"
+                    TileMode="None" />
+    </Window.Background>
+    <Window.DataContext>
+        <Binding Mode="OneWay"
+                 Source="{StaticResource MainViewModelDataSource}" />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="ListViewItemContainerStyle"
+               TargetType="{x:Type ListViewItem}">
+            <Setter Property="kUtils:ListViewItemBehaviour.IsBroughtIntoViewWhenSelected"
+                    Value="true" />
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="KeyDown">
+            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding KeyPress}"
+                                                       PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding Closing}"
+                                                       PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <DockPanel>
+        <ItemsControl DockPanel.Dock="Top"
+                      ItemsSource="{Binding Users}">
+            <ItemsControl.Background>
+                <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/top.jpg" />
+            </ItemsControl.Background>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="30, 0, 30, 0">
+                        <TextBlock Text="{Binding ID}"
+                                   Foreground="White"
+                                   FontSize="26"
+                                   FontWeight="Heavy"></TextBlock>
+                        <TextBlock Text=": "
+                                   Foreground="White"
+                                   FontSize="26"
+                                   FontWeight="Heavy"
+                                   Margin="0, 0, 10, 0"></TextBlock>
+                        <TextBlock Text="{Binding StopWatch,StringFormat=hh\\:mm\\:ss}"
+                                   Foreground="White"
+                                   FontSize="26"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
-		<ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding Users}">
-			<ItemsControl.Background>
-				<ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bottom.jpg" />
-			</ItemsControl.Background>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Semaphore.Sentence}" Foreground="White" FontSize="48" Margin="30, 0, 30, 0"></TextBlock>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-		</ItemsControl>
+        <ItemsControl DockPanel.Dock="Bottom"
+                      ItemsSource="{Binding Users}">
+            <ItemsControl.Background>
+                <ImageBrush ImageSource="/Kinect.Semaphore;component/Images/bottom.jpg" />
+            </ItemsControl.Background>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Semaphore.Sentence}"
+                               Foreground="White"
+                               FontSize="48"
+                               Margin="30, 0, 30, 0"></TextBlock>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
-		<ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding Users}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Image Height="200" Source="{Binding Semaphore.Current.ImageSource, Mode=OneWay}" Name="nextSemaphore" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" />
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-		</ItemsControl>
+        <ItemsControl DockPanel.Dock="Bottom"
+                      ItemsSource="{Binding Users}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Image Height="200"
+                           Source="{Binding Semaphore.Current.ImageSource, Mode=OneWay}"
+                           Name="nextSemaphore"
+                           Stretch="Fill"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Width="200" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel HorizontalAlignment="Center"
+                                Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
-		<StackPanel DockPanel.Dock="Left" Visibility="{Binding DebugInformation}">
-			<StackPanel Orientation="Horizontal">
-				<TextBlock TextWrapping="Wrap" Text="{Binding FramesPerSecond}" VerticalAlignment="Center" Margin="0,0,5,0" FontWeight="Bold" Foreground="White" />
-				<TextBlock TextWrapping="Wrap" Text="{Binding FPS}" VerticalAlignment="Center" Foreground="White" />
-			</StackPanel>
-			<ListView ItemsSource="{Binding Messages}" SelectedItem="{Binding LastMessage, Mode=OneWay}" ItemContainerStyle="{StaticResource ListViewItemContainerStyle}" Height="200">
-				<ListView.ItemTemplate>
-					<DataTemplate>
-						<UserControls:MessageUserControl />
-					</DataTemplate>
-				</ListView.ItemTemplate>
-				<ListView.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel />
-					</ItemsPanelTemplate>
-				</ListView.ItemsPanel>
-			</ListView>
-			<ListView ItemsSource="{Binding Users}" Height="100">
-				<ListView.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Background="{Binding Brush}">
-							<TextBlock Text="{Binding Users}" FontSize="14" FontWeight="Bold" Foreground="White" DataContext="{Binding Source={StaticResource MainViewModelDataSource}}" Margin="0,0,5,0" VerticalAlignment="Center" />
-							<TextBlock Text="{Binding ID}" FontSize="14" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Margin="0,0,5,0" />
-							<TextBlock Text="{Binding Torso.X}" FontSize="9" FontStyle="Italic" Foreground="White" VerticalAlignment="Center" />
-							<TextBlock Text="," FontSize="9" FontStyle="Italic" Foreground="White" Margin="0,0,5,0" VerticalAlignment="Center" />
-							<TextBlock Text="{Binding Torso.Y}" FontSize="9" FontStyle="Italic" Foreground="White" VerticalAlignment="Center" />
-							<TextBlock Text="," FontSize="9" FontStyle="Italic" Foreground="White" Margin="0,0,5,0" VerticalAlignment="Center" />
-							<TextBlock Text="{Binding Torso.Z}" FontSize="9" FontStyle="Italic" Foreground="White" VerticalAlignment="Center" />
-						</StackPanel>
-					</DataTemplate>
-				</ListView.ItemTemplate>
-				<ListView.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel />
-					</ItemsPanelTemplate>
-				</ListView.ItemsPanel>
-			</ListView>
-		</StackPanel>
+        <StackPanel DockPanel.Dock="Left"
+                    Visibility="{Binding DebugInformation}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock TextWrapping="Wrap"
+                           Text="{Binding FramesPerSecond}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,5,0"
+                           FontWeight="Bold"
+                           Foreground="White" />
+                <TextBlock TextWrapping="Wrap"
+                           Text="{Binding FPS}"
+                           VerticalAlignment="Center"
+                           Foreground="White" />
+            </StackPanel>
+            <ListView ItemsSource="{Binding Messages}"
+                      SelectedItem="{Binding LastMessage, Mode=OneWay}"
+                      ItemContainerStyle="{StaticResource ListViewItemContainerStyle}"
+                      Height="200">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <UserControls:MessageUserControl />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+            <ListView ItemsSource="{Binding Users}"
+                      Height="100">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal"
+                                    Background="{Binding Brush}">
+                            <TextBlock Text="{Binding Users}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       DataContext="{Binding Source={StaticResource MainViewModelDataSource}}"
+                                       Margin="0,0,5,0"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ID}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding Torso.X}"
+                                       FontSize="9"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text=","
+                                       FontSize="9"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       Margin="0,0,5,0"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Torso.Y}"
+                                       FontSize="9"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text=","
+                                       FontSize="9"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       Margin="0,0,5,0"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Torso.Z}"
+                                       FontSize="9"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </StackPanel>
 
-		<Image Source="{Binding CameraView, Mode=OneWay}" Visibility="{Binding CameraVisibility}" Width="{Binding CameraSize}" DockPanel.Dock="Right" VerticalAlignment="Top" />
+        <Image Source="{Binding CameraView, Mode=OneWay}"
+               Visibility="{Binding CameraVisibility}"
+               Width="{Binding CameraSize}"
+               DockPanel.Dock="Right"
+               VerticalAlignment="Top" />
 
-		<ItemsControl ItemsSource="{Binding Users}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<UserControls:UserUserControl />
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<Canvas />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-		</ItemsControl>
+        <ItemsControl ItemsSource="{Binding Users}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <UserControls:UserUserControl />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
-		<Image Source="{Binding ImageSource}" />
-	</DockPanel>
+        <Image Source="{Binding ImageSource}" />
+    </DockPanel>
 </Window>

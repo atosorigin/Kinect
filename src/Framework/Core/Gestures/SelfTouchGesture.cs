@@ -14,6 +14,16 @@ namespace Kinect.Core.Gestures
             get { return "SelfTouchGesture"; }
         }
 
+        public SelfTouchGesture()
+        {
+            
+        }
+
+        public SelfTouchGesture(int historyCount)
+        {
+            HistoryCount = historyCount;
+        }
+
         public event EventHandler<SelfTouchEventArgs> SelfTouchDetected;
 
         public override void Process(IUserChangedEvent evt)

@@ -295,12 +295,12 @@ namespace Kinect.Semaphore.ViewModels
         private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                                                      {
-                                                          if (_kinect != null)
-                                                          {
-                                                              CameraView = e.Image;
-                                                          }
-                                                      });
+            {
+                if (_kinect != null)
+                {
+                    CameraView = e.Image;
+                }
+            });
         }
 
         private void SetCameraView()
