@@ -12,11 +12,15 @@ This Kinect application framework and demo apps are made by [Marco Franssen][1] 
 Our goal is to create a framework for developers on top of Kinect. This Framework should support easy access to gestures etc. All the demo apps we created to test our framework are included. We would love it when you guys help to extend and improve the framework. Don't forget to add your own demo apps so you can show of all the cool stuff you made to the other developers participating.
 
 #How to fork
+1. ## Install Git<br />
+Install [10][Git Extensions]. This will you provide a good GUI to Git (easy for Git starters). 
+
 1. ## Fork the `Kinect` repo<br />
 Fork the Kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][7]<br />
 
 1. ## Clone the `Kinect` project<br />
-Run the following code:<br />
+Navigate to the folder where you want to add the Kinect folder. Right-Click this folder and choose for `Git Bash here`.
+Run the following code: (replace username by your own Github username)<br />
 `$ git clone git@github.com:username/Kinect.git`<br />
 
 1. ## Configure remotes<br />
@@ -50,3 +54,4 @@ Don't forget to do a [pull request][6] when you have added value to the project.
 [7]: https://github.com/atosorigin/Kinect "Atos Origin Kinect Repository"
 [8]: https://github.com/atosorigin/Kinect/tree/master/lib/Third%20Party/Microsoft%20Kinect%20SDK "Microsoft SDK's"
 [9]: http://www.atosorigin.com/ "Atos Origin Homepage"
+[10]: http://code.google.com/p/gitextensions/ "Git Extensions"
