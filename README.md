@@ -13,7 +13,7 @@ Our goal is to create a framework for developers on top of Kinect. This Framewor
 
 #How to fork
 1. ## Install Git<br />
-Install [10][Git Extensions]. This will you provide a good GUI to Git (easy for Git starters). 
+Install [Git Extensions][10]. This will you provide a good GUI to Git (easy for Git starters). 
 
 1. ## Fork the `Kinect` repo<br />
 Fork the Kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][7]<br />
