@@ -59,12 +59,5 @@ namespace Kinect.Workshop.Properties {
                 resourceCulture = value;
             }
         }
-        
-        internal static System.Drawing.Bitmap skelet {
-            get {
-                object obj = ResourceManager.GetObject("skelet", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
