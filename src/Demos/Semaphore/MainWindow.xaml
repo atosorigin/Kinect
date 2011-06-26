@@ -126,7 +126,7 @@
                            FontWeight="Bold"
                            Foreground="White" />
                 <TextBlock TextWrapping="Wrap"
-                           Text="{Binding FPS}"
+                           Text="{Binding Fps}"
                            VerticalAlignment="Center"
                            Foreground="White" />
             </StackPanel>

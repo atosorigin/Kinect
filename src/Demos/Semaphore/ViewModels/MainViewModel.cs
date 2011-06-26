@@ -23,9 +23,9 @@ namespace Kinect.Semaphore.ViewModels
 {
     public class MainViewModel : ResourcesViewModelBase
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (MainViewModel));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (MainViewModel));
 
-        private static readonly object _syncRoot = new object();
+        private static readonly object SyncRoot = new object();
 
         private readonly ColorGenerator _generator = new ColorGenerator();
         private double _cameraSize;
@@ -50,21 +50,23 @@ namespace Kinect.Semaphore.ViewModels
             if (IsInDesignMode)
             {
                 //Code runs in Blend --> create design time data.
-                Messages = new ObservableCollection<Message>();
-                Messages.Add(new Message {ImageUrl = "", Value = "Connecting to Kinect..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "Searching for user..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 1 found..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 1..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 2 found..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 2 is in calibration pose..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 2..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "Lost connection to user 1..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 2 waved at Kinect..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 1 found..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "Calibrating user 1..."});
-                Messages.Add(new Message {ImageUrl = "", Value = "User 1 waved at Kinect..."});
+                Messages = new ObservableCollection<Message>
+                {
+                    new Message {ImageUrl = "", Value = "Connecting to Kinect..."},
+                    new Message {ImageUrl = "", Value = "Searching for user..."},
+                    new Message {ImageUrl = "", Value = "User 1 found..."},
+                    new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."},
+                    new Message {ImageUrl = "", Value = "Calibrating user 1..."},
+                    new Message {ImageUrl = "", Value = "User 2 found..."},
+                    new Message {ImageUrl = "", Value = "User 2 is in calibration pose..."},
+                    new Message {ImageUrl = "", Value = "Calibrating user 2..."},
+                    new Message {ImageUrl = "", Value = "Lost connection to user 1..."},
+                    new Message {ImageUrl = "", Value = "User 2 waved at Kinect..."},
+                    new Message {ImageUrl = "", Value = "User 1 found..."},
+                    new Message {ImageUrl = "", Value = "User 1 is in calibration pose..."},
+                    new Message {ImageUrl = "", Value = "Calibrating user 1..."},
+                    new Message {ImageUrl = "", Value = "User 1 waved at Kinect..."}
+                };
 
                 CreateUsers();
             }
@@ -77,7 +79,7 @@ namespace Kinect.Semaphore.ViewModels
 
                 //TODO: Tracelistener van het type collection maken zodat hij direct gebind kan worden
                 Messages = new ObservableCollection<Message>();
-                App.TraceListener.CollectionChanged += TraceListener_CollectionChanged;
+                App.TraceListener.CollectionChanged += TraceListenerCollectionChanged;
             }
             MarginData = "X:10,Y:20,Z;30";
         }
@@ -87,7 +89,7 @@ namespace Kinect.Semaphore.ViewModels
             get { return _cameraView; }
             set
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (value != _cameraView)
                     {
@@ -152,7 +154,7 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        public int FPS
+        public int Fps
         {
             get
             {
@@ -204,7 +206,7 @@ namespace Kinect.Semaphore.ViewModels
 
         public RelayCommand<DataTransferEventArgs> SourceUpdated { get; set; }
 
-        private void TraceListener_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void TraceListenerCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -219,18 +221,18 @@ namespace Kinect.Semaphore.ViewModels
         private void SetUpKinect()
         {
             _kinect = MyKinect.Instance;
-            _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
-            _kinect.PropertyChanged += _kinect_PropertyChanged;
-            _kinect.UserCreated += _kinect_UserCreated;
-            _kinect.UserRemoved += _kinect_UserRemoved;
+            _kinect.CameraDataUpdated += KinectCameraDataUpdated;
+            _kinect.PropertyChanged += KinectPropertyChanged;
+            _kinect.UserCreated += KinectUserCreated;
+            _kinect.UserRemoved += KinectUserRemoved;
             _kinect.StartKinect();
         }
 
-        private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
+        private void KinectUserRemoved(object sender, KinectUserEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                                                       {
-                                                          lock (_syncRoot)
+                                                          lock (SyncRoot)
                                                           {
                                                               if (e.User != null)
                                                               {
@@ -250,11 +252,11 @@ namespace Kinect.Semaphore.ViewModels
                                                       });
         }
 
-        private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
+        private void KinectUserCreated(object sender, KinectUserEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                                                       {
-                                                          lock (_syncRoot)
+                                                          lock (SyncRoot)
                                                           {
                                                               User kuser = _kinect.GetUser(e.User.ID);
                                                               if (kuser != null)
@@ -270,7 +272,7 @@ namespace Kinect.Semaphore.ViewModels
                                                       });
         }
 
-        private void _kinect_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void KinectPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "FPS")
             {
@@ -282,7 +284,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             if (_kinect != null)
             {
-                _kinect.CameraDataUpdated -= _kinect_CameraDataUpdated;
+                _kinect.CameraDataUpdated -= KinectCameraDataUpdated;
                 _kinect.StopKinect();
                 _kinect = null;
                 Messages.Clear();
@@ -292,7 +294,7 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
+        private void KinectCameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
@@ -329,14 +331,7 @@ namespace Kinect.Semaphore.ViewModels
 
         private void ToggleDebugInformation()
         {
-            if (DebugInformation == Visibility.Collapsed)
-            {
-                DebugInformation = Visibility.Visible;
-            }
-            else
-            {
-                DebugInformation = Visibility.Collapsed;
-            }
+            DebugInformation = DebugInformation == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ResizeCameraImage()
@@ -357,7 +352,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             KeyPress = new RelayCommand<KeyEventArgs>(e =>
                                                           {
-                                                              _log.DebugFormat("Key pressed: {0}", e.Key);
+                                                              Log.DebugFormat("Key pressed: {0}", e.Key);
                                                               if (e.Key == Key.S)
                                                               {
                                                                   SetUpKinect();
@@ -442,7 +437,7 @@ namespace Kinect.Semaphore.ViewModels
             return CreateUser(_generator, user);
         }
 
-        private UserViewModel CreateUser(ColorGenerator generator, User user)
+        private static UserViewModel CreateUser(ColorGenerator generator, User user)
         {
             float r = 1f/255*user.Color.R;
             float g = 1f/255*user.Color.G;
@@ -460,7 +455,7 @@ namespace Kinect.Semaphore.ViewModels
                        };
         }
 
-        private UserViewModel CreateUser(ColorGenerator generator, Random rand, int i)
+        private static UserViewModel CreateUser(ColorGenerator generator, Random rand, int i)
         {
             string color = generator.NextColorString();
             float r = 1f/255*int.Parse(color.Substring(0, 2), NumberStyles.HexNumber);
@@ -494,10 +489,12 @@ namespace Kinect.Semaphore.ViewModels
 
         private static Point3D GetPoint3DCoordinates(int i, double x, double y, double z)
         {
-            var point = new Point3D();
-            point.X = (i*(x + 25))/x;
-            point.Y = (i*(y + 25))/y;
-            point.Z = i*z;
+            var point = new Point3D
+                            {
+                                X = (i*(x + 25))/x, 
+                                Y = (i*(y + 25))/y, 
+                                Z = i*z
+                            };
             return point;
         }
 

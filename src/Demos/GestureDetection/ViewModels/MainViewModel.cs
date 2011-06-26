@@ -38,7 +38,7 @@ namespace Kinect.GestureDetection.ViewModels
             }
         }
 
-        public int FPS
+        public int Fps
         {
             get
             {

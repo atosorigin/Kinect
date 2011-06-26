@@ -74,7 +74,7 @@ namespace Kinect.Pong.ViewModels
             }
         }
 
-        public int FPS
+        public int Fps
         {
             get
             {
