@@ -1,10 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Kinect.Core;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Kinect.Workshop.ViewModels
 {
@@ -46,12 +48,12 @@ namespace Kinect.Workshop.ViewModels
 
         protected void KinectCameraMessage(object sender, KinectMessageEventArgs e)
         {
-            Messages.Add(e.Message);
+            UpdateUserInterface(() => Messages.Add(e.Message));
         }
 
         protected void KinectCameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
-            Camera = e.Image;
+            UpdateUserInterface(() => Camera = e.Image);
         }
 
         private void StartKinect()
@@ -67,6 +69,7 @@ namespace Kinect.Workshop.ViewModels
             if (Kinect.KinectState != KinectState.Running) return;
             UnSubscribeToKinectEvents();
             Kinect.StopKinect();
+            Camera = null;
         }
 
         public abstract void SubscribeToKinectEvents();
@@ -74,6 +77,10 @@ namespace Kinect.Workshop.ViewModels
         public abstract void SubscribeToUserUpdatedEvent();
         public abstract void TrackRightHand();
         public abstract void AttachGesture();
+        protected virtual void UpdateUserInterface(Action action)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(action);
+        }
 
         public RelayCommand<RoutedEventArgs> Start { get; set; }
         public RelayCommand<RoutedEventArgs> Stop { get; set; }
