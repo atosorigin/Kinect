@@ -51,11 +51,9 @@ namespace Kinect.Core
             get { return _kinectstate; }
             private set
             {
-                if (_kinectstate != value)
-                {
-                    _kinectstate = value;
-                    OnPropertyChanged("KinectState");
-                }
+                if (_kinectstate == value) return;
+                _kinectstate = value;
+                OnPropertyChanged("KinectState");
             }
         }
 
@@ -70,7 +68,7 @@ namespace Kinect.Core
             get { return _activeUsers.AsReadOnly(); }
         }
 
-        public int FPS
+        public int Fps
         {
             get { return _camera.Fps; }
         }
@@ -133,7 +131,7 @@ namespace Kinect.Core
                                             RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
                         _context.SkeletonEngine.TransformSmooth = true;
                         _camera.Context = _context;
-                        _camera.PropertyChanged += _camera_PropertyChanged;
+                        _camera.PropertyChanged += CameraPropertyChanged;
                         _camera.Running = true;
 
                         KinectState = KinectState.ContextOpen;
@@ -175,7 +173,7 @@ namespace Kinect.Core
 
                     _camera.Initialize();
 
-                    _context.SkeletonFrameReady += context_SkeletonFrameReady;
+                    _context.SkeletonFrameReady += ContextSkeletonFrameReady;
                     _context.SkeletonEngine.IsEnabled = true;
 
                     _activeUsers = new List<User>();
@@ -213,7 +211,7 @@ namespace Kinect.Core
             }
         }
 
-        private void context_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        private void ContextSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             lock (SyncRoot)
             {
@@ -277,7 +275,7 @@ namespace Kinect.Core
             depthX = Math.Max(0, Math.Min(depthX * 320, 320)); //convert to 640, 480 space
             depthY = Math.Max(0, Math.Min(depthY * 240, 240)); //convert to 640, 480 space
             //Make it milimeters
-            return new Point3D(depthX, depthY, depthZ / 10);
+            return new Point3D(depthX, depthY, depthZ);
         }
 
         private void OnCameraMessage(string message)
@@ -382,7 +380,7 @@ namespace Kinect.Core
         {
             try
             {
-                int newAngle = _context.NuiCamera.ElevationAngle - angle;
+                var newAngle = _context.NuiCamera.ElevationAngle - angle;
                 if (newAngle < Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum)
                 {
                     newAngle = Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum;
@@ -395,7 +393,7 @@ namespace Kinect.Core
             }
         }
 
-        private void _camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "FPS")
             {

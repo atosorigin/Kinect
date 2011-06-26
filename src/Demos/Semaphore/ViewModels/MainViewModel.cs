@@ -158,7 +158,7 @@ namespace Kinect.Semaphore.ViewModels
             {
                 if (_kinect != null)
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => { _fps = _kinect.FPS; });
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => { _fps = _kinect.Fps; });
                 }
                 return _fps;
             }
