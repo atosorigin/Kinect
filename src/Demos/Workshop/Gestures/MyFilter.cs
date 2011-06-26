@@ -20,7 +20,20 @@ namespace Kinect.Workshop.Gestures
         /// <param name="evt">The evt.</param>
         public override void Process(IUserChangedEvent evt)
         {
-            base.Process(evt);
+            OnFilteredEvent(new MyFilterEventArgs(this, "Filtering of Frame is started!"));
+            bool filtered = true;
+            
+            //TODO: implement logic to to filter several frames.
+
+
+            if (!filtered)
+            {
+                base.Process(evt);
+            }
+            else
+            {
+                OnFilteredEvent(new MyFilterEventArgs(this, "This Frame is filtered!"));
+            }
         }
     }
 }

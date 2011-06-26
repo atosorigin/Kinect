@@ -23,7 +23,14 @@ namespace Kinect.Workshop.Gestures
         /// <param name="evt">The evt.</param>
         public override void Process(IUserChangedEvent evt)
         {
+            OnProcessingEvent(evt);
+            bool handAreTogether = false;
+            //TODO: Check if hands are together
 
+            if (handAreTogether)
+            {
+                OnProcessedEvent(evt);
+            }
         }
     }
 }

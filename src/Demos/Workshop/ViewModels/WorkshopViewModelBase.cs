@@ -41,8 +41,8 @@ namespace Kinect.Workshop.ViewModels
                 Kinect = MyKinect.Instance;
                 PointerColor = new SolidColorBrush(Color.FromRgb(139, 0, 0));
                 Messages = new ObservableCollection<string>();
-                Start = new RelayCommand<RoutedEventArgs>(e => StartKinect());
-                Stop = new RelayCommand<RoutedEventArgs>(e => StopKinect());
+                Start = new RelayCommand<RoutedEventArgs>(e => SafeStartKinect());
+                Stop = new RelayCommand<RoutedEventArgs>(e => SafeStopKinect());
             }
         }
 
@@ -56,22 +56,24 @@ namespace Kinect.Workshop.ViewModels
             UpdateUserInterface(() => Camera = e.Image);
         }
 
-        private void StartKinect()
+        private void SafeStartKinect()
         {
             if (Kinect.KinectState == KinectState.Running) return;
             Messages.Clear();
             SubscribeToKinectEvents();
-            Kinect.StartKinect();
+            StartKinect();
         }
 
-        private void StopKinect()
+        private void SafeStopKinect()
         {
             if (Kinect.KinectState != KinectState.Running) return;
             UnSubscribeToKinectEvents();
-            Kinect.StopKinect();
+            StopKinect();
             Camera = null;
         }
 
+        public abstract void StartKinect();
+        public abstract void StopKinect();
         public abstract void SubscribeToKinectEvents();
         public abstract void UnSubscribeToKinectEvents();
         public abstract void SubscribeToUserUpdatedEvent();
