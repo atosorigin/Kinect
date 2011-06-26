@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XNAContent", "XNA\XNAConten
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestureDetection", "GestureDetection\GestureDetection.csproj", "{34238744-2856-409F-85CA-21F17D6830BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kinect.Debug", "Debug\Kinect.Debug.csproj", "{46F345F7-3674-4AEF-AFD6-7745D93C4C96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workshop", "Workshop\Workshop.csproj", "{5C95F4EE-FA4C-45E9-AC3E-B80FADEC862C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
