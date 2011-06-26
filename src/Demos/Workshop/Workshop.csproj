@@ -66,6 +66,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Gestures\MyFilter.cs" />
+    <Compile Include="Gestures\MyFilterEventArgs.cs" />
     <Compile Include="Gestures\MyGesture.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WorkshopViewModelBase.cs" />
