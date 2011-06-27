@@ -78,6 +78,7 @@
     <Compile Include="KinectGestureEventArgs.cs" />
     <Compile Include="KinectMessageEventArgs.cs" />
     <Compile Include="KinectSemaphoreGestureEventArgs.cs" />
+    <Compile Include="KinectState.cs" />
     <Compile Include="KinectUserEventArgs.cs" />
     <Compile Include="MyKinect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
