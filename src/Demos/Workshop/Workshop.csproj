@@ -70,6 +70,7 @@
     <Compile Include="Gestures\MyFilter.cs" />
     <Compile Include="Gestures\MyFilterEventArgs.cs" />
     <Compile Include="Gestures\MyGesture.cs" />
+    <None Include="Snippets.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\WorkshopViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
