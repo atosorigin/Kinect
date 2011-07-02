@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Kinect.Core;
 using GalaSoft.MvvmLight.Threading;
+using System.Windows.Media.Media3D;
 
 namespace Kinect.Workshop.ViewModels
 {
@@ -18,23 +19,23 @@ namespace Kinect.Workshop.ViewModels
         {
             if (IsInDesignModeStatic)
             {
-                Head = "Head";
-                Neck = "Neck";
-                LeftShoulder = "Left Shoulder";
-                RightShoulder = "Right Shoulder";
-                Torso = "Torso";
-                LeftElbow = "Left Elbow";
-                RightElbow = "Right Elbow";
-                LeftHand = "Left Hand";
-                RightHand = "Right Hand";
-                LeftHand = "Left Hand";
-                RightHand = "Right Hand";
-                LeftHip = "Left Hip";
-                RightHip = "Right Hip";
-                LeftKnee = "Left Knee";
-                RightKnee = "Right Knee";
-                LeftFoot = "Left Foot";
-                RightFoot = "Right Foot";
+                Head = "X:123, Y:456, Z:7890";
+                Neck = "X:123, Y:456, Z:7890";
+                LeftShoulder = "X:123, Y:456, Z:7890";
+                RightShoulder = "X:123, Y:456, Z:7890";
+                Torso = "X:123, Y:456, Z:7890";
+                LeftElbow = "X:123, Y:456, Z:7890";
+                RightElbow = "X:123, Y:456, Z:7890";
+                LeftHand = "X:123, Y:456, Z:7890";
+                RightHand = "X:123, Y:456, Z:7890";
+                LeftHand = "X:123, Y:456, Z:7890";
+                RightHand = "X:123, Y:456, Z:7890";
+                LeftHip = "X:123, Y:456, Z:7890";
+                RightHip = "X:123, Y:456, Z:7890";
+                LeftKnee = "X:123, Y:456, Z:7890";
+                RightKnee = "X:123, Y:456, Z:7890";
+                LeftFoot = "X:123, Y:456, Z:7890";
+                RightFoot = "X:123, Y:456, Z:7890";
             }
             else
             {
@@ -77,7 +78,7 @@ namespace Kinect.Workshop.ViewModels
         public abstract void SubscribeToKinectEvents();
         public abstract void UnSubscribeToKinectEvents();
         public abstract void SubscribeToUserUpdatedEvent();
-        public abstract void TrackRightHand();
+        public abstract void TrackRightHand(Point3D rightHandCoordinate);
         public abstract void AttachGesture();
         protected virtual void UpdateUserInterface(Action action)
         {

@@ -1,6 +1,9 @@
 using System;
+using System.Windows;
+using Kinect.Common;
 using Kinect.Core;
 using Kinect.Workshop.Gestures;
+using System.Windows.Media.Media3D;
 
 namespace Kinect.Workshop.ViewModels
 {
@@ -23,6 +26,7 @@ namespace Kinect.Workshop.ViewModels
             Kinect.CameraMessage += base.KinectCameraMessage;
             Kinect.CameraDataUpdated += base.KinectCameraDataUpdated;
             //TODO: Workshop -> Step 3: Subscribe to events and add Messages to the Messages property in the eventhandlers
+            //Kinect_UserCreated eventhandler will be implemented in step 5
         }
 
         public override void UnSubscribeToKinectEvents()
@@ -34,8 +38,8 @@ namespace Kinect.Workshop.ViewModels
 
         private void Kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
-            UpdateUserInterface(() => Messages.Add(string.Format("Kinect created a new user with id: {0}", e.User.ID)));
-            //TODO: Workshop -> Step 5: instantiate _kinectUser, use the eventArgs and Kinect
+            UpdateUserInterface(() => Messages.Add(string.Format("User {0} is created", e.User.ID)));
+            //TODO: Workshop -> Step 5: instantiate the field _kinectUser, use the eventArgs and Kinect
 
             SubscribeToUserUpdatedEvent();
             AttachGesture();
@@ -49,9 +53,9 @@ namespace Kinect.Workshop.ViewModels
             //Tip: use base.
         }
 
-        public override void TrackRightHand()
+        public override void TrackRightHand(Point3D rightHandCoordinate)
         {
-            //TODO: Workshop -> Step 7: Set the property PointerPosition
+            //TODO: Workshop -> Step 7: Set the property PointerPosition and call this method in the _kinectUser_Updated eventHandler
 
         }
 
@@ -59,8 +63,11 @@ namespace Kinect.Workshop.ViewModels
         {
             //TODO: Workshop -> Step 8: Implement MyFilter and MyGesture (See Gestures Folder in this Workshop project)
             //TODO: Workshop -> Step 9: Create instance of MyFilter and MyGesture
+
             //TODO: Workshop -> Step 10: Attach the Filter and Pipeline to the _kinectUser
+
             //TODO: Workshop -> Step 11: Subscribe to the filter and gesture events and Set the Messages Property
+            
             //TODO: Workshop -> Step 12: When the event is processed (ocurred) set the PointerColor property each time to another color
         }
     }
