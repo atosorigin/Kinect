@@ -22,15 +22,14 @@ namespace Kinect.Workshop.ViewModels
         {
             Kinect.CameraMessage += base.KinectCameraMessage;
             Kinect.CameraDataUpdated += base.KinectCameraDataUpdated;
-            //TODO: Workshop -> Step 3:
-            //TODO: Workshop -> Subscribe to events and add Messages to the Messages property in the eventhandlers
+            //TODO: Workshop -> Step 3: Subscribe to events and add Messages to the Messages property in the eventhandlers
         }
 
         public override void UnSubscribeToKinectEvents()
         {
             Kinect.CameraMessage -= base.KinectCameraMessage;
             Kinect.CameraDataUpdated -= base.KinectCameraDataUpdated;
-            //TODO: Workshop -> Step 4: UnSubscribe the events you subscribed to in step 1
+            //TODO: Workshop -> Step 4: UnSubscribe the events you subscribed to in step 3
         }
 
         private void Kinect_UserCreated(object sender, KinectUserEventArgs e)
