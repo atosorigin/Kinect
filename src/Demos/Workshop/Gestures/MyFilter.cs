@@ -1,4 +1,3 @@
-using System;
 using Kinect.Core;
 using Kinect.Core.Eventing;
 
@@ -6,6 +5,11 @@ namespace Kinect.Workshop.Gestures
 {
     public class MyFilter : Filter<IUserChangedEvent>
     {
+        /// <summary>
+        /// A variable to count the frames we are filtering
+        /// </summary>
+        private int _framesCount;
+
         /// <summary>
         /// Gets the filter name
         /// </summary>
@@ -21,10 +25,9 @@ namespace Kinect.Workshop.Gestures
         public override void Process(IUserChangedEvent evt)
         {
             OnFilteredEvent(new MyFilterEventArgs(this, "Filtering of Frame is started!"));
-            bool filtered = true;
+            var filtered = true;
             
             //TODO: implement logic to to filter several frames.
-
 
             if (!filtered)
             {

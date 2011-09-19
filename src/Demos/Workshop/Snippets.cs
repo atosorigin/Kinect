@@ -39,9 +39,9 @@
 //        _kinectUser = Kinect.GetUser(e.User.ID);
 
 //        //TODO: Workshop -> Step 6: Subscribe to UserUpdated event
-//        _kinectUser.Updated += new EventHandler<Core.Eventing.ProcessEventArgs<IUserChangedEvent>>(_kinectUser_Updated);
-        
-//        void _kinectUser_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
+//        _kinectUser.Updated += KinectUserUpdated;
+
+//        void KinectUserUpdated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
 //        {
 //            UpdateUserInterface(() => {
 //                Head = e.Event.Head.GetDebugString();
@@ -63,13 +63,27 @@
 //        }
 
 //        //TODO: Workshop -> Step 7: Set the property PointerPosition and call this method in the _kinectUser_Updated eventHandler
-//        var screenCoordinate = rightHandCoordinate.ToScreenPosition(new Size(640, 480), new Size(1366, 768));
+//        var screenCoordinate = rightHandCoordinate.ToScreenPosition(new Size(640, 480), new Size(800, 650));
 //        UpdateUserInterface(() => PointerPosition = new Point(screenCoordinate.X, screenCoordinate.Y));
 
 //        //In _kinectUser_Updated
 //        TrackRightHand(e.Event.RightHand);
 
 //        //TODO: Workshop -> Step 8: Implement MyFilter and MyGesture (See Gestures Folder in this Workshop project)
+//        //MyFilter filtering code
+//        _framesCount++;
+//        if (_framesCount >= 30)
+//        {
+//            filtered = false;
+//            _framesCount = 0;
+//        }
+
+//        //MyGesture detection code
+//        if (Math.Abs(evt.LeftHand.X - evt.RightHand.X) < 40 &&
+//        Math.Abs(evt.LeftHand.Y - evt.RightHand.Y) < 40 &&
+//        Math.Abs(evt.LeftHand.Z - evt.RightHand.Z) < 200)
+//        handsAreTogether = true;
+
 //        //TODO: Workshop -> Step 9: Create instance of MyFilter and MyGesture
 //        var filter = new MyFilter();
 //        var gesture = new MyGesture();
@@ -79,7 +93,27 @@
 //        filter.AttachPipeline(gesture);
 
 //        //TODO: Workshop -> Step 11: Subscribe to the filter and gesture events and Set the Messages Property
+//          filter.Filtered += FilterFiltered;
+//          gesture.ProcessedEvent += GestureProcessedEvent;
 
-//        //TODO: Workshop -> Step 12: When the event is processed (ocurred) set the PointerColor property each time to another color
+//          private void FilterFiltered(object sender, FilterEventArgs e)
+//          {
+//              //UpdateUserInterface(() => Messages.Add("Frame filtered"));
+//          }
+
+//          void GestureProcessedEvent(object sender, ProcessEventArgs<IUserChangedEvent> e)
+//          {
+//              //UpdateUserInterface(() => Messages.Add("Gesture processed"));
+//          }
+
+            //TODO: Workshop -> Step 12: When the event has occured set the PointerColor property each time to another color
+//          gesture.GestureDetected += new EventHandler(GestureGestureDetected);
+
+//          void GestureGestureDetected(object sender, EventArgs e)
+//          {
+//              UpdateUserInterface(() => this.PointerColor = new SolidColorBrush(GetNewColor()));
+//              UpdateUserInterface(() => Messages.Add("Hands are together"));
+//          }
+
 //    }
 //}

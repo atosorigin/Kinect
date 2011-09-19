@@ -7,6 +7,11 @@ namespace Kinect.Workshop.Gestures
     public class MyGesture : GestureBase
     {
         /// <summary>
+        /// The event which needs to get fired when the gesture is detected
+        /// </summary>
+        public event EventHandler GestureDetected;
+        
+        /// <summary>
         /// Gets the name of the gesture.
         /// </summary>
         /// <value>
@@ -24,12 +29,27 @@ namespace Kinect.Workshop.Gestures
         public override void Process(IUserChangedEvent evt)
         {
             OnProcessingEvent(evt);
-            bool handAreTogether = false;
+            var handsAreTogether = false;
+
             //TODO: Check if hands are together
 
-            if (handAreTogether)
+            if (handsAreTogether)
             {
-                OnProcessedEvent(evt);
+                OnGestureDetected();
+            }
+
+            OnProcessedEvent(evt);
+        }
+
+        /// <summary>
+        /// Thread-safe invoke of the GestureDetected event
+        /// </summary>
+        private void OnGestureDetected()
+        {
+            var fire = GestureDetected;
+            if (fire != null)
+            {
+                fire.Invoke(this, new EventArgs());
             }
         }
     }

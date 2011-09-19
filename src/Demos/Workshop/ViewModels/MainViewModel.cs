@@ -1,7 +1,9 @@
 using System;
 using System.Windows;
+using System.Windows.Media;
 using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Eventing;
 using Kinect.Workshop.Gestures;
 using System.Windows.Media.Media3D;
 
@@ -10,6 +12,8 @@ namespace Kinect.Workshop.ViewModels
     public class MainViewModel : WorkshopViewModelBase
     {
         private User _kinectUser;
+        private readonly Color[] _pointerColors = { Colors.Red, Colors.Green, Colors.Yellow, Colors.Blue };
+        private int _colorIndex;
 
         public override void StartKinect()
         {
@@ -24,9 +28,9 @@ namespace Kinect.Workshop.ViewModels
         public override void SubscribeToKinectEvents()
         {
             Kinect.CameraMessage += base.KinectCameraMessage;
-            Kinect.CameraDataUpdated += base.KinectCameraDataUpdated;
+            //Kinect.CameraDataUpdated += base.KinectCameraDataUpdated;
             //TODO: Workshop -> Step 3: Subscribe to events and add Messages to the Messages property in the eventhandlers
-            //Kinect_UserCreated eventhandler will be implemented in step 5
+            //KinectUserCreated eventhandler will be implemented in step 5
         }
 
         public override void UnSubscribeToKinectEvents()
@@ -36,7 +40,7 @@ namespace Kinect.Workshop.ViewModels
             //TODO: Workshop -> Step 4: UnSubscribe the events you subscribed to in step 3
         }
 
-        private void Kinect_UserCreated(object sender, KinectUserEventArgs e)
+        private void KinectUserCreated(object sender, KinectUserEventArgs e)
         {
             UpdateUserInterface(() => Messages.Add(string.Format("User {0} is created", e.User.ID)));
             //TODO: Workshop -> Step 5: instantiate the field _kinectUser, use the eventArgs and Kinect
@@ -56,7 +60,6 @@ namespace Kinect.Workshop.ViewModels
         public override void TrackRightHand(Point3D rightHandCoordinate)
         {
             //TODO: Workshop -> Step 7: Set the property PointerPosition and call this method in the _kinectUser_Updated eventHandler
-
         }
 
         public override void AttachGesture()
@@ -67,8 +70,14 @@ namespace Kinect.Workshop.ViewModels
             //TODO: Workshop -> Step 10: Attach the Filter and Pipeline to the _kinectUser
 
             //TODO: Workshop -> Step 11: Subscribe to the filter and gesture events and Set the Messages Property
-            
-            //TODO: Workshop -> Step 12: When the event is processed (ocurred) set the PointerColor property each time to another color
+
+            //TODO: Workshop -> Step 12: When the event has occured set the PointerColor property each time to another color
+        }
+
+        private Color GetNewColor()
+        {
+            _colorIndex = ++_colorIndex % _pointerColors.Length;
+            return _pointerColors[_colorIndex];
         }
     }
 }
