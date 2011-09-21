@@ -46,10 +46,10 @@ namespace Kinect.Workshop.Gestures
         /// </summary>
         private void OnGestureDetected()
         {
-            var fire = GestureDetected;
-            if (fire != null)
+            var handler = GestureDetected;
+            if (handler != null)
             {
-                fire.Invoke(this, new EventArgs());
+                handler(this,new EventArgs());
             }
         }
     }
