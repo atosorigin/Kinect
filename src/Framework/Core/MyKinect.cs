@@ -15,38 +15,6 @@ using System.Threading;
 namespace Kinect.Core
 {
     /// <summary>
-    /// Kinect states
-    /// </summary>
-    [Flags]
-    public enum KinectState
-    {
-        /// <summary>
-        /// Kinect context is open
-        /// </summary>
-        ContextOpen,
-
-        /// <summary>
-        /// Kinect is initializing
-        /// </summary>
-        Initializing,
-
-        /// <summary>
-        /// Kinect has failed
-        /// </summary>
-        Failed,
-
-        /// <summary>
-        /// Kinect is stopped
-        /// </summary>
-        Stopped,
-
-        /// <summary>
-        /// Kinect is running
-        /// </summary>
-        Running
-    }
-
-    /// <summary>
     /// Get all data from Kinect and control Kinect.
     /// </summary>
     public sealed class MyKinect : INotifyPropertyChanged
@@ -83,11 +51,9 @@ namespace Kinect.Core
             get { return _kinectstate; }
             private set
             {
-                if (_kinectstate != value)
-                {
-                    _kinectstate = value;
-                    OnPropertyChanged("KinectState");
-                }
+                if (_kinectstate == value) return;
+                _kinectstate = value;
+                OnPropertyChanged("KinectState");
             }
         }
 
@@ -102,7 +68,7 @@ namespace Kinect.Core
             get { return _activeUsers.AsReadOnly(); }
         }
 
-        public int FPS
+        public int Fps
         {
             get { return _camera.Fps; }
         }
@@ -165,7 +131,7 @@ namespace Kinect.Core
                                             RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
                         _context.SkeletonEngine.TransformSmooth = true;
                         _camera.Context = _context;
-                        _camera.PropertyChanged += _camera_PropertyChanged;
+                        _camera.PropertyChanged += CameraPropertyChanged;
                         _camera.Running = true;
 
                         KinectState = KinectState.ContextOpen;
@@ -207,7 +173,7 @@ namespace Kinect.Core
 
                     _camera.Initialize();
 
-                    _context.SkeletonFrameReady += context_SkeletonFrameReady;
+                    _context.SkeletonFrameReady += ContextSkeletonFrameReady;
                     _context.SkeletonEngine.IsEnabled = true;
 
                     _activeUsers = new List<User>();
@@ -245,7 +211,7 @@ namespace Kinect.Core
             }
         }
 
-        private void context_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        private void ContextSkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             lock (SyncRoot)
             {
@@ -263,25 +229,25 @@ namespace Kinect.Core
                         }
 
                         //Update user
-                        user.Head = getDisplayPosition(skeleton.Joints[JointID.Head]);
-                        user.Neck = getDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
-                        user.Torso = getDisplayPosition(skeleton.Joints[JointID.Spine]);
-                        user.Waist = getDisplayPosition(skeleton.Joints[JointID.HipCenter]);
+                        user.Head = GetDisplayPosition(skeleton.Joints[JointID.Head]);
+                        user.Neck = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
+                        user.Torso = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
+                        user.Waist = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
 
-                        user.LeftAnkle = getDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
-                        user.LeftElbow = getDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
-                        user.LeftFoot = getDisplayPosition(skeleton.Joints[JointID.FootLeft]);
-                        user.LeftHand = getDisplayPosition(skeleton.Joints[JointID.HandLeft]);
-                        user.LeftHip = getDisplayPosition(skeleton.Joints[JointID.HipLeft]);
-                        user.LeftKnee = getDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
-                        user.LeftShoulder = getDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
-                        user.RightAnkle = getDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
-                        user.RightElbow = getDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
-                        user.RightFoot = getDisplayPosition(skeleton.Joints[JointID.FootRight]);
-                        user.RightHand = getDisplayPosition(skeleton.Joints[JointID.HandRight]);
-                        user.RightHip = getDisplayPosition(skeleton.Joints[JointID.HipRight]);
-                        user.RightKnee = getDisplayPosition(skeleton.Joints[JointID.KneeRight]);
-                        user.RightShoulder = getDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
+                        user.LeftAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
+                        user.LeftElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
+                        user.LeftFoot = GetDisplayPosition(skeleton.Joints[JointID.FootLeft]);
+                        user.LeftHand = GetDisplayPosition(skeleton.Joints[JointID.HandLeft]);
+                        user.LeftHip = GetDisplayPosition(skeleton.Joints[JointID.HipLeft]);
+                        user.LeftKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
+                        user.LeftShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
+                        user.RightAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
+                        user.RightElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
+                        user.RightFoot = GetDisplayPosition(skeleton.Joints[JointID.FootRight]);
+                        user.RightHand = GetDisplayPosition(skeleton.Joints[JointID.HandRight]);
+                        user.RightHip = GetDisplayPosition(skeleton.Joints[JointID.HipRight]);
+                        user.RightKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeRight]);
+                        user.RightShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
                         user.Update();
                     }
                     else if (user != null && skeleton.TrackingState == SkeletonTrackingState.NotTracked)
@@ -294,7 +260,7 @@ namespace Kinect.Core
             }
         }
 
-        private Point3D getDisplayPosition(Joint joint)
+        private Point3D GetDisplayPosition(Joint joint)
         {
             //TODO: Implementeer logica voor de trackingstate. Zodat we ook weten of hij ook echt alles ziet
             //if (joint.TrackingState != JointTrackingState.Tracked)
@@ -309,61 +275,49 @@ namespace Kinect.Core
             depthX = Math.Max(0, Math.Min(depthX * 320, 320)); //convert to 640, 480 space
             depthY = Math.Max(0, Math.Min(depthY * 240, 240)); //convert to 640, 480 space
             //Make it milimeters
-            return new Point3D(depthX, depthY, depthZ / 10);
+            return new Point3D(depthX, depthY, depthZ);
         }
 
         private void OnCameraMessage(string message)
         {
-            EventHandler<KinectMessageEventArgs> handler = CameraMessage;
-            if (handler != null)
-            {
-                handler(this, new KinectMessageEventArgs {Message = message});
-            }
+            var handler = CameraMessage;
+            if (handler == null) return;
+            handler(this, new KinectMessageEventArgs {Message = message});
         }
 
         private void OnKinectStarted()
         {
-            EventHandler<KinectEventArgs> handler = KinectStarted;
-            if (handler != null)
-            {
-                handler(this, new KinectEventArgs());
-            }
+            var handler = KinectStarted;
+            if (handler == null) return;
+            handler(this, new KinectEventArgs());
         }
 
         private void OnKinectStopped()
         {
-            EventHandler<KinectEventArgs> handler = KinectStopped;
-            if (handler != null)
-            {
-                handler(this, new KinectEventArgs());
-            }
+            var handler = KinectStopped;
+            if (handler == null) return;
+            handler(this, new KinectEventArgs());
         }
 
         private void OnUserCreated(IUserChangedEvent userEvent)
         {
-            EventHandler<KinectUserEventArgs> handler = UserCreated;
-            if (handler != null)
-            {
-                handler(this, new KinectUserEventArgs(userEvent));
-            }
+            var handler = UserCreated;
+            if (handler == null) return;
+            handler(this, new KinectUserEventArgs(userEvent));
         }
 
         private void OnUserRemoved(IUserChangedEvent userEvent)
         {
-            EventHandler<KinectUserEventArgs> handler = UserRemoved;
-            if (handler != null)
-            {
-                handler(this, new KinectUserEventArgs(userEvent));
-            }
+            var handler = UserRemoved;
+            if (handler == null) return;
+            handler(this, new KinectUserEventArgs(userEvent));
         }
 
         private void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            var handler = PropertyChanged;
+            if (handler == null) return;
+            handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void StopKinect()
@@ -393,16 +347,16 @@ namespace Kinect.Core
             return null;
         }
 
-        public void MotorUp(int angle)
+        public void MotorUp(int velocity)
         {
             try
             {
-                int newAngle = _context.NuiCamera.ElevationAngle + angle;
-                if (newAngle > Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum)
+                int angle = _context.NuiCamera.ElevationAngle + velocity;
+                if (angle > Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum)
                 {
-                    newAngle = Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum;
+                    angle = Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum;
                 }
-                _context.NuiCamera.ElevationAngle = newAngle;
+                _context.NuiCamera.ElevationAngle = angle;
             }
             catch (InvalidOperationException ex)
             {
@@ -410,16 +364,16 @@ namespace Kinect.Core
             }
         }
 
-        public void MotorDown(int angle)
+        public void MotorDown(int velocity)
         {
             try
             {
-                int newAngle = _context.NuiCamera.ElevationAngle - angle;
-                if (newAngle < Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum)
+                var angle = _context.NuiCamera.ElevationAngle - velocity;
+                if (angle < Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum)
                 {
-                    newAngle = Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum;
+                    angle = Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum;
                 }
-                _context.NuiCamera.ElevationAngle = angle;
+                _context.NuiCamera.ElevationAngle = velocity;
             }
             catch (InvalidOperationException ex)
             {
@@ -427,11 +381,11 @@ namespace Kinect.Core
             }
         }
 
-        private void _camera_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "FPS")
+            if (e.PropertyName == "Fps")
             {
-                OnPropertyChanged("FPS");
+                OnPropertyChanged("Fps");
             }
         }
     }
