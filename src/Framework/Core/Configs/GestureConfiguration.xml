@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Gestures>
-  <Semaphores AngleMargin="21" HistoryCount="6" Active="True">
+  <Semaphores AngleMargin="30" HistoryCount="6" Active="True">
     <!-- 90 degrees is UP; 0 is left; 180 is right; 270 is down -->
     <!--Round one Left angle = Right Hand from persons view / Right angle = Left Hand from persons view-->
     <Semaphore Char="A" LeftAngle="315" RightAngle="270" />
@@ -101,7 +101,7 @@
     <Filters>
       <FramesFilter FPS="6" Sequence="0" />
       <CorrectionFilter SkeletonJoint="HandLeft" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+      <CollisionFilter MarginX="30" MarginY="30" MarginZ="400" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
 </Gestures>

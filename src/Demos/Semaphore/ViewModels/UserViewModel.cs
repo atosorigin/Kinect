@@ -450,7 +450,8 @@ namespace Kinect.Semaphore.ViewModels
                                                             object newValue = propValue;
                                                             if (pi.PropertyType == typeof (Point3D))
                                                             {
-                                                                newValue = ((Point3D) propValue);
+                                                                //var correct = ((Point3D)propValue).ToScreenPosition(new Size(640,480),new Size(960,540));
+                                                                newValue = ((Point3D) new Point3D(((Point3D)propValue).X + 300 ,((Point3D)propValue).Y,0));
                                                             }
                                                             prop.SetValue(this, newValue, null);
                                                         }
