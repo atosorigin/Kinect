@@ -24,7 +24,7 @@ namespace Kinect.Semaphore.ViewModels
     {
         private readonly DispatcherTimer _dispatchtimer;
         private const double UpdateMargin = 0.5;
-        private const double PropertionModifier = 1.5;
+        private const double PropertionModifier = 1.2;
         private readonly User _user;
         private DateTime _startDateTime;
         private Brush _brush;
