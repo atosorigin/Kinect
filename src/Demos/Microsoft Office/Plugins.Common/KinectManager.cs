@@ -120,7 +120,7 @@ namespace Kinect.Plugins.Common
             EventHandler<SinglePointEventArgs> handler = LaserUpdated;
             if (handler != null)
             {
-                handler.Invoke(this, new SinglePointEventArgs(userid, point));
+                handler(this, new SinglePointEventArgs(userid, point));
             }
         }
 
