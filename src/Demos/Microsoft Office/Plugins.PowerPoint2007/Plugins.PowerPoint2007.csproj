@@ -33,6 +33,7 @@
     <OldToolsVersion>4.0</OldToolsVersion>
     <VSTO_TrustAssembliesLocation>true</VSTO_TrustAssembliesLocation>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>False</IsWebBootstrapper>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
@@ -42,7 +43,6 @@
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>days</UpdateIntervalUnits>
-    <IsWebBootstrapper>False</IsWebBootstrapper>
     <ProductName>Kinect.Plugins.PowerPoint2007</ProductName>
     <PublisherName />
     <SupportUrl />
@@ -154,7 +154,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Kinect.Plugins.PowerPoint2007_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Plugins.PowerPoint2007_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>5421BB5217D7088B1ECB744B8CA655A216A76D87</ManifestCertificateThumbprint>

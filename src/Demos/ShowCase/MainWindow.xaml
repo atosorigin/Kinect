@@ -6,10 +6,10 @@
 			<RowDefinition Height="100" />
 		</Grid.RowDefinitions>
 		<Grid.Background>
-			<ImageBrush ImageSource="/Images/bg1.jpg" Stretch="UniformToFill" TileMode="None" />
+			<ImageBrush ImageSource="/Images/bg2.jpg" Stretch="UniformToFill" TileMode="None" />
 		</Grid.Background>
-		<Label x:Name="lblNaam" Visibility="Hidden" Content="Chris Dekkers en Mischa van Oijen" FontSize="30" FontWeight="Bold" Foreground="#FFFFFF" ClipToBounds="False" HorizontalAlignment="Center" Margin="51,0" Grid.RowSpan="3"></Label>
-		<TextBlock x:Name="lblWorkshop" Visibility="Hidden" Text="Onbetreden paden: laat de energie voor je werken 2.0" HorizontalAlignment="Center" FontSize="30" FontWeight="Bold" Foreground="#FFFFFF" Margin="51,0" Grid.Row="2"></TextBlock>
+		<Label x:Name="lblNaam" Visibility="Hidden" Content="" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" ClipToBounds="False" HorizontalAlignment="Center" Margin="51,20,51,0" Grid.RowSpan="3"></Label>
+        <TextBlock x:Name="lblWorkshop" Visibility="Hidden" Text="" HorizontalAlignment="Center" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" Margin="51,0" Grid.Row="2"></TextBlock>
 		<Canvas x:Name="canvas" Grid.RowSpan="3" ClipToBounds="False">
 
 

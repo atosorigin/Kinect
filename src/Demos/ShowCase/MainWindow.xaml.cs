@@ -25,14 +25,14 @@ namespace Kinect.ShowCase
         private readonly List<Point> _ballPoints = new List<Point>
                                                       {
                                                           new Point(15, -10),
-                                                          new Point(15, -5),
-                                                          new Point(15, -0),
-                                                          new Point(15, 5),
+                                                          //new Point(15, -5),
+                                                          //new Point(15, -0),
+                                                          //new Point(15, 5),
                                                           new Point(15, 10),
-                                                          new Point(-15, -8),
-                                                          new Point(-15, -2.5),
-                                                          new Point(-15, 2.5),
-                                                          new Point(-15, 8)
+                                                          new Point(-15, -10),
+                                                          //new Point(-15, -2.5),
+                                                          //new Point(-15, 2.5),
+                                                          new Point(-15, 10)
                                                       };
 
         private readonly List<GradientBall> _balls = new List<GradientBall>();
@@ -40,30 +40,20 @@ namespace Kinect.ShowCase
 
         private readonly List<string> _names = new List<string>
                                                   {
-                                                      "Chris Dekkers en Mischa van Oijen",
-                                                      "Dirk Jan Aalbers",
-                                                      "Remco Seesink",
-                                                      "Ronald Katoen, Gerben Jacobs,\r\nSofia Skoblikov en Tamar van der Riet",
-                                                      "Harold Janssen",
-                                                      "Hester Heringa",
-                                                      "Elly Borsboom",
-                                                      "Christiaan Zandt",
-                                                      "Tjeerd Hans Terpstra en Jan Willem Groenenberg"
+                                                      "Trend voor Technology Services",
+                                                      "Trend voor Technology Services",
+                                                      "Trend voor Technology Services",
+                                                      "Trend voor Technology Services"
                                                   };
 
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
 
         private readonly List<string> _workshops = new List<string>
                                                       {
-                                                          "Any time any place any device",
-                                                          "Creatief vergaderen en brainstormen",
-                                                          "Getting Things Done",
-                                                          "Het Nieuwe Werken volgens Generatie Y",
-                                                          "HNW = Het Normale Werken",
-                                                          "Lijfelijk organiseren",
-                                                          "Onbetreden paden:\r\nlaat de energie voor je werken 2.0",
-                                                          "SAMENwerken 2.0 - Geweldloze communicatie",
-                                                          "Yammer, wat moet ik ermee?"
+                                                          "Business Agility",
+                                                          "Big Data",
+                                                          "Cloud",
+                                                          "Mobile apps",
                                                       };
 
         private MyKinect _kinect;
@@ -78,8 +68,12 @@ namespace Kinect.ShowCase
         private const double Sensitivity = 1.5;
         private Point _viewPortSize = new Point(36, 26);
 
+        private readonly ChangeResolution _changeResolution;
+
         public MainWindow()
         {
+            _changeResolution = new ChangeResolution();
+            _changeResolution.ChangeScreenResolution(1024,768);
             InitializeComponent();
             InitBalls();
             InitAnimations();
@@ -98,6 +92,7 @@ namespace Kinect.ShowCase
             {
                 _kinect.StopKinect();
             }
+            _changeResolution.ChangeScreenResolutionBackToOriginal();
         }
 
         private void InitBalls()
@@ -111,7 +106,7 @@ namespace Kinect.ShowCase
 
         private GradientBall InitGradientBall(string imageSrc, double offsetx, double offsety)
         {
-            var p3D = new Point3D(offsetx, offsety, -10);
+            var p3D = new Point3D(offsetx, offsety, -8);
             var ball = new GradientBall {ImageSource = imageSrc, Offset = p3D};
 
             visualModel.Children.Add(ball);
@@ -122,7 +117,7 @@ namespace Kinect.ShowCase
         {
             foreach (GradientBall ball in _balls)
             {
-                var animation = new DoubleAnimation(0, 360, new Duration(new TimeSpan(0, 0, 3)))
+                var animation = new DoubleAnimation(0, 360, new Duration(new TimeSpan(0, 0, 5)))
                                     {By = 0.5, RepeatBehavior = RepeatBehavior.Forever};
 
                 var vect = new Vector3D(0, 1, 0);
@@ -206,7 +201,8 @@ namespace Kinect.ShowCase
                         if (_movingBall != null)
                         {
                             var tt3D = new TranslateTransform3D(_mouse3DPosition.X, _mouse3DPosition.Y, -10);
-                            _movingBall.Transform = tt3D;
+                            if(_movingBall != null)
+                                _movingBall.Transform = tt3D;
                         }
                     };
 
