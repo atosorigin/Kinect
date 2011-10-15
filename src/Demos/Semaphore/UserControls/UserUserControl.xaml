@@ -1,78 +1,31 @@
 ﻿<UserControl x:Class="Kinect.Semaphore.UserControls.UserUserControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" Height="175" Width="175">
 	<Canvas>
-		<Ellipse Height="75" x:Name="Torso" Stroke="#D7000000" Width="75" Fill="{Binding Brush}" Canvas.Left="{Binding Torso.X}" Canvas.Top="{Binding Torso.Y}" />
-		<TextBlock x:Name="UserId" Height="25" TextWrapping="Wrap" FontSize="21.333" Foreground="#D8FFFFFF" FontWeight="Bold" Width="50" TextAlignment="Center" Canvas.Left="{Binding Torso.X}" Canvas.Top="{Binding Torso.Y}" Margin="13,25,0,0" Text="{Binding ID}" VerticalAlignment="Center" />
-		<Image Source="{Binding Semaphore.Next.ImageSource, Mode=OneWay}" Margin="0,-9,0,0" Width="75" Height="75" Canvas.Left="{Binding Torso.X}" Canvas.Top="{Binding Torso.Y}" />
+		<Ellipse Height="75" x:Name="Spine" Stroke="#D7000000" Width="75" Fill="{Binding Brush}" Canvas.Left="{Binding Spine.X}" Canvas.Top="{Binding Spine.Y}" />
+        <TextBlock x:Name="UserId" Height="25" TextWrapping="Wrap" FontSize="21.333" Foreground="#D8FFFFFF" FontWeight="Bold" Width="50" TextAlignment="Center" Canvas.Left="{Binding Spine.X}" Canvas.Top="{Binding Spine.Y}" Margin="13,25,0,0" Text="{Binding Id}" VerticalAlignment="Center" />
+        <Image Source="{Binding Semaphore.Next.ImageSource, Mode=OneWay}" Margin="0,-9,0,0" Width="75" Height="75" Canvas.Left="{Binding Spine.X}" Canvas.Top="{Binding Spine.Y}" />
 		<Ellipse Height="50" x:Name="Head" Stroke="#D7000000" Width="50" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding Head.X}" Canvas.Top="{Binding Head.Y}" Margin="12.5,12.5,0,0" />
-		<Rectangle Height="25" x:Name="Neck" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding Neck.X}" Canvas.Top="{Binding Neck.Y}" Margin="25,25,0,0" />
-		<Ellipse Height="25" x:Name="RightShoulder" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding RightShoulder.X}" Canvas.Top="{Binding RightShoulder.Y}" Margin="25,25,0,0" />
-		<Ellipse Height="25" x:Name="LeftShoulder" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftShoulder.X}" Canvas.Top="{Binding LeftShoulder.Y}" Margin="25,25,0,0" />
-		<Ellipse Height="25" x:Name="LeftElbow" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftElbow.X}" Canvas.Top="{Binding LeftElbow.Y}" Margin="25,25,0,0" />
-		<Ellipse Height="25" x:Name="RightElbow" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding RightElbow.X}" Canvas.Top="{Binding RightElbow.Y}" Margin="25,25,0,0" />
-		<Rectangle Height="25" x:Name="LeftHand" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftHand.X}" Canvas.Top="{Binding LeftHand.Y}" Margin="25,25,0,0" />
-		<Rectangle Height="25" x:Name="RightHand" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding RightHand.X}" Canvas.Top="{Binding RightHand.Y}" Margin="25,25,0,0" />
-		<!--<Ellipse Height="10"
-                 x:Name="LeftFingertip"
-                 Stroke="#D7000000"
-                 VerticalAlignment="Top"
-                 Width="10"
-                 d:LayoutOverrides="Width"
-                 HorizontalAlignment="Left"
-                 Fill="{Binding Brush}"
-                 Canvas.Left="{Binding LeftFingertip.X}"
-                 Canvas.Top="{Binding LeftFingertip.Y}"
-                 Margin="5,5,0,0" />
-        <Ellipse Height="10"
-                 x:Name="RightFingertip"
-                 Stroke="#D7000000"
-                 VerticalAlignment="Top"
-                 Width="10"
-                 Fill="{Binding Brush}"
-                 Canvas.Left="{Binding RightFingertip.X}"
-                 Canvas.Top="{Binding RightFingertip.Y}"
-                 Margin="5,5,0,0" />-->
-		<Ellipse Height="25" x:Name="RightHip" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding RightHip.X}" Canvas.Top="{Binding RightHip.Y}" Margin="25,25,0,0" />
-		<Ellipse Height="25" x:Name="LeftHip" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftHip.X}" Canvas.Top="{Binding LeftHip.Y}" Margin="25,25,0,0" />
-		<Rectangle Height="30" x:Name="LeftKnee" Stroke="#D7000000" Width="20" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftKnee.X}" Canvas.Top="{Binding LeftKnee.Y}" Margin="27.5,22.5,0,0" />
-		<Rectangle Height="30" x:Name="RightKnee" Stroke="#D7000000" Width="20" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding RightKnee.X}" Canvas.Top="{Binding RightKnee.Y}" Margin="27.5,22.5,0,0" />
-		<!--<Ellipse Height="25"
-                 x:Name="LeftAnkle"
-                 Stroke="#D7000000"
-                 VerticalAlignment="Top"
-                 Width="25"
-                 HorizontalAlignment="Left"
-                 d:LayoutOverrides="Width"
-                 Fill="{Binding Brush}"
-                 Canvas.Left="{Binding LeftAnkle.X}"
-                 Canvas.Top="{Binding LeftAnkle.Y}"
-                 Margin="12.5,12.5,0,0" />
-        <Ellipse Height="25"
-                 x:Name="RightAnkle"
-                 Stroke="#D7000000"
-                 VerticalAlignment="Top"
-                 Width="25"
-                 HorizontalAlignment="Left"
-                 d:LayoutOverrides="Width"
-                 Fill="{Binding Brush}"
-                 Canvas.Left="{Binding RightAnkle.X}"
-                 Canvas.Top="{Binding RightAnkle.Y}"
-                 Margin="12.5,12.5,0,0" />-->
-		<Rectangle Height="25" x:Name="LeftFoot" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding LeftFoot.X}" Canvas.Top="{Binding LeftFoot.Y}" Margin="25,25,0,0" />
-		<Rectangle Height="25" x:Name="RightFoot" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding RightFoot.X}" Canvas.Top="{Binding RightFoot.Y}" Margin="25,25,0,0" />
-		<!--<Path x:Name="RightThigh"
-              Data="{Binding RightThigh, Mode=OneWay}"
-              Stretch="Fill"
-              Stroke="Black" />-->
-
+        <Rectangle Height="25" x:Name="ShoulderCenter" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding ShoulderCenter.X}" Canvas.Top="{Binding ShoulderCenter.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="ShoulderRight" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding ShoulderRight.X}" Canvas.Top="{Binding ShoulderRight.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="ShoulderLeft" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding ShoulderLeft.X}" Canvas.Top="{Binding ShoulderLeft.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="ElbowLeft" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding ElbowLeft.X}" Canvas.Top="{Binding ElbowLeft.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="ElbowRight" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding ElbowRight.X}" Canvas.Top="{Binding ElbowRight.Y}" Margin="25,25,0,0" />
+        <Rectangle Height="25" x:Name="HandLeft" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding HandLeft.X}" Canvas.Top="{Binding HandLeft.Y}" Margin="25,25,0,0" />
+        <Rectangle Height="25" x:Name="HandRight" Stroke="#D7000000" Width="25" Fill="{Binding Brush}" Canvas.Left="{Binding HandRight.X}" Canvas.Top="{Binding HandRight.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="HipRight" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding HipRight.X}" Canvas.Top="{Binding HipRight.Y}" Margin="25,25,0,0" />
+        <Ellipse Height="25" x:Name="HipLeft" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding HipLeft.X}" Canvas.Top="{Binding HipLeft.Y}" Margin="25,25,0,0" />
+        <Rectangle Height="30" x:Name="KneeLeft" Stroke="#D7000000" Width="20" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding KneeLeft.X}" Canvas.Top="{Binding KneeLeft.Y}" Margin="27.5,22.5,0,0" />
+        <Rectangle Height="30" x:Name="KneeRight" Stroke="#D7000000" Width="20" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding KneeRight.X}" Canvas.Top="{Binding KneeRight.Y}" Margin="27.5,22.5,0,0" />
+        <Rectangle Height="25" x:Name="FootLeft" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding FootLeft.X}" Canvas.Top="{Binding FootLeft.Y}" Margin="25,25,0,0" />
+        <Rectangle Height="25" x:Name="FootRight" Stroke="#D7000000" Width="25" d:LayoutOverrides="Width" Fill="{Binding Brush}" Canvas.Left="{Binding FootRight.X}" Canvas.Top="{Binding FootRight.Y}" Margin="25,25,0,0" />
 		<TextBlock x:Name="Winner" TextWrapping="Wrap" FontSize="50" Foreground="#FF000000" FontWeight="Bold" TextAlignment="Center" Canvas.Left="{Binding Torso.X}" Canvas.Top="{Binding Torso.Y}" Margin="-50,-5,0,0" Text="Winner" VerticalAlignment="Center" Visibility="{Binding Semaphore.Winner}" />
 		<TextBlock x:Name="CalibrationCounter" TextWrapping="Wrap" FontSize="50" Foreground="#FF000000" FontWeight="Bold" TextAlignment="Center" Canvas.Left="{Binding Torso.X}" Canvas.Top="{Binding Torso.Y}" Margin="-50,-5,0,0" Text="{Binding CalibrationText}" VerticalAlignment="Center" />
-		<Line x:Name="LeftUpperArm" StrokeThickness="5" X1="{Binding LeftShoulder.X}" X2="{Binding LeftElbow.X}" Y1="{Binding LeftShoulder.Y}" Y2="{Binding LeftElbow.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="RightUpperArm" StrokeThickness="5" X1="{Binding RightShoulder.X}" X2="{Binding RightElbow.X}" Y1="{Binding RightShoulder.Y}" Y2="{Binding RightElbow.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="LeftLowerArm" StrokeThickness="5" X1="{Binding LeftElbow.X}" X2="{Binding LeftHand.X}" Y1="{Binding LeftElbow.Y}" Y2="{Binding LeftHand.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="RightLowerArm" StrokeThickness="5" X1="{Binding RightElbow.X}" X2="{Binding RightHand.X}" Y1="{Binding RightElbow.Y}" Y2="{Binding RightHand.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="LeftUpperLeg" StrokeThickness="5" X1="{Binding LeftHip.X}" X2="{Binding LeftKnee.X}" Y1="{Binding LeftHip.Y}" Y2="{Binding LeftKnee.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="RightUpperLeg" StrokeThickness="5" X1="{Binding RightHip.X}" X2="{Binding RightKnee.X}" Y1="{Binding RightHip.Y}" Y2="{Binding RightKnee.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="LeftLowerLeg" StrokeThickness="5" X1="{Binding LeftKnee.X}" X2="{Binding LeftFoot.X}" Y1="{Binding LeftKnee.Y}" Y2="{Binding LeftFoot.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
-		<Line x:Name="RightLowerLeg" StrokeThickness="5" X1="{Binding RightKnee.X}" X2="{Binding RightFoot.X}" Y1="{Binding RightKnee.Y}" Y2="{Binding RightFoot.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="LeftUpperArm" StrokeThickness="5" X1="{Binding ShoulderLeft.X}" X2="{Binding ElbowLeft.X}" Y1="{Binding ShoulderLeft.Y}" Y2="{Binding ElbowLeft.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="RightUpperArm" StrokeThickness="5" X1="{Binding ShoulderRight.X}" X2="{Binding ElbowRight.X}" Y1="{Binding ShoulderRight.Y}" Y2="{Binding ElbowRight.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="LeftLowerArm" StrokeThickness="5" X1="{Binding ElbowLeft.X}" X2="{Binding HandLeft.X}" Y1="{Binding ElbowLeft.Y}" Y2="{Binding HandLeft.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="RightLowerArm" StrokeThickness="5" X1="{Binding ElbowRight.X}" X2="{Binding HandRight.X}" Y1="{Binding ElbowRight.Y}" Y2="{Binding HandRight.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="LeftUpperLeg" StrokeThickness="5" X1="{Binding HipLeft.X}" X2="{Binding KneeLeft.X}" Y1="{Binding HipLeft.Y}" Y2="{Binding KneeLeft.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="RightUpperLeg" StrokeThickness="5" X1="{Binding HipRight.X}" X2="{Binding KneeRight.X}" Y1="{Binding HipRight.Y}" Y2="{Binding KneeRight.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="LeftLowerLeg" StrokeThickness="5" X1="{Binding KneeLeft.X}" X2="{Binding FootLeft.X}" Y1="{Binding KneeLeft.Y}" Y2="{Binding FootLeft.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
+		<Line x:Name="RightLowerLeg" StrokeThickness="5" X1="{Binding KneeRight.X}" X2="{Binding FootRight.X}" Y1="{Binding KneeRight.Y}" Y2="{Binding FootRight.Y}" Stroke="{Binding Brush}" Margin="37,38,0,0" Opacity="0.745" />
 	</Canvas>
 </UserControl>

@@ -87,3 +87,4 @@ Thumbs.db
 
 # Folder config file
 Desktop.ini
+*.cs.orig
