@@ -268,7 +268,6 @@
     <None Include="app.config" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="Plugins.PowerPoint2010_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
