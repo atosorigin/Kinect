@@ -154,7 +154,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Kinect.Plugins.PowerPoint2007_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Plugins.PowerPoint2007_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>5421BB5217D7088B1ECB744B8CA655A216A76D87</ManifestCertificateThumbprint>
