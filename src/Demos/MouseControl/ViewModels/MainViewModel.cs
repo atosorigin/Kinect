@@ -272,7 +272,7 @@ namespace Kinect.MouseControl.ViewModels
             var screen = new Size(System.Windows.SystemParameters.PrimaryScreenWidth,
                                   System.Windows.SystemParameters.PrimaryScreenHeight);
 
-            var point = e.Event.RightHand.ToScreenPosition(new Size(320, 240), screen,new Point(50,50),new Size(160,120));
+            var point = e.Event.HandRight.ToScreenPosition(new Size(320, 240), screen,new Point(50,50),new Size(160,120));
             MouseSimulator.Position = new Point(point.X,point.Y);
         }
 

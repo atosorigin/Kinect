@@ -37,7 +37,7 @@ namespace Kinect.Core.Gestures
 
         public override void Process(IUserChangedEvent evt)
         {
-            AddPoints(evt.LeftHand, evt.LeftShoulder, evt.RightHand, evt.RightShoulder);
+            AddPoints(evt.HandLeft, evt.ShoulderLeft, evt.HandRight, evt.ShoulderRight);
             Semaphore detectedSemaphore = CheckForSemafoor();
 
             if (detectedSemaphore != null)

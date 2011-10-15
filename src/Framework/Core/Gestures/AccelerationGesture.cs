@@ -31,11 +31,11 @@ namespace Kinect.Core.Gestures
         {
             if (evt != null)
             {
-                double predictedarmlength = evt.RightShoulder.Y - evt.RightHip.Y -
-                                            ((evt.RightHip.Y - evt.RightKnee.Y)/2);
-                double maxposition = evt.RightShoulder.Y + predictedarmlength;
-                double minposition = evt.RightShoulder.Y - predictedarmlength;
-                double position = evt.RightHand.Y - evt.RightShoulder.Y;
+                double predictedarmlength = evt.ShoulderRight.Y - evt.HipRight.Y -
+                                            ((evt.HipRight.Y - evt.KneeRight.Y)/2);
+                double maxposition = evt.ShoulderRight.Y + predictedarmlength;
+                double minposition = evt.ShoulderRight.Y - predictedarmlength;
+                double position = evt.HandRight.Y - evt.ShoulderRight.Y;
                 double ratio = (maxposition - minposition)/2;
                 double normalPosition = position/ratio;
 

@@ -321,7 +321,7 @@ namespace Kinect.ShowCase
 
         private void _kinectUser_Updated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
-            Point3D screenpoint = e.Event.RightHand.ToScreenPosition(new Size(640, 480), screenResolution,
+            Point3D screenpoint = e.Event.HandRight.ToScreenPosition(new Size(640, 480), screenResolution,
                                                                      new Point(213, 160), new Size(213, 160));
             //var screenpoint = e.Event.RightHand.ToScreenPosition(new Size(640, 480), new Size(1650, 1050));
             var point = new Point(screenpoint.X, screenpoint.Y);

@@ -506,7 +506,7 @@ namespace Kinect.Semaphore.ViewModels
             else if (_calibrationCounter == 0)
             {
                 AddSelfTouchGesture(
-                    FilterHelper.CalculateCorrection(new List<Point3D> { _user.LeftHand, _user.RightShoulder }));
+                    FilterHelper.CalculateCorrection(new List<Point3D> { _user.HandLeft, _user.ShoulderRight }));
                 CalibrationText = "Saving";
             }
             else

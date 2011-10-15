@@ -27,22 +27,22 @@ namespace Kinect.Core
         {
             Id = evt.Id;
             Head = evt.Head;
-            Neck = evt.Neck;
+            ShoulderCenter = evt.ShoulderCenter;
             Spine = evt.Spine;
-            LeftElbow = evt.LeftElbow;
-            RightElbow = evt.RightElbow;
-            LeftShoulder = evt.LeftShoulder;
-            RightShoulder = evt.RightShoulder;
-            LeftHand = evt.LeftHand;
-            RightHand = evt.RightHand;
-            LeftHip = evt.LeftHip;
-            RightHip = evt.RightHip;
-            LeftKnee = evt.LeftKnee;
-            RightKnee = evt.RightKnee;
-            LeftAnkle = evt.LeftAnkle;
-            RightAnkle = evt.RightAnkle;
-            LeftFoot = evt.LeftFoot;
-            RightFoot = evt.RightFoot;
+            ElbowLeft = evt.ElbowLeft;
+            ElbowRight = evt.ElbowRight;
+            ShoulderLeft = evt.ShoulderLeft;
+            ShoulderRight = evt.ShoulderRight;
+            HandLeft = evt.HandLeft;
+            HandRight = evt.HandRight;
+            HipLeft = evt.HipLeft;
+            HipRight = evt.HipRight;
+            KneeLeft = evt.KneeLeft;
+            KneeRight = evt.KneeRight;
+            AnkleLeft = evt.AnkleLeft;
+            AnkleRight = evt.AnkleRight;
+            FootLeft = evt.FootLeft;
+            FootRight = evt.FootRight;
             HipCenter = evt.HipCenter;
         }
 
@@ -67,7 +67,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users neck
         /// </summary>
-        public Point3D Neck { get; internal set; }
+        public Point3D ShoulderCenter { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users torso
@@ -77,72 +77,82 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users left elbow
         /// </summary>
-        public Point3D LeftElbow { get; internal set; }
+        public Point3D ElbowLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right elbow
         /// </summary>
-        public Point3D RightElbow { get; internal set; }
+        public Point3D ElbowRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left shoulder
         /// </summary>
-        public Point3D LeftShoulder { get; internal set; }
+        public Point3D ShoulderLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right shoulder
         /// </summary>
-        public Point3D RightShoulder { get; internal set; }
+        public Point3D ShoulderRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left hand
         /// </summary>
-        public Point3D LeftHand { get; internal set; }
+        public Point3D HandLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right hand
         /// </summary>
-        public Point3D RightHand { get; internal set; }
+        public Point3D HandRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left hip
         /// </summary>
-        public Point3D LeftHip { get; internal set; }
+        public Point3D HipLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right hip
         /// </summary>
-        public Point3D RightHip { get; internal set; }
+        public Point3D HipRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left knee
         /// </summary>
-        public Point3D LeftKnee { get; internal set; }
+        public Point3D KneeLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right knee
         /// </summary>
-        public Point3D RightKnee { get; internal set; }
+        public Point3D KneeRight { get; internal set; }
+
+        /// <summary>
+        /// Gets the wrist left.
+        /// </summary>
+        public Point3D WristLeft { get; internal set; }
+
+        /// <summary>
+        /// Gets the wrist right.
+        /// </summary>
+        public Point3D WristRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left ankle
         /// </summary>
-        public Point3D LeftAnkle { get; internal set; }
+        public Point3D AnkleLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right ankle
         /// </summary>
-        public Point3D RightAnkle { get; internal set; }
+        public Point3D AnkleRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left foot
         /// </summary>
-        public Point3D LeftFoot { get; internal set; }
+        public Point3D FootLeft { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users right foot
         /// </summary>
-        public Point3D RightFoot { get; internal set; }
+        public Point3D FootRight { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users waist
