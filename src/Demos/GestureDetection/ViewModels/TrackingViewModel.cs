@@ -43,7 +43,7 @@ namespace Kinect.GestureDetection.ViewModels
 
         public int ID
         {
-            get { return _user.ID; }
+            get { return _user.Id; }
         }
 
         public string Direction

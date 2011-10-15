@@ -232,24 +232,26 @@ namespace Kinect.Core
 
                         //Update user
                         user.Head = GetDisplayPosition(skeleton.Joints[JointID.Head]);
-                        user.Neck = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
-                        user.Torso = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
-                        user.Waist = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
+                        user.ShoulderCenter = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
+                        user.Spine = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
+                        user.HipCenter = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
 
-                        user.LeftAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
-                        user.LeftElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
-                        user.LeftFoot = GetDisplayPosition(skeleton.Joints[JointID.FootLeft]);
-                        user.LeftHand = GetDisplayPosition(skeleton.Joints[JointID.HandLeft]);
-                        user.LeftHip = GetDisplayPosition(skeleton.Joints[JointID.HipLeft]);
-                        user.LeftKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
-                        user.LeftShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
-                        user.RightAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
-                        user.RightElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
-                        user.RightFoot = GetDisplayPosition(skeleton.Joints[JointID.FootRight]);
-                        user.RightHand = GetDisplayPosition(skeleton.Joints[JointID.HandRight]);
-                        user.RightHip = GetDisplayPosition(skeleton.Joints[JointID.HipRight]);
-                        user.RightKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeRight]);
-                        user.RightShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
+                        user.WristLeft = GetDisplayPosition(skeleton.Joints[JointID.WristLeft]);
+                        user.AnkleLeft = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
+                        user.ElbowLeft = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
+                        user.FootLeft = GetDisplayPosition(skeleton.Joints[JointID.FootLeft]);
+                        user.HandLeft = GetDisplayPosition(skeleton.Joints[JointID.HandLeft]);
+                        user.HipLeft = GetDisplayPosition(skeleton.Joints[JointID.HipLeft]);
+                        user.KneeLeft = GetDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
+                        user.ShoulderLeft = GetDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
+                        user.WristRight = GetDisplayPosition(skeleton.Joints[JointID.WristRight]);
+                        user.AnkleRight = GetDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
+                        user.ElbowRight = GetDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
+                        user.FootRight = GetDisplayPosition(skeleton.Joints[JointID.FootRight]);
+                        user.HandRight = GetDisplayPosition(skeleton.Joints[JointID.HandRight]);
+                        user.HipRight = GetDisplayPosition(skeleton.Joints[JointID.HipRight]);
+                        user.KneeRight = GetDisplayPosition(skeleton.Joints[JointID.KneeRight]);
+                        user.ShoulderRight = GetDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
                         user.Update();
                     }
                     else if (user != null && skeleton.TrackingState == SkeletonTrackingState.NotTracked)
@@ -334,7 +336,7 @@ namespace Kinect.Core
 
         public User GetUser(int userId)
         {
-            return _activeUsers.FirstOrDefault(u => u.ID == userId);
+            return _activeUsers.FirstOrDefault(u => u.Id == userId);
         }
 
         public BitmapSource GetCameraView(CameraView view)

@@ -104,7 +104,7 @@ namespace Kinect.Plugins.Common
         {
             if (user != null)
             {
-                _log.DebugFormat("Start calibration for user {0}", user.ID);
+                _log.DebugFormat("Start calibration for user {0}", user.Id);
                 _calibration = 0;
                 _calibratingUser = user;
                 OnUserCalibrating();
@@ -248,15 +248,15 @@ namespace Kinect.Plugins.Common
             if (_kinectUsers != null)
             {
                 User user =
-                    (from kinectuser in _kinectUsers where kinectuser.ID == e.User.ID select kinectuser).FirstOrDefault();
+                    (from kinectuser in _kinectUsers where kinectuser.Id == e.User.Id select kinectuser).FirstOrDefault();
                 if (user != null)
                 {
                     _kinectUsers.Remove(user);
-                    _log.DebugFormat("User {0} removed from the list of active Powerpoint users", user.ID);
+                    _log.DebugFormat("User {0} removed from the list of active Powerpoint users", user.Id);
                 }
                 //_kinectUser = null;
             }
-            OnUserLost(e.User.ID);
+            OnUserLost(e.User.Id);
         }
 
         private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
@@ -264,15 +264,15 @@ namespace Kinect.Plugins.Common
             if (_kinectUsers.Count > 0 && !_userCalibrated)
             {
                 //De gebruiker is al aan het initialiseren
-                _log.DebugFormat("User {0} ignored, because another user is calibrating", e.User.ID);
+                _log.DebugFormat("User {0} ignored, because another user is calibrating", e.User.Id);
                 return;
             }
 
-            User user = _kinect.GetUser(e.User.ID);
+            User user = _kinect.GetUser(e.User.Id);
             user.Updated += _kinectUser_Updated;
             _kinectUsers.Add(user);
-            _log.DebugFormat("User {0} added to the list of active Powerpoint users", user.ID);
-            OnUserFound(e.User.ID);
+            _log.DebugFormat("User {0} added to the list of active Powerpoint users", user.Id);
+            OnUserFound(e.User.Id);
 
             if (_userCalibrated)
             {
@@ -303,7 +303,7 @@ namespace Kinect.Plugins.Common
                                      OnNextSlide(evt.UserID);
                                  }
                              });
-                    _log.DebugFormat("Added NextSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                    _log.DebugFormat("Added NextSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.Id,
                                      ConfigurationViewModel.NextSlideCorrection.GetDebugString(),
                                      ConfigurationViewModel.NextSlide1, ConfigurationViewModel.NextSlide2);
                 }
@@ -322,7 +322,7 @@ namespace Kinect.Plugins.Common
                                      OnPreviousSlide(evt.UserID);
                                  }
                              });
-                    _log.DebugFormat("Added PreviousSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                    _log.DebugFormat("Added PreviousSlideEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.Id,
                                      ConfigurationViewModel.PreviousSlideCorrection.GetDebugString(),
                                      ConfigurationViewModel.PreviousSlide1, ConfigurationViewModel.PreviousSlide2);
                 }
@@ -341,7 +341,7 @@ namespace Kinect.Plugins.Common
                                      OnTogglePointer(evt.UserID);
                                  }
                              });
-                    _log.DebugFormat("Added TogglePointerEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.ID,
+                    _log.DebugFormat("Added TogglePointerEvent\tUser:{0}\tCorrection:{1}\t({2} on {3})", user.Id,
                                      ConfigurationViewModel.TogglePointerCorrection.GetDebugString(),
                                      ConfigurationViewModel.TogglePointer1, ConfigurationViewModel.TogglePointer2);
                 }
@@ -473,7 +473,7 @@ namespace Kinect.Plugins.Common
 
             if (ConfigurationViewModel.EnableTogglePointer)
             {
-                OnLaserUpdated(e.Event.ID, e.Event.GetPoint(ConfigurationViewModel.MovePointer));
+                OnLaserUpdated(e.Event.Id, e.Event.GetPoint(ConfigurationViewModel.MovePointer));
             }
         }
 

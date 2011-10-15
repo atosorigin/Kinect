@@ -42,7 +42,7 @@ namespace Kinect.Workshop.ViewModels
 
         private void KinectUserCreated(object sender, KinectUserEventArgs e)
         {
-            UpdateUserInterface(() => Messages.Add(string.Format("User {0} is created", e.User.ID)));
+            UpdateUserInterface(() => Messages.Add(string.Format("User {0} is created", e.User.Id)));
             //TODO: Workshop -> Step 5: instantiate the field _kinectUser, use the eventArgs and Kinect
 
             SubscribeToUserUpdatedEvent();

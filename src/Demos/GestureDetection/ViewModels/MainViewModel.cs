@@ -85,7 +85,7 @@ namespace Kinect.GestureDetection.ViewModels
                                                       {
                                                           lock (_syncRoot)
                                                           {
-                                                              User kuser = _kinect.GetUser(e.User.ID);
+                                                              User kuser = _kinect.GetUser(e.User.Id);
                                                               if (kuser != null)
                                                               {
                                                                   Users.Add(new TrackingViewModel(kuser));

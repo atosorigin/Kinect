@@ -238,7 +238,7 @@ namespace Kinect.Semaphore.ViewModels
                                                               {
                                                                   UserViewModel user =
                                                                       Users.SingleOrDefault(
-                                                                          ku => ku != null && ku.ID == e.User.ID);
+                                                                          ku => ku != null && ku.Id == e.User.Id);
                                                                   if (user != null)
                                                                   {
                                                                       Users.Remove(user);
@@ -258,7 +258,7 @@ namespace Kinect.Semaphore.ViewModels
                                                       {
                                                           lock (SyncRoot)
                                                           {
-                                                              User kuser = _kinect.GetUser(e.User.ID);
+                                                              User kuser = _kinect.GetUser(e.User.Id);
                                                               if (kuser != null)
                                                               {
                                                                   UserViewModel user = CreateUser(kuser);
@@ -443,7 +443,7 @@ namespace Kinect.Semaphore.ViewModels
             float g = 1f/255*user.Color.G;
             float b = 1f/255*user.Color.B;
 
-            Point3D point = GetPoint3DCoordinates(user.ID, user.Torso.X, user.Torso.Y, user.Torso.Z);
+            Point3D point = GetPoint3DCoordinates(user.Id, user.Spine.X, user.Spine.Y, user.Spine.Z);
 
             return new UserViewModel(user)
                        {
@@ -451,7 +451,7 @@ namespace Kinect.Semaphore.ViewModels
                            Brush =
                                new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b),
                                                        Color.FromScRgb(0.85f, r/2, g/2, b/2)),
-                           Torso = point
+                           Spine = point
                        };
         }
 
@@ -470,20 +470,20 @@ namespace Kinect.Semaphore.ViewModels
                                new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b),
                                                        Color.FromScRgb(0.85f, r/2, g/2, b/2)),
                            Head = new Point3D(point.X, point.Y - 100, point.Z),
-                           Neck = new Point3D(point.X, point.Y - 60, point.Z),
-                           LeftShoulder = new Point3D(point.X - 35, point.Y - 60, point.Z),
-                           RightShoulder = new Point3D(point.X + 35, point.Y - 60, point.Z),
-                           LeftElbow = new Point3D(point.X - 55, point.Y, point.Z),
-                           RightElbow = new Point3D(point.X + 55, point.Y, point.Z),
-                           LeftHand = new Point3D(point.X - 50, point.Y + 65, point.Z),
-                           RightHand = new Point3D(point.X + 50, point.Y + 65, point.Z),
-                           Torso = point,
-                           LeftHip = new Point3D(point.X - 30, point.Y + 50, point.Z),
-                           RightHip = new Point3D(point.X + 30, point.Y + 50, point.Z),
-                           LeftKnee = new Point3D(point.X - 35, point.Y + 130, point.Z),
-                           RightKnee = new Point3D(point.X + 35, point.Y + 130, point.Z),
-                           LeftFoot = new Point3D(point.X - 40, point.Y + 210, point.Z),
-                           RightFoot = new Point3D(point.X + 40, point.Y + 210, point.Z),
+                           ShoulderCenter = new Point3D(point.X, point.Y - 60, point.Z),
+                           ShoulderLeft = new Point3D(point.X - 35, point.Y - 60, point.Z),
+                           ShoulderRight = new Point3D(point.X + 35, point.Y - 60, point.Z),
+                           ElbowLeft = new Point3D(point.X - 55, point.Y, point.Z),
+                           ElbowRight = new Point3D(point.X + 55, point.Y, point.Z),
+                           HandLeft = new Point3D(point.X - 50, point.Y + 65, point.Z),
+                           HandRight = new Point3D(point.X + 50, point.Y + 65, point.Z),
+                           Spine = point,
+                           HipLeft = new Point3D(point.X - 30, point.Y + 50, point.Z),
+                           HipRight = new Point3D(point.X + 30, point.Y + 50, point.Z),
+                           KneeLeft = new Point3D(point.X - 35, point.Y + 130, point.Z),
+                           KneeRight = new Point3D(point.X + 35, point.Y + 130, point.Z),
+                           FootLeft = new Point3D(point.X - 40, point.Y + 210, point.Z),
+                           FootRight = new Point3D(point.X + 40, point.Y + 210, point.Z),
                        };
         }
 

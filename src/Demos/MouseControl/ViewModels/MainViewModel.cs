@@ -187,7 +187,7 @@ namespace Kinect.MouseControl.ViewModels
         {
             lock (_syncRoot)
             {
-                if (_activeUser != null && _activeUser.ID == e.User.ID)
+                if (_activeUser != null && _activeUser.Id == e.User.Id)
                 {
                     _controlMouse = false;
                     _activeUser = null;
@@ -204,7 +204,7 @@ namespace Kinect.MouseControl.ViewModels
                 {
                     return;
                 }
-                _activeUser = _kinect.GetUser(e.User.ID);
+                _activeUser = _kinect.GetUser(e.User.Id);
                 _activeUser.Updated += _activeUser_Updated;
                 _activeUser.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandRight, JointID.Head).SelfTouchDetected += gesture_SelfTouchDetected;
                 
@@ -272,7 +272,7 @@ namespace Kinect.MouseControl.ViewModels
             var screen = new Size(System.Windows.SystemParameters.PrimaryScreenWidth,
                                   System.Windows.SystemParameters.PrimaryScreenHeight);
 
-            var point = e.Event.RightHand.ToScreenPosition(new Size(320, 240), screen,new Point(50,50),new Size(160,120));
+            var point = e.Event.HandRight.ToScreenPosition(new Size(320, 240), screen,new Point(50,50),new Size(160,120));
             MouseSimulator.Position = new Point(point.X,point.Y);
         }
 

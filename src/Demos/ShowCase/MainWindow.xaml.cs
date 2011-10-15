@@ -287,7 +287,7 @@ namespace Kinect.ShowCase
 
         private void KinectUserCreated(object sender, KinectUserEventArgs e)
         {
-            User user = _kinect.GetUser(e.User.ID);
+            User user = _kinect.GetUser(e.User.Id);
             user.Updated += KinectUserUpdated;
             SelfTouchGesture gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft,
                                                                 JointID.HandRight);
@@ -322,7 +322,7 @@ namespace Kinect.ShowCase
 
         private void KinectUserUpdated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
-            var screenpoint = e.Event.RightHand.ToScreenPosition(new Size(640, 480), _screenResolution);
+            var screenpoint = e.Event.HandRight.ToScreenPosition(new Size(640, 480), _screenResolution);
             var point = new Point(screenpoint.X, screenpoint.Y);
             Move(point);
         }
