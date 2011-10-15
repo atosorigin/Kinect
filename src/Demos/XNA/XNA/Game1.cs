@@ -56,7 +56,7 @@ namespace Kinect.XNA
 
         private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
-            Core.User kinect_user = _kinect.GetUser(e.User.ID);
+            Core.User kinect_user = _kinect.GetUser(e.User.Id);
             var xnaUser = new User.User(kinect_user, Content,
                                         new Size(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
             _users.Add(xnaUser);

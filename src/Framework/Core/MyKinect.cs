@@ -231,8 +231,8 @@ namespace Kinect.Core
                         //Update user
                         user.Head = GetDisplayPosition(skeleton.Joints[JointID.Head]);
                         user.Neck = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
-                        user.Torso = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
-                        user.Waist = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
+                        user.Spine = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
+                        user.HipCenter = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
 
                         user.LeftAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
                         user.LeftElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
@@ -338,7 +338,7 @@ namespace Kinect.Core
 
         public User GetUser(int userId)
         {
-            return _activeUsers.FirstOrDefault(u => u.ID == userId);
+            return _activeUsers.FirstOrDefault(u => u.Id == userId);
         }
 
         public BitmapSource GetCameraView(CameraView view)

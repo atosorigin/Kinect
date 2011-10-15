@@ -22,7 +22,6 @@ namespace Kinect.Semaphore.ViewModels
 {
     public class UserViewModel : ViewModelBase
     {
-        private static object _syncRoot = new object();
         private readonly DispatcherTimer _dispatchtimer;
         private const double UpdateMargin = 0.5;
         private const double PropertionModifier = 1.5;
@@ -57,7 +56,7 @@ namespace Kinect.Semaphore.ViewModels
         private Point3D _torso;
         private Point3D _waist;
 
-        public Visibility _win = Visibility.Hidden;
+        private Visibility _win = Visibility.Hidden;
 
         public UserViewModel(int id)
             : this(new User(id))
@@ -72,9 +71,9 @@ namespace Kinect.Semaphore.ViewModels
             _dispatchtimer.Tick += _dispatchtimer_Tick;
         }
 
-        public int ID
+        public int Id
         {
-            get { return _user.ID; }
+            get { return _user.Id; }
         }
 
         public Visibility Win
@@ -461,12 +460,12 @@ namespace Kinect.Semaphore.ViewModels
         internal void AddSemaphoreTracking()
         {
             Semaphore = new SemaphoreViewModel();
-            Semaphore.PropertyChanged += Semaphore_PropertyChanged;
+            Semaphore.PropertyChanged += SemaphorePropertyChanged;
             _semaphoreGesture = _user.AddSemaphoreTouchGesture();
             _semaphoreGesture.SemafoorDetected += _semaphoreGesture_SemafoorDetected;
         }
 
-        private void Semaphore_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SemaphorePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsRunning")
             {

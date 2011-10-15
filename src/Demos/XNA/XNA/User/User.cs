@@ -39,7 +39,7 @@ namespace Kinect.XNA.User
 
         private void Kinect_User_Updated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
-            _bodyparts[JointID.Spine].LeftPoint = e.Event.Torso.ToScreenPosition(new Size(640, 480), WindowSize);
+            _bodyparts[JointID.Spine].LeftPoint = e.Event.Spine.ToScreenPosition(new Size(640, 480), WindowSize);
             _log.DebugFormat("{0}:{1}", JointID.ElbowLeft, _bodyparts[JointID.ElbowLeft].LeftPoint);
             _log.DebugFormat("{0}:{1}", JointID.ShoulderLeft, _bodyparts[JointID.ShoulderLeft].RightPoint);
             //_bodyparts[JointID.RightShoulder].LeftTop = e.Event.RightShoulder.ToScreenPosition(new System.Windows.Size(640, 480), WindowSize); 

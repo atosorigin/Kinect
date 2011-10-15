@@ -90,7 +90,7 @@ namespace Kinect.Core.Filters
             if (FilterData.Count() > 0 && JointsToCheck.Length > 1)
             {
                 _log.IfDebugFormat("CollisionFilter:\t{4} {2} -> {3}\t{0} on {1}", JointsToCheck[0], JointsToCheck[1],
-                                   FilterData[0].GetDebugString(), succesFullCheck ? "OK" : string.Empty, evt.ID);
+                                   FilterData[0].GetDebugString(), succesFullCheck ? "OK" : string.Empty, evt.Id);
             }
 
             if (succesFullCheck)

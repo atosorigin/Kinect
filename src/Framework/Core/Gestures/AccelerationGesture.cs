@@ -46,7 +46,7 @@ namespace Kinect.Core.Gestures
                 //double ratio = (maxposition + minposition) / 2;
                 //double normalPosition = position / ratio;
 
-                OnAccelerationCalculated(evt.ID, -normalPosition);
+                OnAccelerationCalculated(evt.Id, -normalPosition);
             }
         }
 

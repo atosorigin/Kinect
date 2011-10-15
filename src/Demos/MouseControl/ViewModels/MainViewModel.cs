@@ -187,7 +187,7 @@ namespace Kinect.MouseControl.ViewModels
         {
             lock (_syncRoot)
             {
-                if (_activeUser != null && _activeUser.ID == e.User.ID)
+                if (_activeUser != null && _activeUser.Id == e.User.Id)
                 {
                     _controlMouse = false;
                     _activeUser = null;
@@ -204,7 +204,7 @@ namespace Kinect.MouseControl.ViewModels
                 {
                     return;
                 }
-                _activeUser = _kinect.GetUser(e.User.ID);
+                _activeUser = _kinect.GetUser(e.User.Id);
                 _activeUser.Updated += _activeUser_Updated;
                 _activeUser.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandRight, JointID.Head).SelfTouchDetected += gesture_SelfTouchDetected;
                 

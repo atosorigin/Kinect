@@ -45,9 +45,9 @@ namespace Kinect.Core.Filters.Helper
                 case JointID.ShoulderRight:
                     return evt.RightShoulder;
                 case JointID.Spine:
-                    return evt.Torso;
+                    return evt.Spine;
                 case JointID.HipCenter:
-                    return evt.Waist;
+                    return evt.HipCenter;
             }
 
             return default(Point3D);
@@ -119,10 +119,10 @@ namespace Kinect.Core.Filters.Helper
                     user.RightShoulder = newPoint;
                     break;
                 case JointID.Spine:
-                    user.Torso = newPoint;
+                    user.Spine = newPoint;
                     break;
                 case JointID.HipCenter:
-                    user.Waist = newPoint;
+                    user.HipCenter = newPoint;
                     break;
             }
         }

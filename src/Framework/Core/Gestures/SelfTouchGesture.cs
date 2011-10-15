@@ -31,7 +31,7 @@ namespace Kinect.Core.Gestures
             _selfTouchCount++;
             if (_selfTouchCount > HistoryCount)
             {
-                OnSelfTouchDetected(evt.ID, Joints);
+                OnSelfTouchDetected(evt.Id, Joints);
                 _selfTouchCount = 0;
             }
         }

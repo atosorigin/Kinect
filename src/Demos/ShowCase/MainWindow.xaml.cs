@@ -286,7 +286,7 @@ namespace Kinect.ShowCase
 
         private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
-            User user = _kinect.GetUser(e.User.ID);
+            User user = _kinect.GetUser(e.User.Id);
             user.Updated += _kinectUser_Updated;
             SelfTouchGesture gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft,
                                                                 JointID.HandRight);

@@ -238,7 +238,7 @@ namespace Kinect.Semaphore.ViewModels
                                                               {
                                                                   UserViewModel user =
                                                                       Users.SingleOrDefault(
-                                                                          ku => ku != null && ku.ID == e.User.ID);
+                                                                          ku => ku != null && ku.Id == e.User.Id);
                                                                   if (user != null)
                                                                   {
                                                                       Users.Remove(user);
@@ -258,7 +258,7 @@ namespace Kinect.Semaphore.ViewModels
                                                       {
                                                           lock (SyncRoot)
                                                           {
-                                                              User kuser = _kinect.GetUser(e.User.ID);
+                                                              User kuser = _kinect.GetUser(e.User.Id);
                                                               if (kuser != null)
                                                               {
                                                                   UserViewModel user = CreateUser(kuser);
@@ -443,7 +443,7 @@ namespace Kinect.Semaphore.ViewModels
             float g = 1f/255*user.Color.G;
             float b = 1f/255*user.Color.B;
 
-            Point3D point = GetPoint3DCoordinates(user.ID, user.Torso.X, user.Torso.Y, user.Torso.Z);
+            Point3D point = GetPoint3DCoordinates(user.Id, user.Spine.X, user.Spine.Y, user.Spine.Z);
 
             return new UserViewModel(user)
                        {

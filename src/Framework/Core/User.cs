@@ -16,7 +16,7 @@ namespace Kinect.Core
         /// <param name="id">userId assigned by Kinect</param>
         public User(int id)
         {
-            ID = id;
+            Id = id;
         }
 
         /// <summary>
@@ -25,18 +25,16 @@ namespace Kinect.Core
         /// <param name="evt">The IUserChangedEvent data</param>
         public User(IUserChangedEvent evt)
         {
-            ID = evt.ID;
+            Id = evt.Id;
             Head = evt.Head;
             Neck = evt.Neck;
-            Torso = evt.Torso;
+            Spine = evt.Spine;
             LeftElbow = evt.LeftElbow;
             RightElbow = evt.RightElbow;
             LeftShoulder = evt.LeftShoulder;
             RightShoulder = evt.RightShoulder;
             LeftHand = evt.LeftHand;
             RightHand = evt.RightHand;
-            LeftFingertip = evt.LeftFingertip;
-            RightFingertip = evt.RightFingertip;
             LeftHip = evt.LeftHip;
             RightHip = evt.RightHip;
             LeftKnee = evt.LeftKnee;
@@ -45,7 +43,7 @@ namespace Kinect.Core
             RightAnkle = evt.RightAnkle;
             LeftFoot = evt.LeftFoot;
             RightFoot = evt.RightFoot;
-            Waist = evt.Waist;
+            HipCenter = evt.HipCenter;
         }
 
         /// <summary>
@@ -59,7 +57,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets the id Kinect assigns to the user
         /// </summary>
-        public int ID { get; private set; }
+        public int Id { get; private set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users head
@@ -74,7 +72,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users torso
         /// </summary>
-        public Point3D Torso { get; internal set; }
+        public Point3D Spine { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left elbow
@@ -105,16 +103,6 @@ namespace Kinect.Core
         /// Gets three dimensional coordinate of the users right hand
         /// </summary>
         public Point3D RightHand { get; internal set; }
-
-        /// <summary>
-        /// Gets three dimensional coordinate of the users left fingertip
-        /// </summary>
-        public Point3D LeftFingertip { get; internal set; }
-
-        /// <summary>
-        /// Gets three dimensional coordinate of the users right fingertip
-        /// </summary>
-        public Point3D RightFingertip { get; internal set; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left hip
@@ -159,7 +147,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users waist
         /// </summary>
-        public Point3D Waist { get; internal set; }
+        public Point3D HipCenter { get; internal set; }
 
         #endregion
 

@@ -7,7 +7,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets the id Kinect assigns to the user
         /// </summary>
-        int ID { get; }
+        int Id { get; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users head
@@ -22,7 +22,7 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users torso
         /// </summary>
-        Point3D Torso { get; }
+        Point3D Spine { get; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left elbow
@@ -53,16 +53,6 @@ namespace Kinect.Core
         /// Gets three dimensional coordinate of the users right hand
         /// </summary>
         Point3D RightHand { get; }
-
-        /// <summary>
-        /// Gets three dimensional coordinate of the users left fingertip
-        /// </summary>
-        Point3D LeftFingertip { get; }
-
-        /// <summary>
-        /// Gets three dimensional coordinate of the users right fingertip
-        /// </summary>
-        Point3D RightFingertip { get; }
 
         /// <summary>
         /// Gets three dimensional coordinate of the users left hip
@@ -107,6 +97,6 @@ namespace Kinect.Core
         /// <summary>
         /// Gets three dimensional coordinate of the users waist
         /// </summary>
-        Point3D Waist { get; }
+        Point3D HipCenter { get; }
     }
 }
