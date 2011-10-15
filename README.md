@@ -11,10 +11,23 @@ This Kinect application framework and demo apps are made by [Marco Franssen][1] 
 #Goal
 Our goal is to create a framework for developers on top of Kinect. This Framework should support easy access to gestures etc. All the demo apps we created to test our framework are included. We would love it when you guys help to extend and improve the framework. Don't forget to add your own demo apps so you can show of all the cool stuff you made to the other developers participating.
 
-#How to fork
-1. ## Install Git<br />
-Install [Git Extensions][10]. This will provide you a good GUI to Git (easy for Git starters). 
+# Install Git<br />
+Install [Git Extensions][7]. This will provide you a good GUI to Git (easy for Git starters), includes GIT. 
 
+#SSH Key for github repo access<br />
+In order to connect to your github repository you need a SSH Key, so if you don't have one follow the following instructions. <br />
+
+1. ## Generate a ssh key<br />
+Navigate to your directory where you did install GitExtensions. (Default: `C:\Program Files (x86)\GitExtensions`) <br />
+Open the folder `PuTTY` and click the executable `puttygen.exe` and click the button `Generate`.
+
+1. ## Save private key<br />
+Optionally configure a password for your private key and then save the private key to a location on your harddrive. (For example: `c:\sshKeys\github.ppk`)
+
+1. ## Paste public key on your github profile<br />
+Optionally save your public key to your harddrive. Then navigate to [https://github.com/account/ssh][8] and click `add another public key`. Copy the public key from `puttygen.exe` and paste it in the `Key` input-field and click `save`. (Title field not required)
+
+#How to fork
 1. ## Fork the `Kinect` repo<br />
 Fork the Kinect repo by clicking the Fork button on [https://github.com/atosorigin/Kinect][7]<br />
 
