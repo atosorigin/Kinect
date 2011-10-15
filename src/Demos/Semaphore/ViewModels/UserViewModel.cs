@@ -24,9 +24,10 @@ namespace Kinect.Semaphore.ViewModels
     {
         private static object _syncRoot = new object();
         private readonly DispatcherTimer _dispatchtimer;
-        private readonly double _updateMargin = 0.5;
+        private const double UpdateMargin = 0.5;
+        private const double PropertionModifier = 1.5;
         private readonly User _user;
-        private DateTime _StartDateTime;
+        private DateTime _startDateTime;
         private Brush _brush;
         private int _calibrationCounter = 5;
         private string _calibrationText;
@@ -67,8 +68,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             _user = user;
             _user.Updated += _user_Updated;
-            _dispatchtimer = new DispatcherTimer();
-            _dispatchtimer.Interval = TimeSpan.FromMilliseconds(1);
+            _dispatchtimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1)};
             _dispatchtimer.Tick += _dispatchtimer_Tick;
         }
 
@@ -417,9 +417,9 @@ namespace Kinect.Semaphore.ViewModels
 
         private bool Changed(Point3D newValue, Point3D oldValue)
         {
-            if (Math.Abs(newValue.X - oldValue.X) >= _updateMargin ||
-                Math.Abs(newValue.Y - oldValue.Y) >= _updateMargin ||
-                Math.Abs(newValue.Z - oldValue.Z) >= _updateMargin
+            if (Math.Abs(newValue.X - oldValue.X) >= UpdateMargin ||
+                Math.Abs(newValue.Y - oldValue.Y) >= UpdateMargin ||
+                Math.Abs(newValue.Z - oldValue.Z) >= UpdateMargin
                 )
             {
                 return true;
@@ -431,7 +431,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                                                       {
-                                                          StopWatch = DateTime.Now - _StartDateTime;
+                                                          StopWatch = DateTime.Now - _startDateTime;
                                                           //StopWatch += TimeSpan.FromMilliseconds(1);
                                                       });
         }
@@ -446,13 +446,14 @@ namespace Kinect.Semaphore.ViewModels
                                                         PropertyInfo prop = thisType.GetProperty(pi.Name);
                                                         if (prop != null && prop.CanWrite)
                                                         {
-                                                            object propValue = pi.GetValue(e.Event, null);
-                                                            object newValue = propValue;
-                                                            if (pi.PropertyType == typeof (Point3D))
+                                                            if (pi.PropertyType == typeof(Point3D))
                                                             {
-                                                                newValue = ((Point3D) propValue);
+                                                                var propValue = pi.GetValue(e.Event, null);
+                                                                var point = ((Point3D)propValue);
+                                                                var newValue = new Point3D(point.X * PropertionModifier, point.Y * PropertionModifier, point.Z * PropertionModifier);
+
+                                                                prop.SetValue(this, newValue, null);
                                                             }
-                                                            prop.SetValue(this, newValue, null);
                                                         }
                                                     });
         }
@@ -477,7 +478,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             if (isRunning && !_dispatchtimer.IsEnabled)
             {
-                _StartDateTime = DateTime.Now;
+                _startDateTime = DateTime.Now;
 
                 //StopWatch = new TimeSpan(0);
                 _dispatchtimer.Start();
@@ -506,7 +507,7 @@ namespace Kinect.Semaphore.ViewModels
             else if (_calibrationCounter == 0)
             {
                 AddSelfTouchGesture(
-                    FilterHelper.CalculateCorrection(new List<Point3D> {_user.LeftHand, _user.RightShoulder}));
+                    FilterHelper.CalculateCorrection(new List<Point3D> { _user.LeftHand, _user.RightShoulder }));
                 CalibrationText = "Saving";
             }
             else
