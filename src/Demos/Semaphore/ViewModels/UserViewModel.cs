@@ -180,7 +180,7 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        public Point3D Torso
+        public Point3D Spine
         {
             get { return _torso; }
             set
@@ -441,20 +441,20 @@ namespace Kinect.Semaphore.ViewModels
             Type thisType = GetType();
 
             eventProperties.AsParallel().ForAll(pi =>
-                                                    {
-                                                        PropertyInfo prop = thisType.GetProperty(pi.Name);
-                                                        if (prop != null && prop.CanWrite)
-                                                        {
-                                                            if (pi.PropertyType == typeof(Point3D))
-                                                            {
-                                                                var propValue = pi.GetValue(e.Event, null);
-                                                                var point = ((Point3D)propValue);
-                                                                var newValue = new Point3D(point.X * PropertionModifier, point.Y * PropertionModifier, point.Z * PropertionModifier);
+            {
+                PropertyInfo prop = thisType.GetProperty(pi.Name);
+                if (prop != null && prop.CanWrite)
+                {
+                    if (pi.PropertyType == typeof(Point3D))
+                    {
+                        var propValue = pi.GetValue(e.Event, null);
+                        var point = (Point3D) propValue;
+                        var newValue = new Point3D(point.X * PropertionModifier, point.Y * PropertionModifier, point.Z * PropertionModifier);
 
-                                                                prop.SetValue(this, newValue, null);
-                                                            }
-                                                        }
-                                                    });
+                        prop.SetValue(this, newValue, null);
+                    }
+                }
+            });
         }
 
         internal void AddSemaphoreTracking()
@@ -551,7 +551,7 @@ namespace Kinect.Semaphore.ViewModels
                 writer.WriteLine("LeftAnkle:\t\t{0}\t{1}\t{2}", Neck.X, Neck.Y, Neck.Z);
                 writer.WriteLine("LeftShoulder:\t\t{0}\t{1}\t{2}", LeftShoulder.X, LeftShoulder.Y, LeftShoulder.Z);
                 writer.WriteLine("RightShoulder:\t\t{0}\t{1}\t{2}", RightShoulder.X, RightShoulder.Y, RightShoulder.Z);
-                writer.WriteLine("Torso:\t\t{0}\t{1}\t{2}", Torso.X, Torso.Y, Torso.Z);
+                writer.WriteLine("Torso:\t\t{0}\t{1}\t{2}", Spine.X, Spine.Y, Spine.Z);
                 writer.WriteLine("Waist:\t\t{0}\t{1}\t{2}", Waist.X, Waist.Y, Waist.Z);
                 writer.WriteLine("LeftElbow:\t\t{0}\t{1}\t{2}", LeftElbow.X, LeftElbow.Y, LeftElbow.Z);
                 writer.WriteLine("RightElbow:\t\t{0}\t{1}\t{2}", RightElbow.X, RightElbow.Y, RightElbow.Z);

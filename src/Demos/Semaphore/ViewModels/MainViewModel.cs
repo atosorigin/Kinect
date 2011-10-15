@@ -451,7 +451,7 @@ namespace Kinect.Semaphore.ViewModels
                            Brush =
                                new RadialGradientBrush(Color.FromScRgb(0.85f, r, g, b),
                                                        Color.FromScRgb(0.85f, r/2, g/2, b/2)),
-                           Torso = point
+                           Spine = point
                        };
         }
 
@@ -477,7 +477,7 @@ namespace Kinect.Semaphore.ViewModels
                            RightElbow = new Point3D(point.X + 55, point.Y, point.Z),
                            LeftHand = new Point3D(point.X - 50, point.Y + 65, point.Z),
                            RightHand = new Point3D(point.X + 50, point.Y + 65, point.Z),
-                           Torso = point,
+                           Spine = point,
                            LeftHip = new Point3D(point.X - 30, point.Y + 50, point.Z),
                            RightHip = new Point3D(point.X + 30, point.Y + 50, point.Z),
                            LeftKnee = new Point3D(point.X - 35, point.Y + 130, point.Z),

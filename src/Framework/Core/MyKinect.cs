@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Coding4Fun.Kinect.Wpf;
 using Kinect.Common;
 using log4net;
 using Microsoft.Research.Kinect.Nui;
@@ -129,7 +130,8 @@ namespace Kinect.Core
                         _nrOfUsers = 0;
                         _context.Initialize(RuntimeOptions.UseDepthAndPlayerIndex |
                                             RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
-                        _context.SkeletonEngine.TransformSmooth = true;
+                        //_context.SkeletonEngine.TransformSmooth = true;
+                        //_context.SkeletonEngine.SmoothParameters = new TransformSmoothParameters();
                         _camera.Context = _context;
                         _camera.PropertyChanged += CameraPropertyChanged;
                         _camera.Running = true;
@@ -270,14 +272,8 @@ namespace Kinect.Core
             //    //Als hij hem niet ziet, laat hem dan ook links boven in beeld zien.
             //    return new Point3D(0, 0, 0);
             //}
-
-            float depthX, depthY;
-            short depthZ;
-            _context.SkeletonEngine.SkeletonToDepthImage(joint.Position, out depthX, out depthY, out depthZ);
-            depthX = Math.Max(0, Math.Min(depthX * 320, 320)); //convert to 640, 480 space
-            depthY = Math.Max(0, Math.Min(depthY * 240, 240)); //convert to 640, 480 space
-            //Make it milimeters
-            return new Point3D(depthX, depthY, depthZ);
+            var newPoint = joint.ScaleTo(640, 480, .9f, .9f);
+            return new Point3D(newPoint.Position.X, newPoint.Position.Y, newPoint.Position.Z);
         }
 
         private void OnCameraMessage(string message)
