@@ -211,12 +211,12 @@ namespace Kinect.ShowCase
                                 lblNaam.Content = _names[index];
                                 lblNaam.Visibility = Visibility.Visible;
                             };
-                            lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
                             Action del4 = () =>
                             {
                                 lblWorkshop.Text = _workshops[index];
                                 lblWorkshop.Visibility = Visibility.Visible;
                             };
+                            lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
                             lblWorkshop.Dispatcher.BeginInvoke(DispatcherPriority.Send, del4);
                         }
                         //The ball is on the center of the screen. Please make it bigger
@@ -235,7 +235,11 @@ namespace Kinect.ShowCase
 
         private void WindowMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //Zet de ballen terug
+            RestoreBalls();
+        }
+
+        private void RestoreBalls()
+        {
             if (_movingBall != null)
             {
                 GradientBall tempball = _movingBall;
@@ -287,23 +291,11 @@ namespace Kinect.ShowCase
         private void GestureSelfTouchDetected(object sender, SelfTouchEventArgs e)
         {
             Action del3 = () => lblNaam.Visibility = Visibility.Hidden;
-            lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
             Action del4 = () => lblWorkshop.Visibility = Visibility.Hidden;
+            lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
             lblWorkshop.Dispatcher.BeginInvoke(DispatcherPriority.Send, del4);
 
-            //Zet de ballen terug
-            if (_movingBall != null)
-            {
-                GradientBall tempball = _movingBall;
-                _movingBall = null;
-                Do3DAnimation(tempball, _animatingBallOriginalPosition);
-            }
-            if (_centerscreenBall != null)
-            {
-                GradientBall tempball = _centerscreenBall;
-                _centerscreenBall = null;
-                Do3DAnimation(tempball, _animatingBallOriginalPosition);
-            }
+            RestoreBalls();
         }
 
         private void KinectUserUpdated(object sender, ProcessEventArgs<IUserChangedEvent> e)
