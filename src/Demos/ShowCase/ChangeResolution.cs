@@ -146,6 +146,14 @@ namespace Kinect.ShowCase
             }
 
             var dev = d.Value;
+
+            if (dev.dmPelsWidth == _originalResolution.dmPelsWidth &&
+                dev.dmPelsHeight == _originalResolution.dmPelsHeight)
+            {
+                //Resolution is the same, return
+                return;
+            }
+
             ChangeDisplaySettings(ref dev, 0);
         }
 
