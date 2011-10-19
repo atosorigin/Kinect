@@ -13,8 +13,6 @@ using Kinect.Core.Eventing;
 using Kinect.Core.Gestures;
 using Microsoft.Research.Kinect.Nui;
 
-//using Kinect.Core.Gestures;
-
 namespace Kinect.ShowCase
 {
     /// <summary>
@@ -39,22 +37,22 @@ namespace Kinect.ShowCase
         private readonly Point3D _centerScreen = new Point3D(0, 0, -44.5);
 
         private readonly List<string> _names = new List<string>
-                                                  {
-                                                      "Trend voor Technology Services",
-                                                      "Trend voor Technology Services",
-                                                      "Trend voor Technology Services",
-                                                      "Trend voor Technology Services"
-                                                  };
+        {
+            "Trend voor Technology Services",
+            "Trend voor Technology Services",
+            "Trend voor Technology Services",
+            "Trend voor Technology Services"
+        };
 
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
 
         private readonly List<string> _workshops = new List<string>
-                                                      {
-                                                          "Business Agility",
-                                                          "Big Data",
-                                                          "Cloud",
-                                                          "Mobile apps",
-                                                      };
+        {
+            "Business Agility",
+            "Big Data",
+            "Cloud",
+            "Mobile apps",
+        };
 
         private MyKinect _kinect;
         private List<User> _kinectUsers;
@@ -73,14 +71,12 @@ namespace Kinect.ShowCase
         public MainWindow()
         {
             _changeResolution = new ChangeResolution();
-            _changeResolution.ChangeScreenResolution(1024,768);
+            _changeResolution.ChangeScreenResolution(1024, 768);
             InitializeComponent();
             InitBalls();
             InitAnimations();
             InitKinect();
         }
-
-        //Kinect properties
 
         public Point3D HandPoint { get; set; }
 
@@ -107,7 +103,7 @@ namespace Kinect.ShowCase
         private GradientBall InitGradientBall(string imageSrc, double offsetx, double offsety)
         {
             var p3D = new Point3D(offsetx, offsety, -8);
-            var ball = new GradientBall {ImageSource = imageSrc, Offset = p3D};
+            var ball = new GradientBall { ImageSource = imageSrc, Offset = p3D };
 
             visualModel.Children.Add(ball);
             return ball;
@@ -117,8 +113,7 @@ namespace Kinect.ShowCase
         {
             foreach (GradientBall ball in _balls)
             {
-                var animation = new DoubleAnimation(0, 360, new Duration(new TimeSpan(0, 0, 5)))
-                                    {By = 0.5, RepeatBehavior = RepeatBehavior.Forever};
+                var animation = new DoubleAnimation(0, 360, new Duration(new TimeSpan(0, 0, 5))) { By = 0.5, RepeatBehavior = RepeatBehavior.Forever };
 
                 var vect = new Vector3D(0, 1, 0);
                 var rt3D = new AxisAngleRotation3D(vect, 0);
@@ -141,26 +136,21 @@ namespace Kinect.ShowCase
 
         private void Do3DAnimation(GradientBall ball, Point3D nextPosition)
         {
-            SimpleDelegate animation = delegate
-                                           {
-                                               var speed = new Duration(new TimeSpan(0, 0, 3));
-                                               Point3D currentPosition = ball.Offset;
+            Action animation = () =>
+            {
+                var speed = new Duration(new TimeSpan(0, 0, 3));
+                Point3D currentPosition = ball.Offset;
 
-                                               var animationX = new DoubleAnimation(currentPosition.X, nextPosition.X,
-                                                                                    speed);
-                                               var animationY = new DoubleAnimation(currentPosition.Y, nextPosition.Y,
-                                                                                    speed);
-                                               var animationZ = new DoubleAnimation(currentPosition.Z, nextPosition.Z,
-                                                                                    speed);
+                var animationX = new DoubleAnimation(currentPosition.X, nextPosition.X, speed);
+                var animationY = new DoubleAnimation(currentPosition.Y, nextPosition.Y, speed);
+                var animationZ = new DoubleAnimation(currentPosition.Z, nextPosition.Z, speed);
 
-
-                                               var tt3D = new TranslateTransform3D(currentPosition.X, currentPosition.Y,
-                                                                                   currentPosition.Z);
-                                               ball.Transform = tt3D;
-                                               tt3D.BeginAnimation(TranslateTransform3D.OffsetXProperty, animationX);
-                                               tt3D.BeginAnimation(TranslateTransform3D.OffsetYProperty, animationY);
-                                               tt3D.BeginAnimation(TranslateTransform3D.OffsetZProperty, animationZ);
-                                           };
+                var tt3D = new TranslateTransform3D(currentPosition.X, currentPosition.Y, currentPosition.Z);
+                ball.Transform = tt3D;
+                tt3D.BeginAnimation(TranslateTransform3D.OffsetXProperty, animationX);
+                tt3D.BeginAnimation(TranslateTransform3D.OffsetYProperty, animationY);
+                tt3D.BeginAnimation(TranslateTransform3D.OffsetZProperty, animationZ);
+            };
             ball.Dispatcher.BeginInvoke(DispatcherPriority.Send, animation);
         }
 
@@ -172,7 +162,7 @@ namespace Kinect.ShowCase
                 //pos = Mouse.GetPosition(viewPort);
 
                 //update hand
-                Action setHand = delegate
+                Action setHand = () =>
                 {
                     Canvas.SetTop(HandImage, pos.Y);
                     Canvas.SetLeft(HandImage, pos.X);
@@ -197,12 +187,12 @@ namespace Kinect.ShowCase
                 }
                 else if (_movingBall != null)
                 {
-                    SimpleDelegate moveBall = delegate
+                    Action moveBall = () =>
                     {
                         if (_movingBall != null)
                         {
                             var tt3D = new TranslateTransform3D(_mouse3DPosition.X, _mouse3DPosition.Y, -10);
-                            if(_movingBall != null)
+                            if (_movingBall != null)
                                 _movingBall.Transform = tt3D;
                         }
                     };
@@ -216,13 +206,13 @@ namespace Kinect.ShowCase
                         if (_movingBallIndex != -1)
                         {
                             int index = _movingBallIndex;
-                            SimpleDelegate del3 = delegate
+                            Action del3 = () =>
                             {
                                 lblNaam.Content = _names[index];
                                 lblNaam.Visibility = Visibility.Visible;
                             };
                             lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
-                            SimpleDelegate del4 = delegate
+                            Action del4 = () =>
                             {
                                 lblWorkshop.Text = _workshops[index];
                                 lblWorkshop.Visibility = Visibility.Visible;
@@ -286,20 +276,19 @@ namespace Kinect.ShowCase
         {
             User user = _kinect.GetUser(e.User.Id);
             user.Updated += KinectUserUpdated;
-            SelfTouchGesture gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft,
-                                                                JointID.HandRight);
+            SelfTouchGesture gesture = user.AddSelfTouchGesture(new Point3D(0, 0, 0), JointID.HandLeft, JointID.HandRight);
             gesture.SelfTouchDetected += GestureSelfTouchDetected;
             _kinectUsers.Add(user);
 
-            SimpleDelegate del2 = delegate { HandImage.Visibility = Visibility.Visible; };
+            Action del2 = () => HandImage.Visibility = Visibility.Visible;
             HandImage.Dispatcher.BeginInvoke(DispatcherPriority.Send, del2);
         }
 
         private void GestureSelfTouchDetected(object sender, SelfTouchEventArgs e)
         {
-            SimpleDelegate del3 = delegate { lblNaam.Visibility = Visibility.Hidden; };
+            Action del3 = () => lblNaam.Visibility = Visibility.Hidden;
             lblNaam.Dispatcher.BeginInvoke(DispatcherPriority.Send, del3);
-            SimpleDelegate del4 = delegate { lblWorkshop.Visibility = Visibility.Hidden; };
+            Action del4 = () => lblWorkshop.Visibility = Visibility.Hidden;
             lblWorkshop.Dispatcher.BeginInvoke(DispatcherPriority.Send, del4);
 
             //Zet de ballen terug
@@ -327,8 +316,6 @@ namespace Kinect.ShowCase
         private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
         {
         }
-
-        private delegate void SimpleDelegate();
 
         #endregion
 
