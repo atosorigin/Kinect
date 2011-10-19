@@ -33,6 +33,9 @@ namespace Kinect.Core
         private KinectState _kinectstate = KinectState.Stopped;
         private int _nrOfUsers;
 
+        private float _maxSkeletonX = .9f;
+        private float _maxSkeletonY = .9f;
+
         private MyKinect()
         {
             SingleUserMode = false;
@@ -272,7 +275,7 @@ namespace Kinect.Core
             //    //Als hij hem niet ziet, laat hem dan ook links boven in beeld zien.
             //    return new Point3D(0, 0, 0);
             //}
-            var newPoint = joint.ScaleTo(640, 480, .9f, .9f);
+            var newPoint = joint.ScaleTo(640, 480, _maxSkeletonX, _maxSkeletonY);
             return new Point3D(newPoint.Position.X, newPoint.Position.Y, newPoint.Position.Z);
         }
 
@@ -385,6 +388,22 @@ namespace Kinect.Core
             {
                 OnPropertyChanged("Fps");
             }
+        }
+
+        public void ChangeMaxSkeletonPositions(float x, float y)
+        {
+            if (x < 0 || x > 1)
+            {
+                throw new ArgumentException("The x value needs to be between 0 and 1", "x");
+            }
+
+            if (y < 0 || y > 1)
+            {
+                throw new ArgumentException("The y value needs to be between 0 and 1", "y");
+            }
+
+            _maxSkeletonX = x;
+            _maxSkeletonY = y;
         }
     }
 }
