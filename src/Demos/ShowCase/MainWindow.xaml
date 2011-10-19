@@ -11,7 +11,7 @@
 		<Label x:Name="lblNaam" Visibility="Hidden" Content="" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" ClipToBounds="False" HorizontalAlignment="Center" Margin="51,20,51,0" Grid.RowSpan="3"></Label>
         <TextBlock x:Name="lblWorkshop" Visibility="Hidden" Text="" HorizontalAlignment="Center" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" Margin="51,0" Grid.Row="2"></TextBlock>
 		<Canvas x:Name="canvas" Grid.RowSpan="3" ClipToBounds="False">
-            <Image x:Name="HandImage" Visibility="Visible" Source="Kinect.ShowCase;component/Images/hand.gif" Height="60" Width="60" Canvas.Top="300" Canvas.Left="300"></Image>
+            <Image x:Name="HandImage" Visibility="Visible" Source="/Kinect.ShowCase;component/Images/hand.gif" Height="60" Width="60" Canvas.Top="300" Canvas.Left="300"></Image>
 		</Canvas>
 		<Viewport3D x:Name="viewPort" Grid.Row="0" Grid.Column="0" ClipToBounds="False" Grid.RowSpan="3" Width="1024" Height="768" HorizontalAlignment="Center">
 			<Viewport3D.Camera>
