@@ -93,15 +93,15 @@
       <CollisionFilter MarginX="30" MarginY="30" MarginZ="150" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
-  <SelfTouchGesture History="2" Active="True">
+  <SelfTouchGesture History="1" Active="True">
     <PointsToCheck>
       <Point SkeletonJoint="HandLeft" />
       <Point SkeletonJoint="HandRight" />
     </PointsToCheck>
     <Filters>
-      <FramesFilter FPS="6" Sequence="0" />
+      <FramesFilter FPS="30" Sequence="0" />
       <CorrectionFilter SkeletonJoint="HandLeft" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="400" Sequence="2" />
+      <CollisionFilter MarginX="40" MarginY="40" MarginZ="400" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
 </Gestures>
