@@ -97,7 +97,7 @@ namespace Kinect.ShowCase
 
         private void InitBalls()
         {
-            const string imageSrc = "Images/foto{0}.jpg";
+            const string imageSrc = "pack://application:,,,/Kinect.ShowCase;component/Images/foto{0}.jpg";
             for (int i = 0; i < _ballPoints.Count; i++)
             {
                 _balls.Add(InitGradientBall(string.Format(imageSrc, (i + 1)), _ballPoints[i].X, _ballPoints[i].Y));
