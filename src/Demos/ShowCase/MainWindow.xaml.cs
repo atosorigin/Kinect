@@ -132,6 +132,7 @@ namespace Kinect.ShowCase
         {
             _kinectUsers = new List<User>();
             _kinect = MyKinect.Instance;
+            _kinect.ChangeMaxSkeletonPositions(.5f, .5f);
 
             _kinect.UserCreated += KinectUserCreated;
             _kinect.UserRemoved += _kinect_UserRemoved;
@@ -330,5 +331,13 @@ namespace Kinect.ShowCase
         private delegate void SimpleDelegate();
 
         #endregion
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Q)
+            {
+                this.Close();
+            }
+        }
     }
 }
