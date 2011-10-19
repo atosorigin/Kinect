@@ -6,7 +6,7 @@
 			<RowDefinition Height="100" />
 		</Grid.RowDefinitions>
 		<Grid.Background>
-			<ImageBrush ImageSource="/Images/bg2.jpg" Stretch="UniformToFill" TileMode="None" />
+			<ImageBrush ImageSource="/Kinect.ShowCase;component/Images/bg2.jpg" Stretch="UniformToFill" TileMode="None" />
 		</Grid.Background>
 		<Label x:Name="lblNaam" Visibility="Hidden" Content="" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" ClipToBounds="False" HorizontalAlignment="Center" Margin="51,20,51,0" Grid.RowSpan="3"></Label>
         <TextBlock x:Name="lblWorkshop" Visibility="Hidden" Text="" HorizontalAlignment="Center" FontSize="35" FontWeight="Bold" Foreground="#EEEEEE" Margin="51,0" Grid.Row="2"></TextBlock>
