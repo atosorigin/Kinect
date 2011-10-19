@@ -93,6 +93,7 @@
   <ItemGroup>
     <Content Include="Configs\GestureConfiguration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>

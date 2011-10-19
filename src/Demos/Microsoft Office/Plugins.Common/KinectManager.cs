@@ -42,6 +42,7 @@ namespace Kinect.Plugins.Common
             EventIntervalInMilliseconds = 2000;
             _kinect = MyKinect.Instance;
             _kinect.SingleUserMode = true;
+            _kinect.ChangeMaxSkeletonPositions(.5f, .5f);
             ConfigurationViewModel = new ConfigureKinectViewModel();
             _calibrationView = new Calibration();
             _calibrationViewModel = CalibrationViewModel.Current;

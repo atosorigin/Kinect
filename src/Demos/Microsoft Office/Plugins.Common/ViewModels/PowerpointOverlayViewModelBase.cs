@@ -19,7 +19,7 @@ namespace Kinect.Plugins.Common.ViewModels
         private static readonly object _syncRoot = new object();
 
         private readonly KinectManager KinectManager = KinectManager.Instance;
-        private Size ScreenResolution = new Size(1280, 1024);
+        private Size ScreenResolution = new Size(System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight);
         private ImageSource _cameraView;
         private string _debugMessage = string.Empty;
         private CameraView _imageType = Core.CameraView.None;
@@ -278,9 +278,10 @@ namespace Kinect.Plugins.Common.ViewModels
         {
             if (LaserVisible == Visibility.Visible && _laserOwner == e.UserID)
             {
-                Point3D point = e.Point.ToScreenPosition(new Size(640, 480), ScreenResolution, new Point(213, 160),
-                                                         new Size(213, 160));
-                Laser = point;
+                //Point3D point = e.Point.ToScreenPosition(new Size(640, 480), ScreenResolution, new Point(213, 160),
+                //                                         new Size(213, 160));
+                var point = e.Point.ToScreenPosition(new Size(640, 480), ScreenResolution);
+                Laser = new Point3D(point.X,point.Y,20);
             }
         }
 

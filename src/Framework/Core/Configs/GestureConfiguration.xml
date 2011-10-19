@@ -57,7 +57,7 @@
     <Filters>
       <FramesFilter FPS="6" Sequence="0" />
       <CorrectionFilter SkeletonJoint="ShoulderRight" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+      <CollisionFilter MarginX="30" MarginY="30" MarginZ="200" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
   <SelfTouchGesture History="2" Active="True">
@@ -68,7 +68,7 @@
     <Filters>
       <FramesFilter FPS="6" Sequence="0" />
       <CorrectionFilter SkeletonJoint="ShoulderLeft" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+      <CollisionFilter MarginX="30" MarginY="30" MarginZ="200" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
   <SelfTouchGesture History="2" Active="True">
@@ -79,7 +79,7 @@
     <Filters>
       <FramesFilter FPS="6" Sequence="0" />
       <CorrectionFilter SkeletonJoint="HipRight" Sequence="1" />
-      <CollisionFilter MarginX="30" MarginY="30" MarginZ="75" Sequence="2" />
+      <CollisionFilter MarginX="30" MarginY="30" MarginZ="200" Sequence="2" />
     </Filters>
   </SelfTouchGesture>
   <SelfTouchGesture History="2" Active="True">
