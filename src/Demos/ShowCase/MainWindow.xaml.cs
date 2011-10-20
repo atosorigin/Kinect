@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -131,7 +132,14 @@ namespace Kinect.ShowCase
 
             _kinect.UserCreated += KinectUserCreated;
             _kinect.UserRemoved += _kinect_UserRemoved;
+            //_kinect.KinectStarted += new EventHandler<KinectEventArgs>(_kinect_KinectStarted);
             _kinect.StartKinect();
+        }
+
+        void _kinect_KinectStarted(object sender, KinectEventArgs e)
+        {
+            //Thread.Sleep(400);
+            _kinect.SetElevationAngle(1);
         }
 
         private void Do3DAnimation(GradientBall ball, Point3D nextPosition)
@@ -313,9 +321,17 @@ namespace Kinect.ShowCase
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Q)
+            if (e.Key == Key.Space)
             {
                 this.Close();
+            }
+            else if (e.Key == Key.Up)
+            {
+                _kinect.MotorUp(2);
+            }
+            else if (e.Key == Key.Down)
+            {
+                _kinect.MotorDown(2);
             }
         }
     }

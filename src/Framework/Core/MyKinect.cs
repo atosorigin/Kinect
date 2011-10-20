@@ -382,6 +382,12 @@ namespace Kinect.Core
             }
         }
 
+
+        public void SetElevationAngle(int angle)
+        {
+            _context.NuiCamera.ElevationAngle = angle;
+        }
+
         private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Fps")

@@ -103,7 +103,6 @@ namespace Kinect.Core
             {
                 _colors[i] = generator.NextColor();
             }
-
             Context.DepthFrameReady += Context_DepthFrameReady;
             Context.VideoFrameReady += Context_VideoFrameReady;
         }
@@ -131,11 +130,15 @@ namespace Kinect.Core
             }
             //TODO: Depth view beter uitwerken
             //Aan de hand van de examples
+            // 32-bit per pixel, RGBA image
             PlanarImage image = e.ImageFrame.Image;
-            byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth));
-            BitmapSource bitmap = BitmapSource.Create(
-                image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width*4);
+            BitmapSource bitmap = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Gray16, null, image.Bits, image.Width * image.BytesPerPixel);
             bitmap.Freeze();
+            //PlanarImage image = e.ImageFrame.Image;
+            //byte[] convertedDepthFrame = ConvertDepthFrame(image.Bits, ViewType.HasFlag(CameraView.ColoredDepth));
+            //BitmapSource bitmap = BitmapSource.Create(
+            //    image.Width, image.Height, 96, 96, PixelFormats.Bgr32, null, convertedDepthFrame, image.Width*4);
+            //bitmap.Freeze();
             OnCameraUpdated(bitmap, ViewType);
         }
 
