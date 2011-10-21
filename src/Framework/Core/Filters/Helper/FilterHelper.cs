@@ -16,7 +16,6 @@ namespace Kinect.Core.Filters.Helper
                     return evt.AnkleLeft;
                 case JointID.ElbowLeft:
                     return evt.ElbowLeft;
-                    //case JointID.R: return evt.LeftFingertip;
                 case JointID.FootLeft:
                     return evt.FootLeft;
                 case JointID.HandLeft:
@@ -33,7 +32,6 @@ namespace Kinect.Core.Filters.Helper
                     return evt.AnkleRight;
                 case JointID.ElbowRight:
                     return evt.ElbowRight;
-                    //case JointID.RightFingertip: return evt.RightFingertip; 
                 case JointID.FootRight:
                     return evt.FootRight;
                 case JointID.HandRight:
@@ -77,7 +75,6 @@ namespace Kinect.Core.Filters.Helper
                 case JointID.ElbowLeft:
                     user.ElbowLeft = newPoint;
                     break;
-                    //case JointID.LeftFingertip: user.LeftFingertip = newPoint; break;
                 case JointID.FootLeft:
                     user.FootLeft = newPoint;
                     break;
@@ -102,7 +99,6 @@ namespace Kinect.Core.Filters.Helper
                 case JointID.ElbowRight:
                     user.ElbowRight = newPoint;
                     break;
-                    //case JointID.RightFingertip: user.RightFingertip = newPoint; break;
                 case JointID.FootRight:
                     user.FootRight = newPoint;
                     break;

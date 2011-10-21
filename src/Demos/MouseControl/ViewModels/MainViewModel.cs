@@ -1,14 +1,16 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Configuration;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
 using Kinect.Core;
+using Kinect.Core.Eventing;
 using Kinect.Core.Filters;
 using Kinect.Core.Gestures;
 using log4net;
@@ -18,17 +20,23 @@ namespace Kinect.MouseControl.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (MainViewModel));
-        private static readonly object _syncRoot = new object();
-        private const int EventIntervalInMilliseconds = 750;
+        private long _mouseDownCounter, _mouseUpCounter;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (MainViewModel));
+        private static readonly object SyncRoot = new object();
+        private const int EventIntervalInMilliseconds = 500;
 
         public RelayCommand<KeyEventArgs> KeyPress { get; set; }
         public RelayCommand<CancelEventArgs> Closing { get; set; }
+        public RelayCommand<EventArgs> StartGame { get; set; }
+
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
-        private MyKinect _kinect;
+        private readonly Size _handResolution = new Size(640, 480);
+        private Point3D _mouseDownPoint = new Point3D(0, 0, -1); 
+        private readonly MyKinect _kinect;
         private User _activeUser;
         private bool _controlMouse = false;
         private bool _mouseDown = false;
+        private Process _game;
 
         private DateTime _clapHit = DateTime.Now;
         private DateTime _clapFilter = DateTime.Now;
@@ -41,7 +49,7 @@ namespace Kinect.MouseControl.ViewModels
             get { return _windowMessage; }
             set
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (value != _windowMessage)
                     {
@@ -60,7 +68,7 @@ namespace Kinect.MouseControl.ViewModels
             get { return _cameraView; }
             set
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (value != _cameraView)
                     {
@@ -74,6 +82,7 @@ namespace Kinect.MouseControl.ViewModels
         }
 
         private Visibility _cameraVisibility;
+
         public Visibility CameraVisibility
         {
             get { return _cameraVisibility; }
@@ -90,21 +99,17 @@ namespace Kinect.MouseControl.ViewModels
         public MainViewModel()
         {
             _kinect = MyKinect.Instance;
-            _kinect.ChangeMaxSkeletonPositions(.6f, .6f);
             SetCommands();
             WindowMessage = "Application started";
+            SetUpKinect();
         }
 
         private void SetCommands()
         {
             KeyPress = new RelayCommand<KeyEventArgs>(e =>
                 {
-                    _log.DebugFormat("Key pressed: {0}", e.Key);
-                    if (e.Key == Key.S)
-                    {
-                        SetUpKinect();
-                    }
-                    else if (e.Key == Key.Q)
+                    Log.DebugFormat("Key pressed: {0}", e.Key);
+                    if (e.Key == Key.Q)
                     {
                         CloseKinect();
                         Application.Current.MainWindow.Close();
@@ -156,8 +161,34 @@ namespace Kinect.MouseControl.ViewModels
             Closing = new RelayCommand<CancelEventArgs>(e =>
                 {
                     CloseKinect();
+                    if (_game != null && !_game.HasExited)
+                    {
+                        _game.Kill();
+                    }
                     Application.Current.Shutdown();
                 });
+
+            StartGame = new RelayCommand<EventArgs>(e =>
+            {
+                _game = new Process
+                            {
+                                StartInfo = {FileName = ConfigurationManager.AppSettings["GameUri"]},
+                                EnableRaisingEvents = true
+                            };
+
+                _game.Exited += (s, ea) =>
+                {
+                    if (_controlMouse) toggleMouseControl(null, null);
+                };
+
+                _game.Start();
+
+                if (!_controlMouse)
+                {
+                    toggleMouseControl(null, null);
+                }
+                    
+            });
         }
 
         private void SetCameraView()
@@ -191,6 +222,8 @@ namespace Kinect.MouseControl.ViewModels
 
         private void SetUpKinect()
         {
+            _kinect.ChangeMaxSkeletonPositions(.6f, .6f);
+            _kinect.ElevationAngleInitialPosition = 5;
             _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             //_kinect.PropertyChanged += _kinect_PropertyChanged;
             _kinect.UserCreated += _kinect_UserCreated;
@@ -200,7 +233,7 @@ namespace Kinect.MouseControl.ViewModels
 
         private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
         {
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 if (_activeUser != null && _activeUser.Id == e.User.Id)
                 {
@@ -213,7 +246,7 @@ namespace Kinect.MouseControl.ViewModels
         private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
         {
             WindowMessage = "User found";
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 if (_activeUser != null)
                 {
@@ -221,76 +254,104 @@ namespace Kinect.MouseControl.ViewModels
                 }
                 _activeUser = _kinect.GetUser(e.User.Id);
                 _activeUser.Updated += _activeUser_Updated;
-                var framesFilter = new FramesFilter(6);
-                var clickFilter = new CollisionFilter(new Point3D(70, 20, 20), JointID.HandRight, JointID.Head);
-
-                //clapFilter.Filtered += clapFilter_Filtered;
-                var clickGesture = new SelfTouchGesture(1);
-                clickGesture.SelfTouchDetected += FireMouseClick;
-
-                _activeUser.AddSelfTouchGesture(new Point3D(70, 20, 20), JointID.HandRight, JointID.Head).SelfTouchDetected += FireMouseClick;
-                
-                //var framesFilter  = new FramesFilter(6);
-                var mouseUpAndDownFilter = new CollisionFilter(new Point3D(100,30,20), JointID.HandRight, JointID.HipRight);
-                mouseUpAndDownFilter.Filtered += FireMouseUp;
+                var framesFilter = new FramesFilter(15);
+                //var mouseUpAndDownFilter = new CollisionFilter(new Point3D(100, 30, 20), JointID.HandRight, JointID.HipRight);
+                var mouseUpAndDownFilter = new CollisionFilter(new Point3D(80, 30, 200), JointID.HandRight, JointID.HipRight);
                 var mouseUpAndDownGesture = new SelfTouchGesture(1);
-                mouseUpAndDownGesture.SelfTouchDetected += FireMouseDown;
+
                 _activeUser.AttachPipeline(framesFilter);
                 framesFilter.AttachPipeline(mouseUpAndDownFilter);
-                framesFilter.AttachPipeline(clickFilter);
                 mouseUpAndDownFilter.AttachPipeline(mouseUpAndDownGesture);
-                clickFilter.AttachPipeline(clickGesture);
 
+                mouseUpAndDownFilter.Filtered += FireMouseUp;
+                mouseUpAndDownGesture.SelfTouchDetected += FireMouseDown;
+
+                //var mouseUpAndDownFilter = new CollisionFilter(new Point3D(100, 30, 20), JointID.HandRight, JointID.HipRight);
+                var clickCollisionFilter = new CollisionFilter(new Point3D(125, 40, 150), JointID.HandRight, JointID.Head);
+                var clickGesture = new SelfTouchGesture(1);
+
+                _activeUser.AttachPipeline(clickCollisionFilter);
+                clickCollisionFilter.AttachPipeline(clickGesture);
+
+                //clickCollisionFilter.Filtered += (s, args) => ShowDebugInfo(args, "Mouse click: ");
+                clickGesture.SelfTouchDetected += FireMouseClick;
+
+                //_activeUser.AddSelfTouchGesture(new Point3D(70, 20, 20), JointID.HandRight, JointID.Head).SelfTouchDetected += FireMouseClick;
+                //_activeUser.AddSelfTouchGesture(new Point3D(20, 20, 20), JointID.HandRight, JointID.HandLeft).SelfTouchDetected += FireMouseClick;
             }
         }
 
         void FireMouseUp(object sender, Core.Eventing.FilterEventArgs e)
         {
             //Hands are not on each other
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
-                //First check the time interval to ignore most of the messages
-                if (_controlMouse && CheckEventInterval(ref _clapFilter) && _mouseDown)
-                {
-                    WindowMessage = "Mouse up";
-                    _mouseDown = false;
-                    MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
-                }
-            }
-        }
+                //ShowDebugInfo(e, "Mouse up ");
 
-        void FireMouseClick(object sender, SelfTouchEventArgs e)
-        {
-            lock (_syncRoot)
-            {
-                //Left button down
-                if (_controlMouse  && CheckEventInterval(ref _clapHit))
-                {
-                    WindowMessage = "Mouse click";
-                    MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
-                    MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
-                    _mouseDown = false;
-                }
+                _mouseUpCounter++;
+                //only act after 3 hits
+                if (_mouseUpCounter < 3) return;
+                _mouseDownCounter = 0;
+                //Prevent int overflow
+                if (_mouseUpCounter > int.MaxValue) _mouseUpCounter = 3;
+
+                //check the time interval
+                if (!CheckEventInterval(ref _clapFilter) || !_mouseDown) return;
+                _mouseDown = false;
+                WindowMessage = "Mouse up";
+
+                if (!_controlMouse) return;
+                MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
             }
         }
 
         void FireMouseDown(object sender, SelfTouchEventArgs e)
         {
-            lock (_syncRoot)
-            {            
+            lock (SyncRoot)
+            {
+                _mouseDownCounter++;
+                //only act after 3 hits
+                if (_mouseDownCounter < 3) return;
+                _mouseUpCounter = 0;
+                //Prevent int overflow
+                if (_mouseDownCounter > int.MaxValue) _mouseDownCounter = 3;
+                
+                //Check the time interval
+                if (!CheckEventInterval(ref _clapHit) || _mouseDown) return;
+                _mouseDown = true;
+                WindowMessage = "Mouse down";
+
+                if (!_controlMouse) return;
+                MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
+            }
+        }
+
+        void FireMouseClick(object sender, SelfTouchEventArgs e)
+        {
+            lock (SyncRoot)
+            {
                 //Left button down
-                if (_controlMouse && CheckEventInterval(ref _clapHit))
-                {
-                    WindowMessage = "Mouse down";
-                    _mouseDown = true;
-                    MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
-                }
+                if (!CheckEventInterval(ref _clapHit)) return;
+                WindowMessage = "Mouse click";
+                if (!_controlMouse) return;
+                MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
+                MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
+                _mouseDown = false;
+            }
+        }
+
+        void ShowDebugInfo(FilterEventArgs args, string message)
+        {
+            var eventArgs = args as CollisionFilterEventArgs;
+            if (eventArgs != null && eventArgs.MarginData.Length > 0)
+            {
+                WindowMessage = message + eventArgs.MarginData[0].GetDebugString();
             }
         }
 
         void toggleMouseControl(object sender, SelfTouchEventArgs e)
         {
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 if (CheckEventInterval(ref _headHit))
                 {
@@ -309,11 +370,23 @@ namespace Kinect.MouseControl.ViewModels
             {
                 return;
             }
-            var screen = new Size(System.Windows.SystemParameters.PrimaryScreenWidth,
-                                  System.Windows.SystemParameters.PrimaryScreenHeight);
+            lock (SyncRoot)
+            {
 
-            var point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _screenResolution);
-            MouseSimulator.Position = new Point(point.X,point.Y);
+                var point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _screenResolution);
+                MouseSimulator.Position = new Point(point.X, point.Y);
+                //var point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _handResolution);
+
+                //If initial
+                //if (_mouseDownPoint.Z == -1)
+                //{
+                //    _mouseDownPoint = point;
+                //}
+
+                //var diff = new Point3D(point.X - _mouseDownPoint.X, point.Y - _mouseDownPoint.Y, 0);
+                //_mouseDownPoint = new Point3D(diff.X + point.X, diff.Y + point.Y, 0);
+                //MouseSimulator.Position = new Point(_mouseDownPoint.X, _mouseDownPoint.Y);
+            }
         }
 
         private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)

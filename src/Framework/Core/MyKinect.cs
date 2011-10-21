@@ -35,6 +35,7 @@ namespace Kinect.Core
 
         private float _maxSkeletonX = .9f;
         private float _maxSkeletonY = .9f;
+        public int ElevationAngleInitialPosition = 10;
 
         private MyKinect()
         {
@@ -154,7 +155,7 @@ namespace Kinect.Core
 
                     try
                     {
-                        _context.NuiCamera.ElevationAngle = 10;
+                        _context.NuiCamera.ElevationAngle = ElevationAngleInitialPosition;
                         _context.VideoStream.Open(ImageStreamType.Video, 2, ImageResolution.Resolution640x480,
                                                   ImageType.Color);
                         _context.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
@@ -276,7 +277,8 @@ namespace Kinect.Core
             //    return new Point3D(0, 0, 0);
             //}
             var newPoint = joint.ScaleTo(640, 480, _maxSkeletonX, _maxSkeletonY);
-            return new Point3D(newPoint.Position.X, newPoint.Position.Y, newPoint.Position.Z);
+            //return coordinates and return z in millimeters
+            return new Point3D(newPoint.Position.X, newPoint.Position.Y, newPoint.Position.Z * 1000);
         }
 
         private void OnCameraMessage(string message)

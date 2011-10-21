@@ -129,7 +129,7 @@ namespace Kinect.ShowCase
             _kinectUsers = new List<User>();
             _kinect = MyKinect.Instance;
             _kinect.ChangeMaxSkeletonPositions(.5f, .5f);
-
+            _kinect.ElevationAngleInitialPosition = 0;
             _kinect.UserCreated += KinectUserCreated;
             _kinect.UserRemoved += _kinect_UserRemoved;
             //_kinect.KinectStarted += new EventHandler<KinectEventArgs>(_kinect_KinectStarted);
