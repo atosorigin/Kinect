@@ -9,7 +9,7 @@
         Title="MainWindow" Height="600" Width="700"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowState="Maximized"  ResizeMode="NoResize" Topmost="True"
+        WindowState="Maximized"  ResizeMode="NoResize" Topmost="False"
         WindowStyle="None"
         >
     <Window.DataContext>
