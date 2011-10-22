@@ -20,27 +20,35 @@ namespace Kinect.MouseControl.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private enum ControlMode { MouseControl, AngryBirds };
+        private ControlMode _currentMode = ControlMode.AngryBirds;
+
         private long _mouseDownCounter, _mouseUpCounter;
         private static readonly ILog Log = LogManager.GetLogger(typeof (MainViewModel));
         private static readonly object SyncRoot = new object();
-        private const int EventIntervalInMilliseconds = 500;
+        private const int MouseButtonsIntervalInMilliseconds = 100;
+        private const int SwitchModeEventInterval = 2000;
+        private const int NoiseFilter = 3;
 
         public RelayCommand<KeyEventArgs> KeyPress { get; set; }
         public RelayCommand<CancelEventArgs> Closing { get; set; }
         public RelayCommand<EventArgs> StartGame { get; set; }
 
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
-        private readonly Size _handResolution = new Size(640, 480);
-        private Point3D _mouseDownPoint = new Point3D(0, 0, -1); 
         private readonly MyKinect _kinect;
         private User _activeUser;
         private bool _controlMouse = false;
         private bool _mouseDown = false;
         private Process _game;
 
-        private DateTime _clapHit = DateTime.Now;
-        private DateTime _clapFilter = DateTime.Now;
-        private DateTime _headHit = DateTime.Now;
+        private DateTime _mouseDownHit = DateTime.Now;
+        private DateTime _mouseUpHit = DateTime.Now;
+        private DateTime _mouseClickHit = DateTime.Now;
+        private DateTime _switchModeHit = DateTime.Now;
+
+        //Filters and gestures
+        private CollisionFilter _lefthandRighthandCollision, _lefthandHeadCollision, _righthandHeadCollision,_righthandLeftShoulderCollision, _righthandRightHipCollision;
+        private SelfTouchGesture _lefthandRighthandGesture, _lefthandHeadGesture, _righthandHeadGesture, _righthandLeftShoulderGesture, _righthandRightHipGesture;
         
 
         private string _windowMessage;
@@ -146,7 +154,7 @@ namespace Kinect.MouseControl.ViewModels
                     }
                     else if (e.Key == Key.M)
                     {
-                        toggleMouseControl(null, null);
+                        ToggleMouseControl();
                     }
                     else if (e.Key == Key.Up)
                     {
@@ -178,14 +186,14 @@ namespace Kinect.MouseControl.ViewModels
 
                 _game.Exited += (s, ea) =>
                 {
-                    if (_controlMouse) toggleMouseControl(null, null);
+                    if (_controlMouse) ToggleMouseControl();
                 };
 
                 _game.Start();
 
                 if (!_controlMouse)
                 {
-                    toggleMouseControl(null, null);
+                    ToggleMouseControl();
                 }
                     
             });
@@ -223,7 +231,7 @@ namespace Kinect.MouseControl.ViewModels
         private void SetUpKinect()
         {
             _kinect.ChangeMaxSkeletonPositions(.6f, .6f);
-            _kinect.ElevationAngleInitialPosition = 5;
+            _kinect.ElevationAngleInitialPosition = 15;
             _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
             //_kinect.PropertyChanged += _kinect_PropertyChanged;
             _kinect.UserCreated += _kinect_UserCreated;
@@ -254,31 +262,83 @@ namespace Kinect.MouseControl.ViewModels
                 }
                 _activeUser = _kinect.GetUser(e.User.Id);
                 _activeUser.Updated += _activeUser_Updated;
+
                 var framesFilter = new FramesFilter(15);
-                //var mouseUpAndDownFilter = new CollisionFilter(new Point3D(100, 30, 20), JointID.HandRight, JointID.HipRight);
-                var mouseUpAndDownFilter = new CollisionFilter(new Point3D(80, 30, 200), JointID.HandRight, JointID.HipRight);
-                var mouseUpAndDownGesture = new SelfTouchGesture(1);
 
+                //Initialize filters
+                _lefthandRighthandCollision = new CollisionFilter(new Point3D(100, 50, 130), JointID.HandLeft, JointID.HandRight);
+                _lefthandHeadCollision = new CollisionFilter(new Point3D(150, 30, 500), JointID.HandLeft, JointID.Head);
+                _righthandHeadCollision = new CollisionFilter(new Point3D(125, 40, 150), JointID.HandRight, JointID.Head);
+                _righthandLeftShoulderCollision = new CollisionFilter(new Point3D(50, 50, 300), JointID.HandRight, JointID.ShoulderLeft);
+                _righthandRightHipCollision = new CollisionFilter(new Point3D(80, 30, 200), JointID.HandRight, JointID.HipRight);
+
+                //Initialize gestures
+                _lefthandRighthandGesture = new SelfTouchGesture(1);
+                _lefthandHeadGesture = new SelfTouchGesture(1);
+                _righthandHeadGesture = new SelfTouchGesture(1);
+                _righthandLeftShoulderGesture = new SelfTouchGesture(1);
+                _righthandRightHipGesture = new SelfTouchGesture(1);
+
+                //Attach filters and gestures
                 _activeUser.AttachPipeline(framesFilter);
-                framesFilter.AttachPipeline(mouseUpAndDownFilter);
-                mouseUpAndDownFilter.AttachPipeline(mouseUpAndDownGesture);
+                framesFilter.AttachPipeline(_lefthandRighthandCollision);
+                framesFilter.AttachPipeline(_lefthandHeadCollision);
+                framesFilter.AttachPipeline(_righthandHeadCollision);
+                framesFilter.AttachPipeline(_righthandLeftShoulderCollision);
+                framesFilter.AttachPipeline(_righthandRightHipCollision);
+                _lefthandRighthandCollision.AttachPipeline(_lefthandRighthandGesture);
+                _lefthandHeadCollision.AttachPipeline(_lefthandHeadGesture);
+                _righthandHeadCollision.AttachPipeline(_righthandHeadGesture);
+                _righthandLeftShoulderCollision.AttachPipeline(_righthandLeftShoulderGesture);
+                _righthandRightHipCollision.AttachPipeline(_righthandRightHipGesture);
 
-                mouseUpAndDownFilter.Filtered += FireMouseUp;
-                mouseUpAndDownGesture.SelfTouchDetected += FireMouseDown;
+                _righthandLeftShoulderGesture.SelfTouchDetected += SwitchMode;
 
-                //var mouseUpAndDownFilter = new CollisionFilter(new Point3D(100, 30, 20), JointID.HandRight, JointID.HipRight);
-                var clickCollisionFilter = new CollisionFilter(new Point3D(125, 40, 150), JointID.HandRight, JointID.Head);
-                var clickGesture = new SelfTouchGesture(1);
+                //Debug info
+                //_righthandLeftShoulderCollision.Filtered += (s, args) => ShowDebugInfo(args, "Filter info: ");
 
-                _activeUser.AttachPipeline(clickCollisionFilter);
-                clickCollisionFilter.AttachPipeline(clickGesture);
-
-                //clickCollisionFilter.Filtered += (s, args) => ShowDebugInfo(args, "Mouse click: ");
-                clickGesture.SelfTouchDetected += FireMouseClick;
-
-                //_activeUser.AddSelfTouchGesture(new Point3D(70, 20, 20), JointID.HandRight, JointID.Head).SelfTouchDetected += FireMouseClick;
-                //_activeUser.AddSelfTouchGesture(new Point3D(20, 20, 20), JointID.HandRight, JointID.HandLeft).SelfTouchDetected += FireMouseClick;
+                SwitchMode(null, null);
             }
+        }
+
+        void SwitchMode(object sender, GestureEventArgs e)
+        {
+            if (!CheckEventInterval(ref _switchModeHit, SwitchModeEventInterval)) return;
+
+            switch (_currentMode)
+            {
+                case ControlMode.MouseControl: _currentMode = ControlMode.AngryBirds; break;
+                case ControlMode.AngryBirds: _currentMode = ControlMode.MouseControl; break;
+                default: return;
+            }
+
+            WindowMessage = "Switching mode to " + _currentMode;
+
+            UnBindAllGestures();
+            switch (_currentMode)
+            {
+                case ControlMode.MouseControl:
+                    _righthandRightHipCollision.Filtered += FireMouseUp;
+                    _righthandRightHipGesture.SelfTouchDetected += FireMouseDown;
+                    _righthandHeadGesture.SelfTouchDetected += FireMouseClick;
+                break;
+                case ControlMode.AngryBirds:
+                    _lefthandRighthandCollision.Filtered += FireMouseUp;
+                    _lefthandRighthandGesture.SelfTouchDetected += FireMouseDown;
+                    _lefthandHeadGesture.SelfTouchDetected += FireMouseClick;
+                break;
+            }
+        }
+
+        private void UnBindAllGestures()
+        {
+            _righthandRightHipCollision.Filtered -= FireMouseUp;
+            _righthandRightHipGesture.SelfTouchDetected -= FireMouseDown;
+            _righthandHeadGesture.SelfTouchDetected -= FireMouseClick;
+
+            _lefthandRighthandCollision.Filtered -= FireMouseUp;
+            _lefthandRighthandGesture.SelfTouchDetected -= FireMouseDown;
+            _lefthandHeadGesture.SelfTouchDetected -= FireMouseClick;
         }
 
         void FireMouseUp(object sender, Core.Eventing.FilterEventArgs e)
@@ -290,13 +350,13 @@ namespace Kinect.MouseControl.ViewModels
 
                 _mouseUpCounter++;
                 //only act after 3 hits
-                if (_mouseUpCounter < 3) return;
+                if (_mouseUpCounter < NoiseFilter) return;
                 _mouseDownCounter = 0;
                 //Prevent int overflow
-                if (_mouseUpCounter > int.MaxValue) _mouseUpCounter = 3;
+                if (_mouseUpCounter > int.MaxValue) _mouseUpCounter = NoiseFilter;
 
                 //check the time interval
-                if (!CheckEventInterval(ref _clapFilter) || !_mouseDown) return;
+                if (!CheckEventInterval(ref _mouseUpHit, MouseButtonsIntervalInMilliseconds) || !_mouseDown) return;
                 _mouseDown = false;
                 WindowMessage = "Mouse up";
 
@@ -311,13 +371,13 @@ namespace Kinect.MouseControl.ViewModels
             {
                 _mouseDownCounter++;
                 //only act after 3 hits
-                if (_mouseDownCounter < 3) return;
+                if (_mouseDownCounter < NoiseFilter) return;
                 _mouseUpCounter = 0;
                 //Prevent int overflow
-                if (_mouseDownCounter > int.MaxValue) _mouseDownCounter = 3;
+                if (_mouseDownCounter > int.MaxValue) _mouseDownCounter = NoiseFilter;
                 
                 //Check the time interval
-                if (!CheckEventInterval(ref _clapHit) || _mouseDown) return;
+                if (!CheckEventInterval(ref _mouseDownHit, MouseButtonsIntervalInMilliseconds) || _mouseDown) return;
                 _mouseDown = true;
                 WindowMessage = "Mouse down";
 
@@ -331,7 +391,7 @@ namespace Kinect.MouseControl.ViewModels
             lock (SyncRoot)
             {
                 //Left button down
-                if (!CheckEventInterval(ref _clapHit)) return;
+                if (!CheckEventInterval(ref _mouseClickHit, MouseButtonsIntervalInMilliseconds)) return;
                 WindowMessage = "Mouse click";
                 if (!_controlMouse) return;
                 MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
@@ -349,17 +409,13 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        void toggleMouseControl(object sender, SelfTouchEventArgs e)
+        void ToggleMouseControl()
         {
             lock (SyncRoot)
             {
-                if (CheckEventInterval(ref _headHit))
-                {
-                    //WindowMessage = "Enable / Dissable mouse";
-                    //Enable/Disable mouse
-                    _controlMouse = !_controlMouse;
-                    WindowMessage = "MouseControl : " + _controlMouse.ToString();
-                }
+                //Enable/Disable mouse
+                _controlMouse = !_controlMouse;
+                WindowMessage = "MouseControl : " + _controlMouse.ToString();
             }
         }
 
@@ -372,20 +428,18 @@ namespace Kinect.MouseControl.ViewModels
             }
             lock (SyncRoot)
             {
-
-                var point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _screenResolution);
+                Point3D point;
+                switch(_currentMode)
+                {
+                    case ControlMode.MouseControl:
+                        point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _screenResolution);
+                        break;
+                    case ControlMode.AngryBirds:
+                        point = e.Event.Spine.ToScreenPosition(new Size(640, 480), _screenResolution);
+                        break;
+                    default: return;
+                }
                 MouseSimulator.Position = new Point(point.X, point.Y);
-                //var point = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _handResolution);
-
-                //If initial
-                //if (_mouseDownPoint.Z == -1)
-                //{
-                //    _mouseDownPoint = point;
-                //}
-
-                //var diff = new Point3D(point.X - _mouseDownPoint.X, point.Y - _mouseDownPoint.Y, 0);
-                //_mouseDownPoint = new Point3D(diff.X + point.X, diff.Y + point.Y, 0);
-                //MouseSimulator.Position = new Point(_mouseDownPoint.X, _mouseDownPoint.Y);
             }
         }
 
@@ -397,9 +451,9 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        private bool CheckEventInterval(ref DateTime lastHit)
+        private bool CheckEventInterval(ref DateTime lastHit, int interval)
         {
-            if ((DateTime.Now - lastHit).TotalMilliseconds > EventIntervalInMilliseconds)
+            if ((DateTime.Now - lastHit).TotalMilliseconds > interval)
             {
                 lastHit = DateTime.Now;
                 return true;
