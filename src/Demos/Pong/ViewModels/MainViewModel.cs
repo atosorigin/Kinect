@@ -130,7 +130,7 @@ namespace Kinect.Pong.ViewModels
                                                       {
                                                           lock (_syncRoot)
                                                           {
-                                                              User kuser = _kinect.GetUser(e.User.ID);
+                                                              User kuser = _kinect.GetUser(e.User.Id);
                                                               if (kuser != null)
                                                               {
                                                                   _player = kuser;
@@ -142,12 +142,12 @@ namespace Kinect.Pong.ViewModels
                                                                   {
                                                                       PongGame.Paddles.Add(new Paddle(
                                                                                                Paddle.Side.Right, false,
-                                                                                               kuser.ID));
+                                                                                               kuser.Id));
                                                                   }
                                                                   else
                                                                   {
                                                                       PongGame.Paddles.Add(new Paddle(Paddle.Side.Left,
-                                                                                                      false, kuser.ID));
+                                                                                                      false, kuser.Id));
                                                                   }
                                                                   _players.Add(_player);
                                                                   if (PongGame.Paddles.Count == 2)

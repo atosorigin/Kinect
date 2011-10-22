@@ -68,13 +68,13 @@ namespace Kinect.Common
         }
 
         public static Point3D ToScreenPosition(this Point3D point, Size cameraResolution, Size screenResolution,
-                                               Point startPoint, Size HandResolution)
+                                               Point startPoint, Size handResolution)
         {
-            return point.ToScreenPosition(cameraResolution, screenResolution, startPoint, HandResolution, false);
+            return point.ToScreenPosition(cameraResolution, screenResolution, startPoint, handResolution, false);
         }
 
         public static Point3D ToScreenPosition(this Point3D point, Size cameraResolution, Size screenResolution,
-                                               Point startPoint, Size HandResolution, bool keepInBounds)
+                                               Point startPoint, Size handResolution, bool keepInBounds)
         {
             double customX = point.X - startPoint.X;
             double customY = point.Y - startPoint.Y;
@@ -82,15 +82,15 @@ namespace Kinect.Common
             if (keepInBounds)
             {
                 customX = customX < 0 ? 0 : customX;
-                customX = customX > HandResolution.Width ? HandResolution.Width : customX;
+                customX = customX > handResolution.Width ? handResolution.Width : customX;
 
                 customY = customY < 0 ? 0 : customY;
-                customY = customY > HandResolution.Height ? HandResolution.Height : customY;
+                customY = customY > handResolution.Height ? handResolution.Height : customY;
             }
 
-            double x = screenResolution.Width/HandResolution.Width*customX;
-            double y = screenResolution.Height/HandResolution.Height*customY;
-            double z = 75 - point.Z/30;
+            double x = screenResolution.Width/handResolution.Width*customX;
+            double y = screenResolution.Height/handResolution.Height*customY;
+            double z = 75 - point.Z/300;
 
             if (z < 10)
             {

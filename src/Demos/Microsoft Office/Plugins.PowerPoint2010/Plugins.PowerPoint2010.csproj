@@ -141,7 +141,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Kinect.Plugins.PowerPoint2010_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Plugins.PowerPoint2010_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>1FCC2A2ED32D1651C4BABA2C2FD0270D1A932F1E</ManifestCertificateThumbprint>

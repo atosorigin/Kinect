@@ -9,6 +9,7 @@
         Title="MainWindow" Height="600" Width="700"
         AllowsTransparency="True"
         Background="Transparent"
+        WindowState="Maximized"  ResizeMode="NoResize" Topmost="True"
         WindowStyle="None"
         >
     <Window.DataContext>
@@ -33,5 +34,12 @@
                Width="640"
                Height="480"
                VerticalAlignment="Bottom" />
+        <Button Content="Start game" Height="23" HorizontalAlignment="Left" Margin="584,52,0,0" Name="btnStartGame" VerticalAlignment="Top" Width="75" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding StartGame }" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
     </Grid>
 </Window>

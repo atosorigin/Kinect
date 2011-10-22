@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Coding4Fun.Kinect.Wpf;
 using Kinect.Common;
 using log4net;
 using Microsoft.Research.Kinect.Nui;
@@ -31,6 +32,10 @@ namespace Kinect.Core
         private List<User> _activeUsers = new List<User>(2);
         private KinectState _kinectstate = KinectState.Stopped;
         private int _nrOfUsers;
+
+        private float _maxSkeletonX = .9f;
+        private float _maxSkeletonY = .9f;
+        public int ElevationAngleInitialPosition = 10;
 
         private MyKinect()
         {
@@ -129,7 +134,8 @@ namespace Kinect.Core
                         _nrOfUsers = 0;
                         _context.Initialize(RuntimeOptions.UseDepthAndPlayerIndex |
                                             RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
-                        _context.SkeletonEngine.TransformSmooth = true;
+                        //_context.SkeletonEngine.TransformSmooth = true;
+                        //_context.SkeletonEngine.SmoothParameters = new TransformSmoothParameters();
                         _camera.Context = _context;
                         _camera.PropertyChanged += CameraPropertyChanged;
                         _camera.Running = true;
@@ -149,7 +155,7 @@ namespace Kinect.Core
 
                     try
                     {
-                        _context.NuiCamera.ElevationAngle = 10;
+                        _context.NuiCamera.ElevationAngle = ElevationAngleInitialPosition;
                         _context.VideoStream.Open(ImageStreamType.Video, 2, ImageResolution.Resolution640x480,
                                                   ImageType.Color);
                         _context.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
@@ -230,24 +236,26 @@ namespace Kinect.Core
 
                         //Update user
                         user.Head = GetDisplayPosition(skeleton.Joints[JointID.Head]);
-                        user.Neck = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
-                        user.Torso = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
-                        user.Waist = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
+                        user.ShoulderCenter = GetDisplayPosition(skeleton.Joints[JointID.ShoulderCenter]);
+                        user.Spine = GetDisplayPosition(skeleton.Joints[JointID.Spine]);
+                        user.HipCenter = GetDisplayPosition(skeleton.Joints[JointID.HipCenter]);
 
-                        user.LeftAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
-                        user.LeftElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
-                        user.LeftFoot = GetDisplayPosition(skeleton.Joints[JointID.FootLeft]);
-                        user.LeftHand = GetDisplayPosition(skeleton.Joints[JointID.HandLeft]);
-                        user.LeftHip = GetDisplayPosition(skeleton.Joints[JointID.HipLeft]);
-                        user.LeftKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
-                        user.LeftShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
-                        user.RightAnkle = GetDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
-                        user.RightElbow = GetDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
-                        user.RightFoot = GetDisplayPosition(skeleton.Joints[JointID.FootRight]);
-                        user.RightHand = GetDisplayPosition(skeleton.Joints[JointID.HandRight]);
-                        user.RightHip = GetDisplayPosition(skeleton.Joints[JointID.HipRight]);
-                        user.RightKnee = GetDisplayPosition(skeleton.Joints[JointID.KneeRight]);
-                        user.RightShoulder = GetDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
+                        user.WristLeft = GetDisplayPosition(skeleton.Joints[JointID.WristLeft]);
+                        user.AnkleLeft = GetDisplayPosition(skeleton.Joints[JointID.AnkleLeft]);
+                        user.ElbowLeft = GetDisplayPosition(skeleton.Joints[JointID.ElbowLeft]);
+                        user.FootLeft = GetDisplayPosition(skeleton.Joints[JointID.FootLeft]);
+                        user.HandLeft = GetDisplayPosition(skeleton.Joints[JointID.HandLeft]);
+                        user.HipLeft = GetDisplayPosition(skeleton.Joints[JointID.HipLeft]);
+                        user.KneeLeft = GetDisplayPosition(skeleton.Joints[JointID.KneeLeft]);
+                        user.ShoulderLeft = GetDisplayPosition(skeleton.Joints[JointID.ShoulderLeft]);
+                        user.WristRight = GetDisplayPosition(skeleton.Joints[JointID.WristRight]);
+                        user.AnkleRight = GetDisplayPosition(skeleton.Joints[JointID.AnkleRight]);
+                        user.ElbowRight = GetDisplayPosition(skeleton.Joints[JointID.ElbowRight]);
+                        user.FootRight = GetDisplayPosition(skeleton.Joints[JointID.FootRight]);
+                        user.HandRight = GetDisplayPosition(skeleton.Joints[JointID.HandRight]);
+                        user.HipRight = GetDisplayPosition(skeleton.Joints[JointID.HipRight]);
+                        user.KneeRight = GetDisplayPosition(skeleton.Joints[JointID.KneeRight]);
+                        user.ShoulderRight = GetDisplayPosition(skeleton.Joints[JointID.ShoulderRight]);
                         user.Update();
                     }
                     else if (user != null && skeleton.TrackingState == SkeletonTrackingState.NotTracked)
@@ -268,14 +276,9 @@ namespace Kinect.Core
             //    //Als hij hem niet ziet, laat hem dan ook links boven in beeld zien.
             //    return new Point3D(0, 0, 0);
             //}
-
-            float depthX, depthY;
-            short depthZ;
-            _context.SkeletonEngine.SkeletonToDepthImage(joint.Position, out depthX, out depthY, out depthZ);
-            depthX = Math.Max(0, Math.Min(depthX * 320, 320)); //convert to 640, 480 space
-            depthY = Math.Max(0, Math.Min(depthY * 240, 240)); //convert to 640, 480 space
-            //Make it milimeters
-            return new Point3D(depthX, depthY, depthZ);
+            var newPoint = joint.ScaleTo(640, 480, _maxSkeletonX, _maxSkeletonY);
+            //return coordinates and return z in millimeters
+            return new Point3D(newPoint.Position.X, newPoint.Position.Y, newPoint.Position.Z * 1000);
         }
 
         private void OnCameraMessage(string message)
@@ -338,7 +341,7 @@ namespace Kinect.Core
 
         public User GetUser(int userId)
         {
-            return _activeUsers.FirstOrDefault(u => u.ID == userId);
+            return _activeUsers.FirstOrDefault(u => u.Id == userId);
         }
 
         public BitmapSource GetCameraView(CameraView view)
@@ -381,12 +384,34 @@ namespace Kinect.Core
             }
         }
 
+
+        public void SetElevationAngle(int angle)
+        {
+            _context.NuiCamera.ElevationAngle = angle;
+        }
+
         private void CameraPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Fps")
             {
                 OnPropertyChanged("Fps");
             }
+        }
+
+        public void ChangeMaxSkeletonPositions(float x, float y)
+        {
+            if (x < 0 || x > 1)
+            {
+                throw new ArgumentException("The x value needs to be between 0 and 1", "x");
+            }
+
+            if (y < 0 || y > 1)
+            {
+                throw new ArgumentException("The y value needs to be between 0 and 1", "y");
+            }
+
+            _maxSkeletonX = x;
+            _maxSkeletonY = y;
         }
     }
 }

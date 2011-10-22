@@ -61,36 +61,30 @@ namespace Kinect.Core.Filters
         /// <param name="evt">The evt.</param>
         public override void Process(IUserChangedEvent evt)
         {
-            List<Point3D> points = evt.GetPoints(JointsToCheck);
-            bool succesFullCheck = false;
+            var points = evt.GetPoints(JointsToCheck);
+            var succesFullCheck = true;
 
-            if (!succesFullCheck)
+            //Use the first point as reference
+            var point = points[0];
+            //Check every point with the first one
+            for (var i = 1; i < points.Count; i++)
             {
-                succesFullCheck = true;
-                //Use the first point as reference
-                Point3D point = points[0];
-                //Check every point with the first one
-                for (int i = 1; i < points.Count; i++)
+                var margin = new Point3D
                 {
-                    var margin = new Point3D();
-                    margin.X = Math.Abs(point.X - points[i].X);
-                    margin.Y = Math.Abs(point.Y - points[i].Y);
-                    margin.Z = Math.Abs(point.Z - points[i].Z);
-                    FilterData[i - 1] = margin;
-
-                    succesFullCheck = succesFullCheck && Calculator.WithinMargin(point, points[i], Margin);
-                    //If one check fails, break the loop
-                    if (!succesFullCheck)
-                    {
-                        break;
-                    }
-                }
+                    X = (point.X - points[i].X),
+                    Y = (point.Y - points[i].Y),
+                    Z = (point.Z - points[i].Z)
+                };
+                FilterData[i - 1] = margin;
+                succesFullCheck = Calculator.WithinMargin(point, points[i], Margin);
+                //If one check fails, break the loop
+                if (!succesFullCheck) break;
             }
 
             if (FilterData.Count() > 0 && JointsToCheck.Length > 1)
             {
                 _log.IfDebugFormat("CollisionFilter:\t{4} {2} -> {3}\t{0} on {1}", JointsToCheck[0], JointsToCheck[1],
-                                   FilterData[0].GetDebugString(), succesFullCheck ? "OK" : string.Empty, evt.ID);
+                                   FilterData[0].GetDebugString(), succesFullCheck ? "OK" : string.Empty, evt.Id);
             }
 
             if (succesFullCheck)

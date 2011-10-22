@@ -22,11 +22,11 @@ namespace Kinect.Semaphore.ViewModels
 {
     public class UserViewModel : ViewModelBase
     {
-        private static object _syncRoot = new object();
         private readonly DispatcherTimer _dispatchtimer;
-        private readonly double _updateMargin = 0.5;
+        private const double UpdateMargin = 0.5;
+        private const double PropertionModifier = 1.2;
         private readonly User _user;
-        private DateTime _StartDateTime;
+        private DateTime _startDateTime;
         private Brush _brush;
         private int _calibrationCounter = 5;
         private string _calibrationText;
@@ -34,29 +34,29 @@ namespace Kinect.Semaphore.ViewModels
         private Color _color;
         private int _counter;
         private Point3D _head;
-        private Point3D _leftAnkle;
-        private Point3D _leftElbow;
-        private Point3D _leftFingertip;
-        private Point3D _leftFoot;
-        private Point3D _leftHand;
-        private Point3D _leftHip;
-        private Point3D _leftKnee;
-        private Point3D _leftShoulder;
-        private Point3D _neck;
-        private Point3D _rightAnkle;
-        private Point3D _rightElbow;
-        private Point3D _rightFingertip;
-        private Point3D _rightFoot;
-        private Point3D _rightHand;
-        private Point3D _rightHip;
-        private Point3D _rightKnee;
-        private Point3D _rightShoulder;
+        private Point3D _ankleLeft;
+        private Point3D _elbowLeft;
+        private Point3D _wristLeft;
+        private Point3D _footLeft;
+        private Point3D _handLeft;
+        private Point3D _hipLeft;
+        private Point3D _kneeLeft;
+        private Point3D _shoulderLeft;
+        private Point3D _shoulderCenter;
+        private Point3D _ankleRight;
+        private Point3D _elbowRight;
+        private Point3D _wristRight;
+        private Point3D _footRight;
+        private Point3D _handRight;
+        private Point3D _hipRight;
+        private Point3D _kneeRight;
+        private Point3D _shoulderRight;
+        private Point3D _spine;
+        private Point3D _hipCenter;
         private SemaphoreGesture _semaphoreGesture;
         private TimeSpan _stopWatch;
-        private Point3D _torso;
-        private Point3D _waist;
 
-        public Visibility _win = Visibility.Hidden;
+        private Visibility _win = Visibility.Hidden;
 
         public UserViewModel(int id)
             : this(new User(id))
@@ -67,14 +67,13 @@ namespace Kinect.Semaphore.ViewModels
         {
             _user = user;
             _user.Updated += _user_Updated;
-            _dispatchtimer = new DispatcherTimer();
-            _dispatchtimer.Interval = TimeSpan.FromMilliseconds(1);
+            _dispatchtimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(1)};
             _dispatchtimer.Tick += _dispatchtimer_Tick;
         }
 
-        public int ID
+        public int Id
         {
-            get { return _user.ID; }
+            get { return _user.Id; }
         }
 
         public Visibility Win
@@ -168,258 +167,258 @@ namespace Kinect.Semaphore.ViewModels
             }
         }
 
-        public Point3D Neck
+        public Point3D ShoulderCenter
         {
-            get { return _neck; }
+            get { return _shoulderCenter; }
             set
             {
                 if (Changed(value, _head))
                 {
-                    _neck = value;
-                    RaisePropertyChanged("Neck");
+                    _shoulderCenter = value;
+                    RaisePropertyChanged("ShoulderCenter");
                 }
             }
         }
 
-        public Point3D Torso
+        public Point3D Spine
         {
-            get { return _torso; }
+            get { return _spine; }
             set
             {
-                if (Changed(value, _torso))
+                if (Changed(value, _spine))
                 {
-                    _torso = value;
-                    RaisePropertyChanged("Torso");
+                    _spine = value;
+                    RaisePropertyChanged("Spine");
                 }
             }
         }
 
-        public Point3D Waist
+        public Point3D HipCenter
         {
-            get { return _waist; }
+            get { return _hipCenter; }
             set
             {
-                if (Changed(value, _waist))
+                if (Changed(value, _hipCenter))
                 {
-                    _waist = value;
-                    RaisePropertyChanged("Waist");
+                    _hipCenter = value;
+                    RaisePropertyChanged("HipCenter");
                 }
             }
         }
 
-        public Point3D LeftShoulder
+        public Point3D ShoulderLeft
         {
-            get { return _leftShoulder; }
+            get { return _shoulderLeft; }
             set
             {
-                if (Changed(value, _leftShoulder))
+                if (Changed(value, _shoulderLeft))
                 {
-                    _leftShoulder = value;
-                    RaisePropertyChanged("LeftShoulder");
+                    _shoulderLeft = value;
+                    RaisePropertyChanged("ShoulderLeft");
                 }
             }
         }
 
-        public Point3D RightShoulder
+        public Point3D ShoulderRight
         {
-            get { return _rightShoulder; }
+            get { return _shoulderRight; }
             set
             {
-                if (Changed(value, _rightShoulder))
+                if (Changed(value, _shoulderRight))
                 {
-                    _rightShoulder = value;
-                    RaisePropertyChanged("RightShoulder");
+                    _shoulderRight = value;
+                    RaisePropertyChanged("ShoulderRight");
                 }
             }
         }
 
-        public Point3D LeftElbow
+        public Point3D ElbowLeft
         {
-            get { return _leftElbow; }
+            get { return _elbowLeft; }
             set
             {
-                if (Changed(value, _leftElbow))
+                if (Changed(value, _elbowLeft))
                 {
-                    _leftElbow = value;
-                    RaisePropertyChanged("LeftElbow");
+                    _elbowLeft = value;
+                    RaisePropertyChanged("ElbowLeft");
                 }
             }
         }
 
-        public Point3D RightElbow
+        public Point3D ElbowRight
         {
-            get { return _rightElbow; }
+            get { return _elbowRight; }
             set
             {
-                if (Changed(value, _rightElbow))
+                if (Changed(value, _elbowRight))
                 {
-                    _rightElbow = value;
-                    RaisePropertyChanged("RightElbow");
+                    _elbowRight = value;
+                    RaisePropertyChanged("ElbowRight");
                 }
             }
         }
 
-        public Point3D LeftHand
+        public Point3D HandLeft
         {
-            get { return _leftHand; }
+            get { return _handLeft; }
             set
             {
-                if (Changed(value, _leftHand))
+                if (Changed(value, _handLeft))
                 {
-                    _leftHand = value;
-                    RaisePropertyChanged("LeftHand");
+                    _handLeft = value;
+                    RaisePropertyChanged("HandLeft");
                 }
             }
         }
 
-        public Point3D RightHand
+        public Point3D HandRight
         {
-            get { return _rightHand; }
+            get { return _handRight; }
             set
             {
-                if (Changed(value, _rightHand))
+                if (Changed(value, _handRight))
                 {
-                    _rightHand = value;
-                    RaisePropertyChanged("RightHand");
+                    _handRight = value;
+                    RaisePropertyChanged("HandRight");
                 }
             }
         }
 
-        public Point3D LeftFingertip
+        public Point3D WristLeft
         {
-            get { return _leftFingertip; }
+            get { return _wristLeft; }
             set
             {
-                if (Changed(value, _leftFingertip))
+                if (Changed(value, _wristLeft))
                 {
-                    _leftFingertip = value;
-                    RaisePropertyChanged("LeftFingertip");
+                    _wristLeft = value;
+                    RaisePropertyChanged("WristLeft");
                 }
             }
         }
 
-        public Point3D RightFingertip
+        public Point3D WristRight
         {
-            get { return _rightFingertip; }
+            get { return _wristRight; }
             set
             {
-                if (Changed(value, _rightFingertip))
+                if (Changed(value, _wristRight))
                 {
-                    _rightFingertip = value;
-                    RaisePropertyChanged("RightFingertip");
+                    _wristRight = value;
+                    RaisePropertyChanged("WristRight");
                 }
             }
         }
 
-        public Point3D LeftHip
+        public Point3D HipLeft
         {
-            get { return _leftHip; }
+            get { return _hipLeft; }
             set
             {
-                if (Changed(value, _leftHip))
+                if (Changed(value, _hipLeft))
                 {
-                    _leftHip = value;
-                    RaisePropertyChanged("LeftHip");
+                    _hipLeft = value;
+                    RaisePropertyChanged("HipLeft");
                 }
             }
         }
 
-        public Point3D RightHip
+        public Point3D HipRight
         {
-            get { return _rightHip; }
+            get { return _hipRight; }
             set
             {
-                if (Changed(value, _rightHip))
+                if (Changed(value, _hipRight))
                 {
-                    _rightHip = value;
-                    RaisePropertyChanged("RightHip");
+                    _hipRight = value;
+                    RaisePropertyChanged("HipRight");
                 }
             }
         }
 
-        public Point3D LeftKnee
+        public Point3D KneeLeft
         {
-            get { return _leftKnee; }
+            get { return _kneeLeft; }
             set
             {
-                if (Changed(value, _leftKnee))
+                if (Changed(value, _kneeLeft))
                 {
-                    _leftKnee = value;
-                    RaisePropertyChanged("LeftKnee");
+                    _kneeLeft = value;
+                    RaisePropertyChanged("KneeLeft");
                 }
             }
         }
 
-        public Point3D RightKnee
+        public Point3D KneeRight
         {
-            get { return _rightKnee; }
+            get { return _kneeRight; }
             set
             {
-                if (Changed(value, _rightKnee))
+                if (Changed(value, _kneeRight))
                 {
-                    _rightKnee = value;
-                    RaisePropertyChanged("RightKnee");
+                    _kneeRight = value;
+                    RaisePropertyChanged("KneeRight");
                 }
             }
         }
 
-        public Point3D LeftAnkle
+        public Point3D AnkleLeft
         {
-            get { return _leftAnkle; }
+            get { return _ankleLeft; }
             set
             {
-                if (Changed(value, _leftAnkle))
+                if (Changed(value, _ankleLeft))
                 {
-                    _leftAnkle = value;
-                    RaisePropertyChanged("LeftAnkle");
+                    _ankleLeft = value;
+                    RaisePropertyChanged("AnkleLeft");
                 }
             }
         }
 
-        public Point3D RightAnkle
+        public Point3D AnkleRight
         {
-            get { return _rightAnkle; }
+            get { return _ankleRight; }
             set
             {
-                if (Changed(value, _rightAnkle))
+                if (Changed(value, _ankleRight))
                 {
-                    _rightAnkle = value;
-                    RaisePropertyChanged("RightAnkle");
+                    _ankleRight = value;
+                    RaisePropertyChanged("AnkleRight");
                 }
             }
         }
 
-        public Point3D LeftFoot
+        public Point3D FootLeft
         {
-            get { return _leftFoot; }
+            get { return _footLeft; }
             set
             {
-                if (Changed(value, _leftFoot))
+                if (Changed(value, _footLeft))
                 {
-                    _leftFoot = value;
-                    RaisePropertyChanged("LeftFoot");
+                    _footLeft = value;
+                    RaisePropertyChanged("FootLeft");
                 }
             }
         }
 
-        public Point3D RightFoot
+        public Point3D FootRight
         {
-            get { return _rightFoot; }
+            get { return _footRight; }
             set
             {
-                if (Changed(value, _rightFoot))
+                if (Changed(value, _footRight))
                 {
-                    _rightFoot = value;
-                    RaisePropertyChanged("RightFoot");
+                    _footRight = value;
+                    RaisePropertyChanged("FootRight");
                 }
             }
         }
 
         private bool Changed(Point3D newValue, Point3D oldValue)
         {
-            if (Math.Abs(newValue.X - oldValue.X) >= _updateMargin ||
-                Math.Abs(newValue.Y - oldValue.Y) >= _updateMargin ||
-                Math.Abs(newValue.Z - oldValue.Z) >= _updateMargin
+            if (Math.Abs(newValue.X - oldValue.X) >= UpdateMargin ||
+                Math.Abs(newValue.Y - oldValue.Y) >= UpdateMargin ||
+                Math.Abs(newValue.Z - oldValue.Z) >= UpdateMargin
                 )
             {
                 return true;
@@ -431,7 +430,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
                                                       {
-                                                          StopWatch = DateTime.Now - _StartDateTime;
+                                                          StopWatch = DateTime.Now - _startDateTime;
                                                           //StopWatch += TimeSpan.FromMilliseconds(1);
                                                       });
         }
@@ -442,30 +441,31 @@ namespace Kinect.Semaphore.ViewModels
             Type thisType = GetType();
 
             eventProperties.AsParallel().ForAll(pi =>
-                                                    {
-                                                        PropertyInfo prop = thisType.GetProperty(pi.Name);
-                                                        if (prop != null && prop.CanWrite)
-                                                        {
-                                                            object propValue = pi.GetValue(e.Event, null);
-                                                            object newValue = propValue;
-                                                            if (pi.PropertyType == typeof (Point3D))
-                                                            {
-                                                                newValue = ((Point3D) propValue);
-                                                            }
-                                                            prop.SetValue(this, newValue, null);
-                                                        }
-                                                    });
+            {
+                PropertyInfo prop = thisType.GetProperty(pi.Name);
+                if (prop != null && prop.CanWrite)
+                {
+                    if (pi.PropertyType == typeof(Point3D))
+                    {
+                        var propValue = pi.GetValue(e.Event, null);
+                        var point = (Point3D) propValue;
+                        var newValue = new Point3D(point.X * PropertionModifier, point.Y * PropertionModifier, point.Z * PropertionModifier);
+
+                        prop.SetValue(this, newValue, null);
+                    }
+                }
+            });
         }
 
         internal void AddSemaphoreTracking()
         {
             Semaphore = new SemaphoreViewModel();
-            Semaphore.PropertyChanged += Semaphore_PropertyChanged;
+            Semaphore.PropertyChanged += SemaphorePropertyChanged;
             _semaphoreGesture = _user.AddSemaphoreTouchGesture();
             _semaphoreGesture.SemafoorDetected += _semaphoreGesture_SemafoorDetected;
         }
 
-        private void Semaphore_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void SemaphorePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsRunning")
             {
@@ -477,7 +477,7 @@ namespace Kinect.Semaphore.ViewModels
         {
             if (isRunning && !_dispatchtimer.IsEnabled)
             {
-                _StartDateTime = DateTime.Now;
+                _startDateTime = DateTime.Now;
 
                 //StopWatch = new TimeSpan(0);
                 _dispatchtimer.Start();
@@ -506,7 +506,7 @@ namespace Kinect.Semaphore.ViewModels
             else if (_calibrationCounter == 0)
             {
                 AddSelfTouchGesture(
-                    FilterHelper.CalculateCorrection(new List<Point3D> {_user.LeftHand, _user.RightShoulder}));
+                    FilterHelper.CalculateCorrection(new List<Point3D> { _user.HandLeft, _user.ShoulderRight }));
                 CalibrationText = "Saving";
             }
             else
@@ -548,24 +548,23 @@ namespace Kinect.Semaphore.ViewModels
             using (var writer = new StreamWriter("c:/temp/user.log"))
             {
                 writer.WriteLine("Head:\t\t{0}\t{1}\t{2}", Head.X, Head.Y, Head.Z);
-                writer.WriteLine("LeftAnkle:\t\t{0}\t{1}\t{2}", Neck.X, Neck.Y, Neck.Z);
-                writer.WriteLine("LeftShoulder:\t\t{0}\t{1}\t{2}", LeftShoulder.X, LeftShoulder.Y, LeftShoulder.Z);
-                writer.WriteLine("RightShoulder:\t\t{0}\t{1}\t{2}", RightShoulder.X, RightShoulder.Y, RightShoulder.Z);
-                writer.WriteLine("Torso:\t\t{0}\t{1}\t{2}", Torso.X, Torso.Y, Torso.Z);
-                writer.WriteLine("Waist:\t\t{0}\t{1}\t{2}", Waist.X, Waist.Y, Waist.Z);
-                writer.WriteLine("LeftElbow:\t\t{0}\t{1}\t{2}", LeftElbow.X, LeftElbow.Y, LeftElbow.Z);
-                writer.WriteLine("RightElbow:\t\t{0}\t{1}\t{2}", RightElbow.X, RightElbow.Y, RightElbow.Z);
-                writer.WriteLine("LeftHand:\t\t{0}\t{1}\t{2}", LeftHand.X, LeftHand.Y, LeftHand.Z);
-                writer.WriteLine("RightHand:\t\t{0}\t{1}\t{2}", RightHand.X, RightHand.Y, RightHand.Z);
-                writer.WriteLine("LeftFingertip:\t\t{0}\t{1}\t{2}", LeftFingertip.X, LeftFingertip.Y, LeftFingertip.Z);
-                writer.WriteLine("RightFingertip:\t\t{0}\t{1}\t{2}", RightFingertip.X, RightFingertip.Y,
-                                 RightFingertip.Z);
-                writer.WriteLine("LeftHip:\t\t{0}\t{1}\t{2}", LeftHip.X, LeftHip.Y, LeftHip.Z);
-                writer.WriteLine("RightHip:\t\t{0}\t{1}\t{2}", RightHip.X, RightHip.Y, RightHip.Z);
-                writer.WriteLine("LeftKnee:\t\t{0}\t{1}\t{2}", LeftKnee.X, LeftKnee.Y, LeftKnee.Z);
-                writer.WriteLine("RightKnee:\t\t{0}\t{1}\t{2}", RightKnee.X, RightKnee.Y, RightKnee.Z);
-                writer.WriteLine("LeftFoot:\t\t{0}\t{1}\t{2}", LeftFoot.X, LeftFoot.Y, LeftFoot.Z);
-                writer.WriteLine("RightFoot:\t\t{0}\t{1}\t{2}", RightFoot.X, RightFoot.Y, RightFoot.Z);
+                writer.WriteLine("ShoulderCenter:\t\t{0}\t{1}\t{2}", ShoulderCenter.X, ShoulderCenter.Y, ShoulderCenter.Z);
+                writer.WriteLine("ShoulderLeft:\t\t{0}\t{1}\t{2}", ShoulderLeft.X, ShoulderLeft.Y, ShoulderLeft.Z);
+                writer.WriteLine("ShoulderRight:\t\t{0}\t{1}\t{2}", ShoulderRight.X, ShoulderRight.Y, ShoulderRight.Z);
+                writer.WriteLine("Spine:\t\t{0}\t{1}\t{2}", Spine.X, Spine.Y, Spine.Z);
+                writer.WriteLine("HipCenter:\t\t{0}\t{1}\t{2}", HipCenter.X, HipCenter.Y, HipCenter.Z);
+                writer.WriteLine("ElbowLeft:\t\t{0}\t{1}\t{2}", ElbowLeft.X, ElbowLeft.Y, ElbowLeft.Z);
+                writer.WriteLine("ElbowRight:\t\t{0}\t{1}\t{2}", ElbowRight.X, ElbowRight.Y, ElbowRight.Z);
+                writer.WriteLine("HandLeft:\t\t{0}\t{1}\t{2}", HandLeft.X, HandLeft.Y, HandLeft.Z);
+                writer.WriteLine("HandRight:\t\t{0}\t{1}\t{2}", HandRight.X, HandRight.Y, HandRight.Z);
+                writer.WriteLine("WristLeft:\t\t{0}\t{1}\t{2}", WristLeft.X, WristLeft.Y, WristLeft.Z);
+                writer.WriteLine("WristRight:\t\t{0}\t{1}\t{2}", WristRight.X, WristRight.Y, WristRight.Z);
+                writer.WriteLine("HipLeft:\t\t{0}\t{1}\t{2}", HipLeft.X, HipLeft.Y, HipLeft.Z);
+                writer.WriteLine("HipRight:\t\t{0}\t{1}\t{2}", HipRight.X, HipRight.Y, HipRight.Z);
+                writer.WriteLine("KneeLeft:\t\t{0}\t{1}\t{2}", KneeLeft.X, KneeLeft.Y, KneeLeft.Z);
+                writer.WriteLine("KneeRight:\t\t{0}\t{1}\t{2}", KneeRight.X, KneeRight.Y, KneeRight.Z);
+                writer.WriteLine("FootLeft:\t\t{0}\t{1}\t{2}", FootLeft.X, FootLeft.Y, FootLeft.Z);
+                writer.WriteLine("FootRight:\t\t{0}\t{1}\t{2}", FootRight.X, FootRight.Y, FootRight.Z);
             }
         }
     }

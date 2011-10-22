@@ -13,41 +13,39 @@ namespace Kinect.Core.Filters.Helper
                 case JointID.Head:
                     return evt.Head;
                 case JointID.AnkleLeft:
-                    return evt.LeftAnkle;
+                    return evt.AnkleLeft;
                 case JointID.ElbowLeft:
-                    return evt.LeftElbow;
-                    //case JointID.R: return evt.LeftFingertip;
+                    return evt.ElbowLeft;
                 case JointID.FootLeft:
-                    return evt.LeftFoot;
+                    return evt.FootLeft;
                 case JointID.HandLeft:
-                    return evt.LeftHand;
+                    return evt.HandLeft;
                 case JointID.KneeLeft:
-                    return evt.LeftKnee;
+                    return evt.KneeLeft;
                 case JointID.ShoulderLeft:
-                    return evt.LeftShoulder;
+                    return evt.ShoulderLeft;
                 case JointID.HipLeft:
-                    return evt.LeftHip;
+                    return evt.HipLeft;
                 case JointID.ShoulderCenter:
-                    return evt.Neck;
+                    return evt.ShoulderCenter;
                 case JointID.AnkleRight:
-                    return evt.RightAnkle;
+                    return evt.AnkleRight;
                 case JointID.ElbowRight:
-                    return evt.RightElbow;
-                    //case JointID.RightFingertip: return evt.RightFingertip; 
+                    return evt.ElbowRight;
                 case JointID.FootRight:
-                    return evt.RightFoot;
+                    return evt.FootRight;
                 case JointID.HandRight:
-                    return evt.RightHand;
+                    return evt.HandRight;
                 case JointID.KneeRight:
-                    return evt.RightKnee;
+                    return evt.KneeRight;
                 case JointID.HipRight:
-                    return evt.RightHip;
+                    return evt.HipRight;
                 case JointID.ShoulderRight:
-                    return evt.RightShoulder;
+                    return evt.ShoulderRight;
                 case JointID.Spine:
-                    return evt.Torso;
+                    return evt.Spine;
                 case JointID.HipCenter:
-                    return evt.Waist;
+                    return evt.HipCenter;
             }
 
             return default(Point3D);
@@ -72,57 +70,55 @@ namespace Kinect.Core.Filters.Helper
                     user.Head = newPoint;
                     break;
                 case JointID.AnkleLeft:
-                    user.LeftAnkle = newPoint;
+                    user.AnkleLeft = newPoint;
                     break;
                 case JointID.ElbowLeft:
-                    user.LeftElbow = newPoint;
+                    user.ElbowLeft = newPoint;
                     break;
-                    //case JointID.LeftFingertip: user.LeftFingertip = newPoint; break;
                 case JointID.FootLeft:
-                    user.LeftFoot = newPoint;
+                    user.FootLeft = newPoint;
                     break;
                 case JointID.HandLeft:
-                    user.LeftHand = newPoint;
+                    user.HandLeft = newPoint;
                     break;
                 case JointID.KneeLeft:
-                    user.LeftKnee = newPoint;
+                    user.KneeLeft = newPoint;
                     break;
                 case JointID.ShoulderLeft:
-                    user.LeftShoulder = newPoint;
+                    user.ShoulderLeft = newPoint;
                     break;
                 case JointID.HipLeft:
-                    user.LeftHip = newPoint;
+                    user.HipLeft = newPoint;
                     break;
                 case JointID.ShoulderCenter:
-                    user.Neck = newPoint;
+                    user.ShoulderCenter = newPoint;
                     break;
                 case JointID.AnkleRight:
-                    user.RightAnkle = newPoint;
+                    user.AnkleRight = newPoint;
                     break;
                 case JointID.ElbowRight:
-                    user.RightElbow = newPoint;
+                    user.ElbowRight = newPoint;
                     break;
-                    //case JointID.RightFingertip: user.RightFingertip = newPoint; break;
                 case JointID.FootRight:
-                    user.RightFoot = newPoint;
+                    user.FootRight = newPoint;
                     break;
                 case JointID.HandRight:
-                    user.RightHand = newPoint;
+                    user.HandRight = newPoint;
                     break;
                 case JointID.KneeRight:
-                    user.RightKnee = newPoint;
+                    user.KneeRight = newPoint;
                     break;
                 case JointID.HipRight:
-                    user.RightHip = newPoint;
+                    user.HipRight = newPoint;
                     break;
                 case JointID.ShoulderRight:
-                    user.RightShoulder = newPoint;
+                    user.ShoulderRight = newPoint;
                     break;
                 case JointID.Spine:
-                    user.Torso = newPoint;
+                    user.Spine = newPoint;
                     break;
                 case JointID.HipCenter:
-                    user.Waist = newPoint;
+                    user.HipCenter = newPoint;
                     break;
             }
         }
