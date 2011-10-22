@@ -7,9 +7,8 @@
         xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800"
-        AllowsTransparency="True"
         Background="Transparent"
-        WindowStyle="None"
+        WindowStyle="ThreeDBorderWindow"
         >
     <Window.DataContext>
         <Binding Mode="OneWay"
@@ -28,12 +27,19 @@
     <Grid>
         <Label Content="{Binding WindowMessage, Mode=OneWay}"
                FontSize="48" Background="White" />
-        <Image Source="{Binding CameraView, Mode=OneWay}"
+        <Canvas Height="480" Width="640" VerticalAlignment="Bottom">
+            <Image Source="{Binding CameraView, Mode=OneWay}"
                Visibility="{Binding CameraVisibility}"
                Width="640"
                Height="480"
-               VerticalAlignment="Bottom" />
-        <Button Content="Start game" Height="23" HorizontalAlignment="Left" Margin="584,52,0,0" Name="btnStartGame" VerticalAlignment="Top" Width="75" >
+               VerticalAlignment="Bottom"
+                HorizontalAlignment="Left">
+            </Image>
+            <Ellipse Width="50" Height="50" Fill="#FFFF0000" Visibility="{Binding AngryBirdsMode}" Canvas.Left="165" Canvas.Top="270" Stroke="White" StrokeThickness="5" />
+            <Ellipse Width="50" Height="50" Fill="Green" Visibility="{Binding AngryBirdsMode}" Canvas.Left="{Binding SpinePoint.X}" Canvas.Top="{Binding SpinePoint.Y}" Stroke="White" StrokeThickness="5" />
+        </Canvas>
+
+        <Button Content="Start game" Height="40" HorizontalAlignment="Left" Margin="584,52,0,0" Name="btnStartGame" VerticalAlignment="Top" Width="100" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
                     <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding StartGame }" PassEventArgsToCommand="True" />

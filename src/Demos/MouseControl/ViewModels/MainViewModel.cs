@@ -20,25 +20,26 @@ namespace Kinect.MouseControl.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MainViewModel));
+        private static readonly object SyncRoot = new object();
+
         private enum ControlMode { MouseControl, AngryBirds };
         private ControlMode _currentMode = ControlMode.AngryBirds;
 
-        private long _mouseDownCounter, _mouseUpCounter;
-        private static readonly ILog Log = LogManager.GetLogger(typeof (MainViewModel));
-        private static readonly object SyncRoot = new object();
         private const int MouseButtonsIntervalInMilliseconds = 100;
         private const int SwitchModeEventInterval = 2000;
         private const int NoiseFilter = 3;
+        private long _mouseDownCounter, _mouseUpCounter;
 
-        public RelayCommand<KeyEventArgs> KeyPress { get; set; }
-        public RelayCommand<CancelEventArgs> Closing { get; set; }
-        public RelayCommand<EventArgs> StartGame { get; set; }
+        public RelayCommand<KeyEventArgs> KeyPress { get; private set; }
+        public RelayCommand<CancelEventArgs> Closing { get; private set; }
+        public RelayCommand<EventArgs> StartGame { get; private set; }
 
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
         private readonly MyKinect _kinect;
         private User _activeUser;
-        private bool _controlMouse = false;
-        private bool _mouseDown = false;
+        private bool _controlMouse;
+        private bool _mouseDown;
         private Process _game;
 
         private DateTime _mouseDownHit = DateTime.Now;
@@ -49,21 +50,39 @@ namespace Kinect.MouseControl.ViewModels
         //Filters and gestures
         private CollisionFilter _lefthandRighthandCollision, _lefthandHeadCollision, _righthandHeadCollision,_righthandLeftShoulderCollision, _righthandRightHipCollision;
         private SelfTouchGesture _lefthandRighthandGesture, _lefthandHeadGesture, _righthandHeadGesture, _righthandLeftShoulderGesture, _righthandRightHipGesture;
-        
+
+        private Visibility _angryBirdsMode = Visibility.Hidden;
+        public Visibility AngryBirdsMode
+        {
+            get { return _angryBirdsMode; }
+            private set { 
+                _angryBirdsMode = value;
+                RaisePropertyChanged("AngryBirdsMode");
+            }
+        }
+
+        private Point _spinePoint = new Point(0,0);
+        public Point SpinePoint
+        {
+            get { return _spinePoint; }
+            private set 
+            { 
+                _spinePoint = value;
+                RaisePropertyChanged("SpinePoint");
+            }
+        }
 
         private string _windowMessage;
         public string WindowMessage
         {
             get { return _windowMessage; }
-            set
+            private set
             {
                 lock (SyncRoot)
                 {
                     if (value != _windowMessage)
                     {
                         _windowMessage = value;
-                        //TODO: Change to RaisePropertyChanged(() => WindowMessage)
-                        //when MvvMLight V4 is released
                         RaisePropertyChanged("WindowMessage");
                     }
                 }
@@ -74,15 +93,13 @@ namespace Kinect.MouseControl.ViewModels
         public ImageSource CameraView
         {
             get { return _cameraView; }
-            set
+            private set
             {
                 lock (SyncRoot)
                 {
                     if (value != _cameraView)
                     {
                         _cameraView = value;
-                        //TODO: Change to RaisePropertyChanged(() => CameraView)
-                        //when MvvMLight V4 is released
                         RaisePropertyChanged("CameraView");
                     }
                 }
@@ -94,7 +111,7 @@ namespace Kinect.MouseControl.ViewModels
         public Visibility CameraVisibility
         {
             get { return _cameraVisibility; }
-            set
+            private set
             {
                 if (value != _cameraVisibility)
                 {
@@ -139,30 +156,20 @@ namespace Kinect.MouseControl.ViewModels
                             case Core.CameraView.None:
                                 _kinect.CameraViewType = Core.CameraView.Depth;
                                 break;
-                            default:
-                                break;
                         }
                         SetCameraView();
                     }
                     else if (e.Key == Key.Up)
                     {
-                        _kinect.MotorUp(2);
+                        WindowMessage = "New ElevationAngle: " + _kinect.MotorUp(2);
                     }
                     else if (e.Key == Key.Down)
                     {
-                        _kinect.MotorDown(2);
+                        WindowMessage = "New ElevationAngle: " + _kinect.MotorDown(2);
                     }
                     else if (e.Key == Key.M)
                     {
                         ToggleMouseControl();
-                    }
-                    else if (e.Key == Key.Up)
-                    {
-                        _kinect.MotorUp(2);
-                    }
-                    else if (e.Key == Key.Down)
-                    {
-                        _kinect.MotorDown(2);
                     }
                 });
 
@@ -195,7 +202,6 @@ namespace Kinect.MouseControl.ViewModels
                 {
                     ToggleMouseControl();
                 }
-                    
             });
         }
 
@@ -217,8 +223,6 @@ namespace Kinect.MouseControl.ViewModels
                     case Core.CameraView.None:
                         CameraVisibility = Visibility.Collapsed;
                         break;
-                    default:
-                        break;
                 }
             }
         }
@@ -231,15 +235,15 @@ namespace Kinect.MouseControl.ViewModels
         private void SetUpKinect()
         {
             _kinect.ChangeMaxSkeletonPositions(.6f, .6f);
-            _kinect.ElevationAngleInitialPosition = 15;
-            _kinect.CameraDataUpdated += _kinect_CameraDataUpdated;
+            _kinect.ElevationAngleInitialPosition = Convert.ToInt32(ConfigurationManager.AppSettings["ElevationLevel"]);
+            _kinect.CameraDataUpdated += KinectCameraDataUpdated;
             //_kinect.PropertyChanged += _kinect_PropertyChanged;
-            _kinect.UserCreated += _kinect_UserCreated;
-            _kinect.UserRemoved += _kinect_UserRemoved;
+            _kinect.UserCreated += KinectUserCreated;
+            _kinect.UserRemoved += KinectUserRemoved;
             _kinect.StartKinect();
         }
 
-        private void _kinect_UserRemoved(object sender, KinectUserEventArgs e)
+        private void KinectUserRemoved(object sender, KinectUserEventArgs e)
         {
             lock (SyncRoot)
             {
@@ -251,7 +255,7 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        private void _kinect_UserCreated(object sender, KinectUserEventArgs e)
+        private void KinectUserCreated(object sender, KinectUserEventArgs e)
         {
             WindowMessage = "User found";
             lock (SyncRoot)
@@ -261,7 +265,7 @@ namespace Kinect.MouseControl.ViewModels
                     return;
                 }
                 _activeUser = _kinect.GetUser(e.User.Id);
-                _activeUser.Updated += _activeUser_Updated;
+                _activeUser.Updated += ActiveUserUpdated;
 
                 var framesFilter = new FramesFilter(15);
 
@@ -313,6 +317,7 @@ namespace Kinect.MouseControl.ViewModels
             }
 
             WindowMessage = "Switching mode to " + _currentMode;
+            AngryBirdsMode = _currentMode == ControlMode.AngryBirds ? Visibility.Visible : Visibility.Hidden;
 
             UnBindAllGestures();
             switch (_currentMode)
@@ -341,7 +346,7 @@ namespace Kinect.MouseControl.ViewModels
             _lefthandHeadGesture.SelfTouchDetected -= FireMouseClick;
         }
 
-        void FireMouseUp(object sender, Core.Eventing.FilterEventArgs e)
+        void FireMouseUp(object sender, FilterEventArgs e)
         {
             //Hands are not on each other
             lock (SyncRoot)
@@ -400,6 +405,7 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
+// ReSharper disable UnusedMember.Local
         void ShowDebugInfo(FilterEventArgs args, string message)
         {
             var eventArgs = args as CollisionFilterEventArgs;
@@ -408,6 +414,7 @@ namespace Kinect.MouseControl.ViewModels
                 WindowMessage = message + eventArgs.MarginData[0].GetDebugString();
             }
         }
+// ReSharper restore UnusedMember.Local
 
         void ToggleMouseControl()
         {
@@ -419,9 +426,11 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        void _activeUser_Updated(object sender, Core.Eventing.ProcessEventArgs<IUserChangedEvent> e)
+        void ActiveUserUpdated(object sender, ProcessEventArgs<IUserChangedEvent> e)
         {
-            //WindowMessage = e.Event.Head.Z.ToString();
+            if (AngryBirdsMode == Visibility.Visible)
+                SpinePoint = new Point(e.Event.Spine.X, e.Event.Spine.Y);
+
             if (!_controlMouse)
             {
                 return;
@@ -443,7 +452,7 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        private void _kinect_CameraDataUpdated(object sender, KinectCameraEventArgs e)
+        private void KinectCameraDataUpdated(object sender, KinectCameraEventArgs e)
         {
             if (_kinect != null)
             {
@@ -451,7 +460,7 @@ namespace Kinect.MouseControl.ViewModels
             }
         }
 
-        private bool CheckEventInterval(ref DateTime lastHit, int interval)
+        private static bool CheckEventInterval(ref DateTime lastHit, int interval)
         {
             if ((DateTime.Now - lastHit).TotalMilliseconds > interval)
             {
