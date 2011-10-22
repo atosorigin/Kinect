@@ -183,7 +183,10 @@ namespace Kinect.MouseControl.ViewModels
                                 StartInfo = {FileName = ConfigurationManager.AppSettings["GameUri"]},
                                 EnableRaisingEvents = true
                             };
-
+                var overlay = new AtosOverlay();
+                overlay.BringIntoView(new Rect(10, 10, 100, 100));
+                overlay.Activate();
+                overlay.Show();
                 _game.Exited += (s, ea) =>
                 {
                     if (_controlMouse) ToggleMouseControl();
