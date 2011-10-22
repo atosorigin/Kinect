@@ -21,7 +21,7 @@ namespace Kinect.MouseControl.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private enum ControlMode { MouseControl, AngryBirds };
-        private ControlMode _currentMode = ControlMode.MouseControl;
+        private ControlMode _currentMode = ControlMode.AngryBirds;
 
         private long _mouseDownCounter, _mouseUpCounter;
         private static readonly ILog Log = LogManager.GetLogger(typeof (MainViewModel));
