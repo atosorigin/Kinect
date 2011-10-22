@@ -88,3 +88,4 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 *.cs.orig
+src/Demos/MouseControl/MainWindow.xaml.orig
