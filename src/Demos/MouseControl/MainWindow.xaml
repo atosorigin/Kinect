@@ -6,10 +6,9 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="700"
+        Title="MainWindow" Height="600" Width="800"
         AllowsTransparency="True"
         Background="Transparent"
-        WindowState="Maximized"  ResizeMode="NoResize" Topmost="True"
         WindowStyle="None"
         >
     <Window.DataContext>
@@ -28,7 +27,7 @@
     </i:Interaction.Triggers>
     <Grid>
         <Label Content="{Binding WindowMessage, Mode=OneWay}"
-               FontSize="32" Background="White" />
+               FontSize="48" Background="White" />
         <Image Source="{Binding CameraView, Mode=OneWay}"
                Visibility="{Binding CameraVisibility}"
                Width="640"
