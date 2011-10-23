@@ -7,11 +7,16 @@
         xmlns:GalaSoft_MvvmLight_Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800"
-        AllowsTransparency="True"
-        Background="Transparent"
-        WindowState="Maximized" ResizeMode="NoResize" Topmost="False"
+        Topmost="False"
         WindowStyle="None"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         >
+    <Window.Background>
+        <ImageBrush ImageSource="/Kinect.MouseControl;component/Images/background.jpg"
+                    Stretch="UniformToFill"
+                    TileMode="None" />
+    </Window.Background>
     <Window.DataContext>
         <Binding Mode="OneWay"
                  Source="{StaticResource MainViewModelDataSource}" />
@@ -26,27 +31,31 @@
                                                        PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid>
+    <Canvas Height="600" Width="800" VerticalAlignment="Top">
         <Label Content="{Binding WindowMessage, Mode=OneWay}"
-               FontSize="48" Background="White" />
-        <Canvas Height="480" Width="640" VerticalAlignment="Bottom">
-            <Image Source="{Binding CameraView, Mode=OneWay}"
-               Visibility="{Binding CameraVisibility}"
-               Width="640"
-               Height="480"
-               VerticalAlignment="Bottom"
-                HorizontalAlignment="Left">
-            </Image>
-            <Ellipse Width="50" Height="50" Fill="#FFFF0000" Visibility="{Binding AngryBirdsMode}" Canvas.Left="165" Canvas.Top="270" Stroke="White" StrokeThickness="5" />
-            <Ellipse Width="50" Height="50" Fill="Green" Visibility="{Binding AngryBirdsMode}" Canvas.Left="{Binding SpinePoint.X}" Canvas.Top="{Binding SpinePoint.Y}" Stroke="White" StrokeThickness="5" />
-        </Canvas>
-
-        <Button Content="Start game" Height="40" HorizontalAlignment="Left" Margin="584,52,0,0" Name="btnStartGame" VerticalAlignment="Top" Width="100" >
+            FontSize="48" Background="Transparent" Foreground="White" />
+        <Image Source="{Binding CameraView, Mode=OneWay}"
+            Visibility="{Binding CameraVisibility}"
+            Width="640"
+            Height="480"
+            Canvas.Top="120" Canvas.Left="80">
+        </Image>
+        <Ellipse Width="50" Height="50" Fill="#FFFF0000" Visibility="{Binding AngryBirdsMode}" Canvas.Left="165" Canvas.Top="270" Stroke="White" StrokeThickness="5" />
+        <Ellipse Width="50" Height="50" Fill="Green" Visibility="{Binding AngryBirdsMode}" Canvas.Left="{Binding SpinePoint.X}" Canvas.Top="{Binding SpinePoint.Y}" Stroke="White" StrokeThickness="5" />
+        <Button Width="100" Height="100" Canvas.Top="0" Canvas.Right="0">
+            <Button.Background>
+                <SolidColorBrush Color="Gray" Opacity="0.0" />
+            </Button.Background>
+            <Image Source="/Kinect.MouseControl;component/Images/AngryBirdsRio.png" Width="100" Height="100" />
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
                     <GalaSoft_MvvmLight_Command:EventToCommand Command="{Binding StartGame }" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
-    </Grid>
+
+        <Label Content="Play" FontSize="48" Background="Transparent" Foreground="White" Width="100" Canvas.Top="80" Canvas.Right="0" />
+    </Canvas>
+
+        
 </Window>

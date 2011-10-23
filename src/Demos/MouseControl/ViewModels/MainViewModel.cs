@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using Kinect.Common;
 using Kinect.Core;
 using Kinect.Core.Eventing;
@@ -37,6 +38,7 @@ namespace Kinect.MouseControl.ViewModels
 
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
         private readonly MyKinect _kinect;
+        private AtosOverlay _atosOverlay;
         private User _activeUser;
         private bool _controlMouse;
         private bool _mouseDown;
@@ -46,10 +48,11 @@ namespace Kinect.MouseControl.ViewModels
         private DateTime _mouseUpHit = DateTime.Now;
         private DateTime _mouseClickHit = DateTime.Now;
         private DateTime _switchModeHit = DateTime.Now;
+        private DateTime _fireCustomHit = DateTime.Now;
 
         //Filters and gestures
-        private CollisionFilter _lefthandRighthandCollision, _lefthandHeadCollision, _righthandHeadCollision,_righthandLeftShoulderCollision, _righthandRightHipCollision;
-        private SelfTouchGesture _lefthandRighthandGesture, _lefthandHeadGesture, _righthandHeadGesture, _righthandLeftShoulderGesture, _righthandRightHipGesture;
+        private CollisionFilter _lefthandRighthandCollision, _lefthandHeadCollision, _righthandHeadCollision, _righthandLeftShoulderCollision, _righthandRightHipCollision, _lefthandRightShoulderCollision;
+        private SelfTouchGesture _lefthandRighthandGesture, _lefthandHeadGesture, _righthandHeadGesture, _righthandLeftShoulderGesture, _righthandRightHipGesture, _lefthandRightShoulderGesture;
 
         private Visibility _angryBirdsMode = Visibility.Hidden;
         public Visibility AngryBirdsMode
@@ -183,29 +186,42 @@ namespace Kinect.MouseControl.ViewModels
                     Application.Current.Shutdown();
                 });
 
-            StartGame = new RelayCommand<EventArgs>(e =>
+            StartGame = new RelayCommand<EventArgs>(e => InitStartGame());
+        }
+
+        private void InitStartGame()
+        {
+            _game = new Process
             {
-                _game = new Process
-                            {
-                                StartInfo = {FileName = ConfigurationManager.AppSettings["GameUri"]},
-                                EnableRaisingEvents = true
-                            };
-                var overlay = new AtosOverlay();
-                overlay.BringIntoView(new Rect(10, 10, 100, 100));
-                overlay.Activate();
-                overlay.Show();
-                _game.Exited += (s, ea) =>
-                {
-                    if (_controlMouse) ToggleMouseControl();
-                };
+                StartInfo = { FileName = ConfigurationManager.AppSettings["GameUri"] },
+                EnableRaisingEvents = true
+            };
+            _game.Exited += (s, ea) =>
+            {
+                if (_controlMouse) ToggleMouseControl();
+                GameExited();
+            };
 
-                _game.Start();
+            _game.Start();
 
-                if (!_controlMouse)
-                {
-                    ToggleMouseControl();
-                }
-            });
+            if (_atosOverlay == null)
+            {
+                _atosOverlay = new AtosOverlay();
+                //_atosOverlay.BringIntoView(new Rect(10, 10, 100, 100));    
+            }
+            _atosOverlay.Activate();
+            _atosOverlay.Show();
+
+            if (!_controlMouse)
+            {
+                ToggleMouseControl();
+            }
+        }
+
+        private void GameExited()
+        {
+            //_atosOverlay.Hide();
+            _lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
         }
 
         private void SetCameraView()
@@ -275,6 +291,7 @@ namespace Kinect.MouseControl.ViewModels
                 //Initialize filters
                 _lefthandRighthandCollision = new CollisionFilter(new Point3D(100, 50, 130), JointID.HandLeft, JointID.HandRight);
                 _lefthandHeadCollision = new CollisionFilter(new Point3D(150, 30, 500), JointID.HandLeft, JointID.Head);
+                _lefthandRightShoulderCollision = new CollisionFilter(new Point3D(50, 50, 300), JointID.HandLeft, JointID.ShoulderRight);
                 _righthandHeadCollision = new CollisionFilter(new Point3D(125, 40, 150), JointID.HandRight, JointID.Head);
                 _righthandLeftShoulderCollision = new CollisionFilter(new Point3D(50, 50, 300), JointID.HandRight, JointID.ShoulderLeft);
                 _righthandRightHipCollision = new CollisionFilter(new Point3D(80, 30, 200), JointID.HandRight, JointID.HipRight);
@@ -282,6 +299,7 @@ namespace Kinect.MouseControl.ViewModels
                 //Initialize gestures
                 _lefthandRighthandGesture = new SelfTouchGesture(1);
                 _lefthandHeadGesture = new SelfTouchGesture(1);
+                _lefthandRightShoulderGesture = new SelfTouchGesture(1);
                 _righthandHeadGesture = new SelfTouchGesture(1);
                 _righthandLeftShoulderGesture = new SelfTouchGesture(1);
                 _righthandRightHipGesture = new SelfTouchGesture(1);
@@ -290,11 +308,13 @@ namespace Kinect.MouseControl.ViewModels
                 _activeUser.AttachPipeline(framesFilter);
                 framesFilter.AttachPipeline(_lefthandRighthandCollision);
                 framesFilter.AttachPipeline(_lefthandHeadCollision);
+                framesFilter.AttachPipeline(_lefthandRightShoulderCollision);
                 framesFilter.AttachPipeline(_righthandHeadCollision);
                 framesFilter.AttachPipeline(_righthandLeftShoulderCollision);
                 framesFilter.AttachPipeline(_righthandRightHipCollision);
                 _lefthandRighthandCollision.AttachPipeline(_lefthandRighthandGesture);
                 _lefthandHeadCollision.AttachPipeline(_lefthandHeadGesture);
+                _lefthandRightShoulderCollision.AttachPipeline(_lefthandRightShoulderGesture);
                 _righthandHeadCollision.AttachPipeline(_righthandHeadGesture);
                 _righthandLeftShoulderCollision.AttachPipeline(_righthandLeftShoulderGesture);
                 _righthandRightHipCollision.AttachPipeline(_righthandRightHipGesture);
@@ -303,7 +323,7 @@ namespace Kinect.MouseControl.ViewModels
 
                 //Debug info
                 //_righthandLeftShoulderCollision.Filtered += (s, args) => ShowDebugInfo(args, "Filter info: ");
-
+                _lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
                 SwitchMode(null, null);
             }
         }
@@ -405,6 +425,18 @@ namespace Kinect.MouseControl.ViewModels
                 MouseSimulator.MouseDown(System.Windows.Input.MouseButton.Left);
                 MouseSimulator.MouseUp(System.Windows.Input.MouseButton.Left);
                 _mouseDown = false;
+            }
+        }
+
+        void FireCustomEvent(object sender, SelfTouchEventArgs e)
+        {
+            lock (SyncRoot)
+            {
+                //Left button down
+                if (!CheckEventInterval(ref _fireCustomHit, MouseButtonsIntervalInMilliseconds)) return;
+                WindowMessage = "Fire Custom";
+                _lefthandRightShoulderGesture.SelfTouchDetected -= FireCustomEvent;
+                DispatcherHelper.CheckBeginInvokeOnUI(InitStartGame);
             }
         }
 
