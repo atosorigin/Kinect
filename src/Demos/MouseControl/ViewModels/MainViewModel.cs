@@ -207,7 +207,7 @@ namespace Kinect.MouseControl.ViewModels
             if (_atosOverlay == null)
             {
                 _atosOverlay = new AtosOverlay();
-                //_atosOverlay.BringIntoView(new Rect(10, 10, 100, 100));    
+                _atosOverlay.BringIntoView(new Rect(10, 10, 100, 100));    
             }
             _atosOverlay.Activate();
             _atosOverlay.Show();
