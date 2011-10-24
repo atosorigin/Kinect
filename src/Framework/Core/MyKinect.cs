@@ -345,7 +345,7 @@ namespace Kinect.Core
             return null;
         }
 
-        public void MotorUp(int velocity)
+        public int MotorUp(int velocity)
         {
             try
             {
@@ -355,14 +355,16 @@ namespace Kinect.Core
                     angle = Microsoft.Research.Kinect.Nui.Camera.ElevationMaximum;
                 }
                 _context.NuiCamera.ElevationAngle = angle;
+                return angle;
             }
             catch (InvalidOperationException ex)
             {
                 OnCameraMessage(string.Concat("Couldn't change the angle of the motor up: ", ex.Message));
+                return -1;
             }
         }
 
-        public void MotorDown(int velocity)
+        public int MotorDown(int velocity)
         {
             try
             {
@@ -371,11 +373,13 @@ namespace Kinect.Core
                 {
                     angle = Microsoft.Research.Kinect.Nui.Camera.ElevationMinimum;
                 }
-                _context.NuiCamera.ElevationAngle = velocity;
+                _context.NuiCamera.ElevationAngle = angle;
+                return angle;
             }
             catch (InvalidOperationException ex)
             {
                 OnCameraMessage(string.Concat("Couldn't change the angle of the motor down: ", ex.Message));
+                return -1;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Kinect.MouseControl
 {
@@ -9,6 +10,7 @@ namespace Kinect.MouseControl
     {
         public MainWindow()
         {
+            DispatcherHelper.Initialize();
             InitializeComponent();
         }
     }
