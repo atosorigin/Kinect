@@ -25,7 +25,7 @@ namespace Kinect.MouseControl.ViewModels
         private static readonly object SyncRoot = new object();
 
         private enum ControlMode { MouseControl, AngryBirds };
-        private ControlMode _currentMode = ControlMode.AngryBirds;
+        private ControlMode _currentMode = ControlMode.MouseControl;
 
         private const int MouseButtonsIntervalInMilliseconds = 100;
         private const int SwitchModeEventInterval = 2000;
@@ -206,8 +206,7 @@ namespace Kinect.MouseControl.ViewModels
 
             if (_atosOverlay == null)
             {
-                _atosOverlay = new AtosOverlay();
-                _atosOverlay.BringIntoView(new Rect(10, 10, 100, 100));    
+                _atosOverlay = new AtosOverlay();   
             }
             _atosOverlay.Activate();
             _atosOverlay.Show();
