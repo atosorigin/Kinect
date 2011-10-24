@@ -132,8 +132,7 @@ namespace Kinect.Core
                     try
                     {
                         _nrOfUsers = 0;
-                        _context.Initialize(RuntimeOptions.UseDepthAndPlayerIndex |
-                                            RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
+                        _context.Initialize(RuntimeOptions.UseDepthAndPlayerIndex | RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
                         //_context.SkeletonEngine.TransformSmooth = true;
                         //_context.SkeletonEngine.SmoothParameters = new TransformSmoothParameters();
                         _camera.Context = _context;
@@ -144,9 +143,7 @@ namespace Kinect.Core
                     }
                     catch (Exception ex)
                     {
-                        Log.IfError(
-                            "Runtime initialization failed. Please make sure Kinect device is plugged in. Error: {0}",
-                            ex);
+                        Log.IfError("Runtime initialization failed. Please make sure Kinect device is plugged in. Error: {0}", ex);
 
                         KinectState = KinectState.Failed;
                         _running = false;
@@ -156,10 +153,8 @@ namespace Kinect.Core
                     try
                     {
                         _context.NuiCamera.ElevationAngle = ElevationAngleInitialPosition;
-                        _context.VideoStream.Open(ImageStreamType.Video, 2, ImageResolution.Resolution640x480,
-                                                  ImageType.Color);
-                        _context.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
-                                                  ImageType.DepthAndPlayerIndex);
+                        _context.VideoStream.Open(ImageStreamType.Video, 2, ImageResolution.Resolution640x480, ImageType.Color);
+                        _context.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240, ImageType.DepthAndPlayerIndex);
                     }
                     catch (Exception ex)
                     {

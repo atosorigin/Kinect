@@ -190,6 +190,7 @@ namespace Kinect.MouseControl.ViewModels
                 _game.Exited += (s, ea) =>
                 {
                     if (_controlMouse) ToggleMouseControl();
+                    overlay.Close();
                 };
 
                 _game.Start();
