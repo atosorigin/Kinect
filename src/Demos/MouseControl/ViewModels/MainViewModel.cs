@@ -25,7 +25,7 @@ namespace Kinect.MouseControl.ViewModels
         private static readonly object SyncRoot = new object();
 
         private enum ControlMode { MouseControl, AngryBirds };
-        private ControlMode _currentMode = ControlMode.MouseControl;
+        private ControlMode _currentMode = ControlMode.AngryBirds;
 
         private const int MouseButtonsIntervalInMilliseconds = 100;
         private const int SwitchModeEventInterval = 2000;
@@ -178,6 +178,7 @@ namespace Kinect.MouseControl.ViewModels
 
             Closing = new RelayCommand<CancelEventArgs>(e =>
                 {
+                    
                     CloseKinect();
                     if (_game != null && !_game.HasExited)
                     {
