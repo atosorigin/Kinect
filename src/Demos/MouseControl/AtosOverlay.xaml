@@ -1,0 +1,17 @@
+﻿<Window x:Class="Kinect.MouseControl.AtosOverlay"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AtosOverlay" Height="314" Width="510"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True" WindowState="Maximized" ResizeMode="NoResize"
+        WindowStyle="None"
+        WindowStartupLocation="Manual">
+    <Canvas>
+        <StackPanel Background="Transparent" Canvas.Right="305" Canvas.Top="-50" Height="162" Width="190">
+            <Image Source="/Kinect.MouseControl;component/Images/atos.png"  />
+            <TextBlock Background="Transparent" Text="Kinect Angry Birds Control" HorizontalAlignment="Center" Margin="0,-60,0,0" FontWeight="Bold" FontSize="14" />
+            <TextBlock Background="Transparent" Text="By Marco Franssen and Jan Saris" HorizontalAlignment="Center" Margin="0,-40,0,0" FontSize="10" />
+        </StackPanel>
+    </Canvas>
+</Window>

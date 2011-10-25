@@ -71,8 +71,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AtosOverlay.xaml.cs">
+      <DependentUpon>AtosOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MouseSimulator.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Page Include="AtosOverlay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -120,6 +127,15 @@
       <Project>{7D86DA3E-808E-47B1-B89B-F6CB76D249DE}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\atos.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AngryBirdsRio.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
