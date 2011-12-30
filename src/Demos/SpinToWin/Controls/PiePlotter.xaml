@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Kinect.SpinToWin.Controls.PiePlotter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Util="clr-namespace:Kinect.SpinToWin.Util" 
+    xmlns:Shapes="clr-namespace:Kinect.SpinToWin.Shapes">
+    <UserControl.Resources>
+        <Util:FormattingConverter x:Key="formatter" />
+
+        <Style TargetType="{x:Type Shapes:PiePiece}">
+            <Setter Property="Stroke" Value="Black"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+        </Style>
+
+        <!-- http://forums.msdn.microsoft.com/en-US/wpf/thread/4fbf876e-15a9-4581-badc-0277d873366a -->
+        <!-- http://blogs.msdn.com/tom_mathews/archive/2006/11/06/binding-a-tooltip-in-xaml.aspx -->
+        <!-- http://joshsmithonwpf.wordpress.com/2008/07/22/enable-elementname-bindings-with-elementspy/ -->
+       
+        
+    </UserControl.Resources>
+    <Grid>
+        <Canvas Name="canvas" VerticalAlignment="Center" Width="600" Height="600">
+            <Canvas.RenderTransform>
+                <RotateTransform Angle="0" CenterX="300" CenterY="300" />
+            </Canvas.RenderTransform>
+            <Canvas.Triggers>
+                <EventTrigger RoutedEvent="Canvas.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard Name="storyBoard">
+                            <DoubleAnimation
+                                Name="rotationAnimation"
+                                Storyboard.TargetName="canvas" 
+                                Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
+                                From="0" To="700" Duration="0:0:2" 
+                                AutoReverse="False" DecelerationRatio="0.9" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Canvas.Triggers>
+        </Canvas>
+    </Grid>
+
+</UserControl>
+
+    

@@ -1,0 +1,71 @@
+﻿<Window x:Class="Kinect.SpinToWin.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:Kinect.SpinToWin.Controls"
+        Title="Spin to win" MouseDoubleClick="Window_MouseDoubleClick" WindowState="Maximized" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">
+            <SolidColorBrush Color="#9F15C3"/>
+            <SolidColorBrush Color="#FF8E01"/>
+            <SolidColorBrush Color="#339933"/>
+            <SolidColorBrush Color="#00AAFF"/>
+            <SolidColorBrush Color="#818183"/>
+            <SolidColorBrush Color="#000033"/>
+        </x:ArrayExtension>
+    </Window.Resources>
+    <Grid Width="800" Height="600">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <Rectangle Grid.Column="0" Grid.Row="0" MouseLeave="Start_MouseLeave" MouseEnter="Start_MouseEnter">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="#FFC7D3F2" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <TextBlock Text="Start" FontSize="24" FontWeight="Bold"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Grid.Column="0" Grid.Row="0" Name="StartTextBlock" />
+        
+        <Rectangle Grid.Column="0" Grid.Row="1">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
+                    <GradientStop Color="#FFC7D3F2" Offset="0" />
+                    <GradientStop Color="#FF002AFF" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <TextBlock Text="" FontSize="24" FontWeight="Bold"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Grid.Column="0" Grid.Row="1" Foreground="White" Name="TimeTextBloxk" />
+        
+        <Rectangle Grid.Column="0" Grid.Row="2" MouseEnter="Rotate_MouseEnter" MouseLeave="Rotate_MouseLeave">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
+                    <GradientStop Color="#FF002AFF" Offset="0" />
+                    <GradientStop Color="#FF00168D" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <TextBlock Text="Rotate" FontSize="24" FontWeight="Bold"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Grid.Column="0" Grid.Row="2" Foreground="White" Name="RotateTextBlock" />
+
+        <c:PiePlotter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                      Grid.Column="1" Grid.RowSpan="3" Grid.Row="0"
+                      x:Name="piePlotter" PieSize="Size" PieName="Name" HoleSize="0.3"
+                      Margin="0" Height="600"  Width="600">
+            <c:PiePlotter.ColorSelector>
+                <c:IndexedColourSelector Brushes="{StaticResource brushes}"/>
+            </c:PiePlotter.ColorSelector>
+        </c:PiePlotter>
+    </Grid>
+</Window>
