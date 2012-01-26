@@ -1,7 +1,8 @@
 ﻿<Window x:Class="Kinect.SpinToWin.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:Kinect.SpinToWin.Controls"
-        Title="Spin to win" MouseDoubleClick="Window_MouseDoubleClick" WindowState="Maximized" WindowStartupLocation="CenterScreen">
+        Title="Spin to win" WindowState="Maximized" WindowStartupLocation="CenterScreen" KeyUp="WindowKeyUp" Closing="WindowClosing"
+        WindowStyle="None">
     <Window.Resources>
         <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">
             <SolidColorBrush Color="#9F15C3"/>
@@ -23,7 +24,7 @@
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Column="0" Grid.Row="0" MouseLeave="Start_MouseLeave" MouseEnter="Start_MouseEnter">
+        <Rectangle Grid.Column="0" Grid.Row="0" MouseLeave="StartMouseLeave">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
                     <GradientStop Color="White" Offset="0" />
@@ -47,7 +48,7 @@
                    HorizontalAlignment="Center" VerticalAlignment="Center" 
                    Grid.Column="0" Grid.Row="1" Foreground="White" Name="TimeTextBloxk" />
         
-        <Rectangle Grid.Column="0" Grid.Row="2" MouseEnter="Rotate_MouseEnter" MouseLeave="Rotate_MouseLeave">
+        <Rectangle Grid.Column="0" Grid.Row="2" MouseEnter="RotateMouseEnter">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
                     <GradientStop Color="#FF002AFF" Offset="0" />
@@ -68,5 +69,6 @@
             </c:PiePlotter.ColorSelector>
         </c:PiePlotter>
         <Rectangle Grid.Column="1" Height="100" HorizontalAlignment="Left" Margin="297,-34,0,0" Name="rectangle1" Stroke="Black" VerticalAlignment="Top" Width="6" Fill="Black" />
+        <Image x:Name="HandImage" Grid.Row="1" Source="/Kinect.ShowCase;component/Images/hand.gif" Height="60" Width="60" Grid.ColumnSpan="2" Margin="163,6,577,334"></Image>
     </Grid>
 </Window>

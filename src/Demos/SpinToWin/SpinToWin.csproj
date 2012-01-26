@@ -39,6 +39,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -56,12 +58,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangeResolution.cs" />
     <Compile Include="Controls\IColorSelector.cs" />
     <Compile Include="Controls\IndexedColourSelector.cs" />
     <Compile Include="Controls\PieData.cs" />
     <Compile Include="Controls\PiePlotter.xaml.cs">
       <DependentUpon>PiePlotter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MouseSimulator.cs" />
     <Compile Include="Shapes\PiePiece.cs" />
     <Compile Include="Util\FormattingConverter.cs" />
     <Compile Include="Util\Utils.cs" />
@@ -113,6 +117,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\logo_klein.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Common\Common.csproj">
+      <Project>{E93F3A28-1EDC-4583-9A5A-5EB7DFCF80EE}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Core\Core.csproj">
+      <Project>{7D86DA3E-808E-47B1-B89B-F6CB76D249DE}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\hand.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
