@@ -25,7 +25,8 @@ namespace Kinect.MouseControl.ViewModels
         private static readonly object SyncRoot = new object();
 
         private enum ControlMode { MouseControl, AngryBirds };
-        private ControlMode _currentMode = ControlMode.AngryBirds;
+        private ControlMode _currentMode = ControlMode.MouseControl;
+        private const bool FixedMode = false;
 
         private const int MouseButtonsIntervalInMilliseconds = 100;
         private const int SwitchModeEventInterval = 2000;
@@ -83,11 +84,9 @@ namespace Kinect.MouseControl.ViewModels
             {
                 lock (SyncRoot)
                 {
-                    if (value != _windowMessage)
-                    {
-                        _windowMessage = value;
-                        RaisePropertyChanged("WindowMessage");
-                    }
+                    if (value == _windowMessage) return;
+                    _windowMessage = value;
+                    RaisePropertyChanged("WindowMessage");
                 }
             }
         }
@@ -205,13 +204,6 @@ namespace Kinect.MouseControl.ViewModels
 
             _game.Start();
 
-            if (_atosOverlay == null)
-            {
-                _atosOverlay = new AtosOverlay();   
-            }
-            _atosOverlay.Activate();
-            _atosOverlay.Show();
-
             if (!_controlMouse)
             {
                 ToggleMouseControl();
@@ -221,7 +213,7 @@ namespace Kinect.MouseControl.ViewModels
         private void GameExited()
         {
             //_atosOverlay.Hide();
-            _lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
+            //_lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
         }
 
         private void SetCameraView()
@@ -319,18 +311,19 @@ namespace Kinect.MouseControl.ViewModels
                 _righthandLeftShoulderCollision.AttachPipeline(_righthandLeftShoulderGesture);
                 _righthandRightHipCollision.AttachPipeline(_righthandRightHipGesture);
 
-                _righthandLeftShoulderGesture.SelfTouchDetected += SwitchMode;
+                if (!FixedMode)
+                    _righthandLeftShoulderGesture.SelfTouchDetected += SwitchMode;
 
                 //Debug info
                 //_righthandLeftShoulderCollision.Filtered += (s, args) => ShowDebugInfo(args, "Filter info: ");
-                _lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
-                SwitchMode(null, null);
+                //_lefthandRightShoulderGesture.SelfTouchDetected += FireCustomEvent;
+                ReBindGestures();
             }
         }
 
         void SwitchMode(object sender, GestureEventArgs e)
         {
-            if (!CheckEventInterval(ref _switchModeHit, SwitchModeEventInterval)) return;
+            if (FixedMode || !CheckEventInterval(ref _switchModeHit, SwitchModeEventInterval)) return;
 
             switch (_currentMode)
             {
@@ -342,6 +335,11 @@ namespace Kinect.MouseControl.ViewModels
             WindowMessage = "Switching mode to " + _currentMode;
             AngryBirdsMode = _currentMode == ControlMode.AngryBirds ? Visibility.Visible : Visibility.Hidden;
 
+            ReBindGestures();
+        }
+
+        private void ReBindGestures()
+        {
             UnBindAllGestures();
             switch (_currentMode)
             {
@@ -349,12 +347,12 @@ namespace Kinect.MouseControl.ViewModels
                     _righthandRightHipCollision.Filtered += FireMouseUp;
                     _righthandRightHipGesture.SelfTouchDetected += FireMouseDown;
                     _righthandHeadGesture.SelfTouchDetected += FireMouseClick;
-                break;
+                    break;
                 case ControlMode.AngryBirds:
                     _lefthandRighthandCollision.Filtered += FireMouseUp;
                     _lefthandRighthandGesture.SelfTouchDetected += FireMouseDown;
                     _lefthandHeadGesture.SelfTouchDetected += FireMouseClick;
-                break;
+                    break;
             }
         }
 
@@ -435,7 +433,7 @@ namespace Kinect.MouseControl.ViewModels
                 //Left button down
                 if (!CheckEventInterval(ref _fireCustomHit, MouseButtonsIntervalInMilliseconds)) return;
                 WindowMessage = "Fire Custom";
-                _lefthandRightShoulderGesture.SelfTouchDetected -= FireCustomEvent;
+                //_lefthandRightShoulderGesture.SelfTouchDetected -= FireCustomEvent;
                 DispatcherHelper.CheckBeginInvokeOnUI(InitStartGame);
             }
         }
@@ -459,6 +457,12 @@ namespace Kinect.MouseControl.ViewModels
                 _controlMouse = !_controlMouse;
                 WindowMessage = "MouseControl : " + _controlMouse.ToString();
             }
+            if (_atosOverlay == null)
+            {
+                _atosOverlay = new AtosOverlay();
+            }
+            _atosOverlay.Activate();
+            _atosOverlay.Show();
         }
 
         void ActiveUserUpdated(object sender, ProcessEventArgs<IUserChangedEvent> e)
