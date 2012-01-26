@@ -31,7 +31,6 @@ namespace Kinect.Core
         private readonly Runtime _context = new Runtime();
         private List<User> _activeUsers = new List<User>(2);
         private KinectState _kinectstate = KinectState.Stopped;
-        private int _nrOfUsers;
 
         private float _maxSkeletonX = .9f;
         private float _maxSkeletonY = .9f;
@@ -39,7 +38,6 @@ namespace Kinect.Core
 
         private MyKinect()
         {
-            SingleUserMode = false;
         }
 
         ///<summary>
@@ -77,8 +75,6 @@ namespace Kinect.Core
         {
             get { return _camera.Fps; }
         }
-
-        public bool SingleUserMode { get; set; }
 
         #region INotifyPropertyChanged Members
 
@@ -131,7 +127,6 @@ namespace Kinect.Core
                     _running = true;
                     try
                     {
-                        _nrOfUsers = 0;
                         _context.Initialize(RuntimeOptions.UseDepthAndPlayerIndex | RuntimeOptions.UseSkeletalTracking | RuntimeOptions.UseColor);
                         //_context.SkeletonEngine.TransformSmooth = true;
                         //_context.SkeletonEngine.SmoothParameters = new TransformSmoothParameters();
