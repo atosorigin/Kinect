@@ -26,6 +26,8 @@ namespace Kinect.SpinToWin.Controls
         /// </summary>
         private readonly List<PiePiece> _piePieces = new List<PiePiece>();
 
+        private int totalRotation = 0;
+
         #region dependency properties
 
         /// <summary>
@@ -129,12 +131,21 @@ namespace Kinect.SpinToWin.Controls
         
         public void RotatePies(int angle, TimeSpan timeSpan)
         {
+            totalRotation += angle;
             var animation = storyBoard.Children[0] as DoubleAnimation;
             if (animation != null)
             {
                 animation.To = angle;
                 animation.Duration = new Duration(timeSpan);
             }
+            storyBoard.Completed += (sender, args) =>
+                                        {
+                                            var rotated = totalRotation % 360;
+                                            var piece =
+                                                _piePieces.FirstOrDefault(
+                                                    p => p.RotationAngle >= rotated && p.RotationAngle <= rotated + 18);
+                                            PiePieceMouseUp(piece,null);
+                                        };
             storyBoard.Begin();
         }
 
