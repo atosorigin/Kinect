@@ -1,4 +1,6 @@
-﻿using System.Windows.Shapes;
+﻿using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows;
 using Kinect.SpinToWin.Util;
@@ -152,6 +154,7 @@ namespace Kinect.SpinToWin.Shapes
             get
             {
                 // Create a StreamGeometry for describing the shape
+                var geometryGroup = new GeometryGroup();
                 var geometry = new StreamGeometry {FillRule = FillRule.EvenOdd};
 
                 using (var context = geometry.Open())
@@ -162,7 +165,26 @@ namespace Kinect.SpinToWin.Shapes
                 // Freeze the geometry for performance benefits
                 geometry.Freeze();
 
-                return geometry;
+                geometryGroup.Children.Add(geometry);
+
+                //Add text:
+                FormattedText ft = new FormattedText("Test",Thread.CurrentThread.CurrentCulture,
+                    System.Windows.FlowDirection.LeftToRight,new Typeface("Verdana"), 32, Brushes.Black);
+                //var point = new Point(CentreX, CentreY);
+                //var point = new Point(450, 300);
+                var point = new Point(0, 0);
+                var text = ft.BuildGeometry(point);
+                var converted = Utils.ComputeCartesianCoordinate(RotationAngle, Radius - 100);
+                converted.Offset(CentreX, CentreY);
+
+                var group = new TransformGroup();
+                //group.Children.Add(new RotateTransform(RotationAngle + 90));
+                group.Children.Add(new RotateTransform(RotationAngle - 90));
+                group.Children.Add(new TranslateTransform(converted.X, converted.Y));
+                text.Transform = group;
+
+                geometryGroup.Children.Add(text);
+                return geometryGroup;
             }
         }
 
@@ -194,7 +216,6 @@ namespace Kinect.SpinToWin.Shapes
                 innerArcEndPoint.Offset(offset.X, offset.Y);
                 outerArcStartPoint.Offset(offset.X, offset.Y);
                 outerArcEndPoint.Offset(offset.X, offset.Y);
-
             }
 
             var outerArcSize = new Size(Radius, Radius);
