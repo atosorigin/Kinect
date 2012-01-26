@@ -25,8 +25,12 @@ namespace Kinect.SpinToWin.Controls
         /// it represents.
         /// </summary>
         private readonly List<PiePiece> _piePieces = new List<PiePiece>();
+        private PiePiece _currentPie = null;
+        private double _pieSize = 0;
+        private bool _wheelSpinning = true;
 
-        private int totalRotation = 0;
+        private double _currentAngle = -720;
+        
 
         #region dependency properties
 
@@ -127,25 +131,46 @@ namespace Kinect.SpinToWin.Controls
         {
             InitializeComponent();
             DataContextChanged += DataContextChangedHandler;
+            storyBoard.Completed += new EventHandler(storyBoard_Completed);
+        }
+
+        void storyBoard_Completed(object sender, EventArgs e)
+        {
+            var calculatedAngle = Math.Abs(_currentAngle%360);
+            var piece = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + 18) >= calculatedAngle);
+            PushPie(piece);
+            _currentPie = piece;
+            _wheelSpinning = false;
         }
         
         public void RotatePies(int angle, TimeSpan timeSpan)
         {
-            totalRotation += angle;
+            if (_wheelSpinning) return;
+            ReturnPie(_currentPie);
             var animation = storyBoard.Children[0] as DoubleAnimation;
-            if (animation != null)
+            if(animation == null) throw new Exception("No DoubleAnimation found on the PiePlotter");
+            _wheelSpinning = true;
+            _currentAngle = (animation.To.Value % 360) - angle;
+
+            //Correct angle, because the winner isn't obvious
+            var calculatedAngle = Math.Abs(_currentAngle % 360);
+            var winnner = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + 18) >= calculatedAngle);
+            if (winnner != null)
             {
-                animation.To = angle;
-                animation.Duration = new Duration(timeSpan);
+                if (winnner.RotationAngle % calculatedAngle < 2)
+                {
+                    _currentAngle -= 2;
+                }
+                else if ((winnner.RotationAngle + 18) % calculatedAngle < 2)
+                {
+                    _currentAngle += 2;
+                }
             }
-            storyBoard.Completed += (sender, args) =>
-                                        {
-                                            var rotated = totalRotation % 360;
-                                            var piece =
-                                                _piePieces.FirstOrDefault(
-                                                    p => p.RotationAngle >= rotated && p.RotationAngle <= rotated + 18);
-                                            PiePieceMouseUp(piece,null);
-                                        };
+
+            animation.From = animation.To % 360;
+            animation.To = _currentAngle;
+            animation.Duration = new Duration(timeSpan);
+            
             storyBoard.Begin();
         }
 
@@ -165,11 +190,6 @@ namespace Kinect.SpinToWin.Controls
                 var observable = (INotifyCollectionChanged)DataContext;
                 observable.CollectionChanged += BoundCollectionChanged;
             }
-
-            // handle the selection change events
-            var collectionView = (CollectionView)CollectionViewSource.GetDefaultView(DataContext);
-            collectionView.CurrentChanged += CollectionViewCurrentChanged;
-            collectionView.CurrentChanging += CollectionViewCurrentChanging;
 
             ConstructPiePieces();
             ObserveBoundCollectionChanges();
@@ -196,49 +216,33 @@ namespace Kinect.SpinToWin.Controls
         /// <param name="e"></param>
         void PiePieceMouseUp(object sender, MouseButtonEventArgs e)
         {
-            var collectionView = (CollectionView)CollectionViewSource.GetDefaultView(DataContext);
-            if (collectionView == null) return;
-
             var piece = sender as PiePiece;
             if (piece == null) return;
-
-            // select the item which this pie piece represents
-            var index = (int)piece.Tag;
-            collectionView.MoveCurrentToPosition(index);
+            if (_currentPie == piece)
+            {
+                ReturnPie(_currentPie);
+                _currentPie = null;
+            }
+            else
+            {
+                ReturnPie(_currentPie);
+                PushPie(piece);
+                _currentPie = piece;
+            }
         }
 
-        /// <summary>
-        /// Handles the event which occurs when the selected item is about to change
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void CollectionViewCurrentChanging(object sender, CurrentChangingEventArgs e)
+        void PushPie(PiePiece pie)
         {
-            var collectionView = (CollectionView)sender;
+            if (pie == null) return;
+            var animation = new DoubleAnimation { To = 10, Duration = new Duration(TimeSpan.FromMilliseconds(200)) };
+            pie.BeginAnimation(PiePiece.PushOutProperty, animation);
+        }
 
-            if (collectionView == null || collectionView.CurrentPosition < 0 ||
-                collectionView.CurrentPosition > _piePieces.Count) return;
-
-            var piece = _piePieces[collectionView.CurrentPosition];
+        void ReturnPie(PiePiece pie)
+        {
+            if (pie == null) return;
             var animation = new DoubleAnimation { To = 0, Duration = new Duration(TimeSpan.FromMilliseconds(200)) };
-            piece.BeginAnimation(PiePiece.PushOutProperty, animation);
-        }
-
-        /// <summary>
-        /// Handles the event which occurs when the selected item has changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void CollectionViewCurrentChanged(object sender, EventArgs e)
-        {
-            var collectionView = (CollectionView)sender;
-
-            if (collectionView == null || collectionView.CurrentPosition < 0 ||
-                collectionView.CurrentPosition > _piePieces.Count) return;
-
-            var piece = _piePieces[collectionView.CurrentPosition];
-            var animation = new DoubleAnimation {To = 10, Duration = new Duration(TimeSpan.FromMilliseconds(200))};
-            piece.BeginAnimation(PiePiece.PushOutProperty, animation);
+            pie.BeginAnimation(PiePiece.PushOutProperty, animation);
         }
 
         /// <summary>
@@ -291,6 +295,15 @@ namespace Kinect.SpinToWin.Controls
             throw new Exception("Object not of type double");
         }
 
+        private string GetNamePropertyValue(object item)
+        {
+            var filterPropDesc = TypeDescriptor.GetProperties(item);
+            var itemValue = filterPropDesc[PieName].GetValue(item);
+
+            if (itemValue != null) return (string)itemValue;
+            throw new Exception("Object not of type string");
+        }
+
         /// <summary>
         /// Constructs pie pieces and adds them to the visual tree for this control's canvas
         /// </summary>
@@ -305,7 +318,7 @@ namespace Kinect.SpinToWin.Controls
 
             // compute the total for the property which is being plotted
             var total = myCollectionView.Cast<object>().Sum(item => GetSizePropertyValue(item));
-
+            _pieSize = 360/total;
             // add the pie pieces
             canvas.Children.Clear();
             _piePieces.Clear();
@@ -323,6 +336,7 @@ namespace Kinect.SpinToWin.Controls
                         CentreY = halfWidth,
                         WedgeAngle = wedgeAngle,
                         PieceValue = GetSizePropertyValue(item),
+                        NameValue = GetNamePropertyValue(item),
                         RotationAngle = accumulativeAngle,
                         Fill = ColorSelector != null ? ColorSelector.SelectBrush(item, myCollectionView.IndexOf(item)) : Brushes.Black,
                         // record the index of the item which this pie slice represents

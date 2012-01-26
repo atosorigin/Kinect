@@ -168,7 +168,7 @@ namespace Kinect.SpinToWin.Shapes
                 geometryGroup.Children.Add(geometry);
 
                 //Add text:
-                FormattedText ft = new FormattedText("Test",Thread.CurrentThread.CurrentCulture,
+                FormattedText ft = new FormattedText(NameValue,Thread.CurrentThread.CurrentCulture,
                     System.Windows.FlowDirection.LeftToRight,new Typeface("Verdana"), 32, Brushes.Black);
                 //var point = new Point(CentreX, CentreY);
                 //var point = new Point(450, 300);

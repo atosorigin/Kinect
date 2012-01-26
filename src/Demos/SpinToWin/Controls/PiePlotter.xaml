@@ -30,7 +30,7 @@
                                 Name="rotationAnimation"
                                 Storyboard.TargetName="canvas" 
                                 Storyboard.TargetProperty="(RenderTransform).(RotateTransform.Angle)"
-                                From="0" To="700" Duration="0:0:2" 
+                                From="0" To="-720" Duration="0:0:2" 
                                 AutoReverse="False" DecelerationRatio="0.9" />
                         </Storyboard>
                     </BeginStoryboard>

@@ -67,5 +67,6 @@
                 <c:IndexedColourSelector Brushes="{StaticResource brushes}"/>
             </c:PiePlotter.ColorSelector>
         </c:PiePlotter>
+        <Rectangle Grid.Column="1" Height="100" HorizontalAlignment="Left" Margin="297,-34,0,0" Name="rectangle1" Stroke="Black" VerticalAlignment="Top" Width="6" Fill="Black" />
     </Grid>
 </Window>
