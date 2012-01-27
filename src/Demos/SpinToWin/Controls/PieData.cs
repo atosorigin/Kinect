@@ -34,7 +34,7 @@ namespace Kinect.SpinToWin.Controls
         {
             var pies = new List<PieData>();
 
-            for (var i = 1; i <= 20; i++)
+            for (var i = 1; i <= 51; i++)
             {
                 pies.Add(new PieData() { Name = String.Concat("Player",i), Size = 1 });
             }

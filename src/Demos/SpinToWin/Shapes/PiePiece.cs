@@ -169,7 +169,7 @@ namespace Kinect.SpinToWin.Shapes
 
                 //Add text:
                 FormattedText ft = new FormattedText(NameValue,Thread.CurrentThread.CurrentCulture,
-                    System.Windows.FlowDirection.LeftToRight,new Typeface("Verdana"), 32, Brushes.Black);
+                    FlowDirection.LeftToRight,new Typeface("Verdana"), 16, Brushes.Black);
                 //var point = new Point(CentreX, CentreY);
                 //var point = new Point(450, 300);
                 var point = new Point(0, 0);

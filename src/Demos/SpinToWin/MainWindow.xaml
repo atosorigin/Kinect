@@ -8,14 +8,21 @@
             <SolidColorBrush Color="#9F15C3"/>
             <SolidColorBrush Color="#FF8E01"/>
             <SolidColorBrush Color="#339933"/>
+            <SolidColorBrush Color="#0066A1"/>
+            <SolidColorBrush Color="#FFFFFF"/>
+            <SolidColorBrush Color="#66A3C7"/>
+            <SolidColorBrush Color="#BFBFBF"/>
+            <SolidColorBrush Color="#A626AA"/>
+            <!--<SolidColorBrush Color="#339933"/>
             <SolidColorBrush Color="#00AAFF"/>
             <SolidColorBrush Color="#818183"/>
             <SolidColorBrush Color="#000033"/>
+            <SolidColorBrush Color="#FF0000"/>-->
         </x:ArrayExtension>
     </Window.Resources>
     <Grid Width="800" Height="600">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
+            <!--<ColumnDefinition Width="200" />-->
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -28,47 +35,51 @@
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
                     <GradientStop Color="White" Offset="0" />
-                    <GradientStop Color="#FFC7D3F2" Offset="1" />
+                    <!--<GradientStop Color="#FFC7D3F2" Offset="1" />-->
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <TextBlock Text="Start" FontSize="24" FontWeight="Bold"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+        <TextBlock Text="Spin" FontSize="52" FontWeight="Bold"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" 
                    Grid.Column="0" Grid.Row="0" Name="StartTextBlock" />
         
         <Rectangle Grid.Column="0" Grid.Row="1">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
-                    <GradientStop Color="#FFC7D3F2" Offset="0" />
-                    <GradientStop Color="#FF002AFF" Offset="1" />
+                    <GradientStop Color="White" Offset="0" />
+                    <!--<GradientStop Color="#FF002AFF" Offset="1" />-->
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
         <TextBlock Text="" FontSize="24" FontWeight="Bold"
                    HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   Grid.Column="0" Grid.Row="1" Foreground="White" Name="TimeTextBloxk" />
+                   Grid.Column="0" Grid.Row="1" Foreground="White" Name="TimeTextBloxk" Visibility="Hidden" />
+        <TextBlock Text="To" FontSize="52" FontWeight="Bold"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Grid.Column="0" Grid.Row="1" Foreground="Black" Visibility="Hidden" />
         
         <Rectangle Grid.Column="0" Grid.Row="2" MouseEnter="RotateMouseEnter">
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1" >
-                    <GradientStop Color="#FF002AFF" Offset="0" />
-                    <GradientStop Color="#FF00168D" Offset="1" />
+                    <!--<GradientStop Color="#FF002AFF" Offset="0" />-->
+                    <GradientStop Color="White" Offset="0" />
+                    <!--<GradientStop Color="#FF00168D" Offset="1" />-->
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
-        <TextBlock Text="Rotate" FontSize="24" FontWeight="Bold"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   Grid.Column="0" Grid.Row="2" Foreground="White" Name="RotateTextBlock" />
+        <TextBlock Text="Win" FontSize="52" FontWeight="Bold"
+                   HorizontalAlignment="Right" VerticalAlignment="Center" 
+                   Grid.Column="0" Grid.Row="2" Foreground="Black" Name="RotateTextBlock" />
 
         <c:PiePlotter HorizontalAlignment="Center" VerticalAlignment="Center" 
-                      Grid.Column="1" Grid.RowSpan="3" Grid.Row="0"
+                      Grid.Column="0" Grid.RowSpan="3" Grid.Row="0"
                       x:Name="piePlotter" PieSize="Size" PieName="Name" HoleSize="0.3"
                       Margin="0" Height="600"  Width="600">
             <c:PiePlotter.ColorSelector>
                 <c:IndexedColourSelector Brushes="{StaticResource brushes}"/>
             </c:PiePlotter.ColorSelector>
         </c:PiePlotter>
-        <Rectangle Grid.Column="1" Height="100" HorizontalAlignment="Left" Margin="297,-34,0,0" Name="rectangle1" Stroke="Black" VerticalAlignment="Top" Width="6" Fill="Black" />
-        <Image x:Name="HandImage" Grid.Row="1" Source="/Kinect.ShowCase;component/Images/hand.gif" Height="60" Width="60" Grid.ColumnSpan="2" Margin="163,6,577,334"></Image>
+        <Rectangle Height="100" HorizontalAlignment="Left" Margin="397,-34,0,0" Name="rectangle1" Stroke="Black" VerticalAlignment="Top" Width="6" Fill="Black" />
+        <Image x:Name="HandImage" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Kinect.SpinToWin;component/images/hand.gif" Height="60" Width="60"></Image>
     </Grid>
 </Window>

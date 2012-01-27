@@ -50,6 +50,7 @@ namespace Kinect.SpinToWin
             {
                 lostUser.Updated -= KinectUserUpdated;
                 _currentUser = null;
+                Dispatcher.BeginInvoke(new Func<Cursor>(() => Mouse.OverrideCursor = Cursors.Arrow));
             }
             //throw new NotImplementedException();
         }
@@ -61,6 +62,8 @@ namespace Kinect.SpinToWin
             {
                 _currentUser.Updated -= KinectUserUpdated;
             }
+            Dispatcher.BeginInvoke(new Func<Cursor>(() => Mouse.OverrideCursor = Cursors.None));
+            
             _currentUser = user;
             _currentUser.Updated += KinectUserUpdated;
         }
@@ -70,6 +73,8 @@ namespace Kinect.SpinToWin
             var screenpoint = e.Event.HandLeft.ToScreenPosition(new Size(640, 480), _screenResolution);
             MouseSimulator.X = (int)screenpoint.X;
             MouseSimulator.Y = (int)screenpoint.Y;
+            HandImage.Dispatcher.BeginInvoke(new Func<Thickness>(() => HandImage.Margin = new Thickness(screenpoint.X - 140, screenpoint.Y - 120, 0, 0)));
+
         }
 
         private void InitializeData()
@@ -97,8 +102,8 @@ namespace Kinect.SpinToWin
 
         private void SpinIt()
         {
-            var seconds = (int)(5000 - _milliseconds) / 1000;
-            var angle = (int)((3360) - _milliseconds);
+            var seconds = (int)(10000 - _milliseconds) / 1000;
+            var angle = (int)((1800) - _milliseconds);
             piePlotter.RotatePies(angle, new TimeSpan(0, 0, seconds));
         }
 

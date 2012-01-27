@@ -137,7 +137,7 @@ namespace Kinect.SpinToWin.Controls
         void storyBoard_Completed(object sender, EventArgs e)
         {
             var calculatedAngle = Math.Abs(_currentAngle%360);
-            var piece = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + 18) >= calculatedAngle);
+            var piece = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + _pieSize) >= calculatedAngle);
             PushPie(piece);
             _currentPie = piece;
             _wheelSpinning = false;
@@ -154,7 +154,7 @@ namespace Kinect.SpinToWin.Controls
 
             //Correct angle, because the winner isn't obvious
             var calculatedAngle = Math.Abs(_currentAngle % 360);
-            var winnner = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + 18) >= calculatedAngle);
+            var winnner = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + _pieSize) >= calculatedAngle);
             if (winnner != null)
             {
                 if (winnner.RotationAngle % calculatedAngle < 2)
@@ -352,16 +352,22 @@ namespace Kinect.SpinToWin.Controls
                 accumulativeAngle += wedgeAngle;
             }
 
-            var logo = new Image
-            {
-                Source = new BitmapImage(new Uri(@"pack://application:,,,/Images/logo_klein.png",
-                                            UriKind.RelativeOrAbsolute)),
-                Stretch = Stretch.None
-            };
-            Canvas.SetLeft(logo, 210);
-            Canvas.SetTop(logo, 260);
-            
-            canvas.Children.Insert(0, logo);
+            var To = new TextBlock();
+            To.Text = "TO";
+            To.FontSize = 52;
+            //To.HorizontalAlignment = HorizontalAlignment.Center;
+            //To.VerticalAlignment = VerticalAlignment.Center;
+            //To.FontWeight = FontWeight.
+            //var logo = new Image
+            //{
+            //    Source = new BitmapImage(new Uri(@"pack://application:,,,/Images/logo_klein.png",
+            //                                UriKind.RelativeOrAbsolute)),
+            //    Stretch = Stretch.None
+            //};
+            Canvas.SetLeft(To, 260);
+            Canvas.SetTop(To, 260);
+
+            canvas.Children.Insert(0, To);
         }
     }
 }
