@@ -168,18 +168,17 @@ namespace Kinect.SpinToWin.Shapes
                 geometryGroup.Children.Add(geometry);
 
                 //Add text:
-                FormattedText ft = new FormattedText(NameValue,Thread.CurrentThread.CurrentCulture,
-                    FlowDirection.LeftToRight,new Typeface("Verdana"), 16, Brushes.Black);
-                //var point = new Point(CentreX, CentreY);
-                //var point = new Point(450, 300);
+                var ft = new FormattedText(NameValue, Thread.CurrentThread.CurrentCulture,
+                    FlowDirection.LeftToRight, new Typeface("Arial black"), 20, Brushes.WhiteSmoke);
+
                 var point = new Point(0, 0);
                 var text = ft.BuildGeometry(point);
-                var converted = Utils.ComputeCartesianCoordinate(RotationAngle, Radius - 100);
+                var converted = Utils.ComputeCartesianCoordinate(RotationAngle, Radius - 130);
                 converted.Offset(CentreX, CentreY);
 
                 var group = new TransformGroup();
                 //group.Children.Add(new RotateTransform(RotationAngle + 90));
-                group.Children.Add(new RotateTransform(RotationAngle - 90));
+                group.Children.Add(new RotateTransform(RotationAngle - 89));
                 group.Children.Add(new TranslateTransform(converted.X, converted.Y));
                 text.Transform = group;
 

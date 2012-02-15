@@ -352,22 +352,16 @@ namespace Kinect.SpinToWin.Controls
                 accumulativeAngle += wedgeAngle;
             }
 
-            var To = new TextBlock();
-            To.Text = "TO";
-            To.FontSize = 52;
-            //To.HorizontalAlignment = HorizontalAlignment.Center;
-            //To.VerticalAlignment = VerticalAlignment.Center;
-            //To.FontWeight = FontWeight.
-            //var logo = new Image
-            //{
-            //    Source = new BitmapImage(new Uri(@"pack://application:,,,/Images/logo_klein.png",
-            //                                UriKind.RelativeOrAbsolute)),
-            //    Stretch = Stretch.None
-            //};
-            Canvas.SetLeft(To, 260);
-            Canvas.SetTop(To, 260);
-
-            canvas.Children.Insert(0, To);
+            var logo = new Image
+            {
+                Source = new BitmapImage(new Uri(@"pack://application:,,,/Images/to_small.png",UriKind.RelativeOrAbsolute)),
+                Stretch = Stretch.None,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Canvas.SetLeft(logo, 225);
+            Canvas.SetTop(logo, 225);
+            canvas.Children.Insert(0, logo);
         }
     }
 }

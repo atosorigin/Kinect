@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Kinect.SpinToWin.Controls
 {
@@ -30,16 +31,9 @@ namespace Kinect.SpinToWin.Controls
             }
         }
 
-        public static List<PieData> ConstructPies()
+        public static List<PieData> ConstructPies(IEnumerable<string> players)
         {
-            var pies = new List<PieData>();
-
-            for (var i = 1; i <= 51; i++)
-            {
-                pies.Add(new PieData() { Name = String.Concat("Player",i), Size = 1 });
-            }
- 
-            return pies;
+            return players.Select(player => new PieData() {Name = player, Size = 1}).ToList();
         }
 
         #region INotifyPropertyChanged Members

@@ -131,6 +131,17 @@
   <ItemGroup>
     <Resource Include="images\hand.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Deelnemerslijst.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="images\arrow.png" />
+    <Resource Include="images\to_small.png" />
+    <Resource Include="images\spin.png" />
+    <Resource Include="images\spin_to_win.png" />
+    <Resource Include="images\to.png" />
+    <Resource Include="images\win.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

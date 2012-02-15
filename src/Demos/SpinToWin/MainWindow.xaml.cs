@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using Kinect.Common;
@@ -22,14 +24,23 @@ namespace Kinect.SpinToWin
 
         private DateTime _start;
         private double _milliseconds;
+        private readonly List<string> _participants = new List<string>();
 
         public MainWindow()
         {
+            ReadParticipants();
             _changeResolution = new ChangeResolution();
             _changeResolution.ChangeScreenResolution(1024, 768);
             InitializeComponent();
             InitializeData();
             InitKinect();
+        }
+
+        private void ReadParticipants()
+        {
+            using (var reader = new StreamReader("Deelnemerslijst.txt"))
+                while (!reader.EndOfStream) 
+                    _participants.Add(reader.ReadLine());
         }
 
         private void InitKinect()
@@ -80,7 +91,7 @@ namespace Kinect.SpinToWin
         private void InitializeData()
         {
             // create our test dataset and bind it
-            _pies = new ObservableCollection<PieData>(PieData.ConstructPies());
+            _pies = new ObservableCollection<PieData>(PieData.ConstructPies(_participants));
             DataContext = _pies;
         }
 
@@ -95,7 +106,6 @@ namespace Kinect.SpinToWin
             _start = DateTime.MinValue;
             if (_milliseconds < 1000)
             {
-                TimeTextBloxk.Text = _milliseconds.ToString();
                 SpinIt();
             }
         }
