@@ -30,6 +30,7 @@ namespace Kinect.SpinToWin.Controls
         private bool _wheelSpinning = true;
 
         private double _currentAngle = -720;
+        private bool DemoRun = true;
 
         public event EventHandler<WinnerEventArgs> Win;
         
@@ -138,15 +139,21 @@ namespace Kinect.SpinToWin.Controls
 
         void storyBoard_Completed(object sender, EventArgs e)
         {
+            if (DemoRun)
+            {
+                DemoRun = false;
+                _wheelSpinning = false;
+                return;
+            }
             var calculatedAngle = Math.Abs(_currentAngle%360);
             var piece = _piePieces.FirstOrDefault(p => p.RotationAngle <= calculatedAngle && (p.RotationAngle + _pieSize) >= calculatedAngle);
             PushPie(piece);
             _currentPie = piece;
-            _wheelSpinning = false;
             if (Win != null)
             {
                 Win.Invoke(sender, new WinnerEventArgs(piece.NameValue));
             }
+            _wheelSpinning = false;
         }
         
         public void RotatePies(int angle, TimeSpan timeSpan)

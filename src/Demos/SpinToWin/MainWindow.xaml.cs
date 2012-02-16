@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using Kinect.Common;
 using Kinect.Core;
 using Kinect.Core.Eventing;
@@ -33,7 +34,7 @@ namespace Kinect.SpinToWin
             _changeResolution = new ChangeResolution();
             _changeResolution.ChangeScreenResolution(1024, 768);
             InitializeComponent();
-            InitializeData();
+            InitializeData(_participants);
             InitKinect();
             piePlotter.Win += PiePlotterWin;
         }
@@ -90,10 +91,10 @@ namespace Kinect.SpinToWin
 
         }
 
-        private void InitializeData()
+        private void InitializeData(IEnumerable<string> participants)
         {
             // create our test dataset and bind it
-            _pies = new ObservableCollection<PieData>(PieData.ConstructPies(_participants));
+            _pies = new ObservableCollection<PieData>(PieData.ConstructPies(participants));
             DataContext = _pies;
         }
 
@@ -115,21 +116,30 @@ namespace Kinect.SpinToWin
         private void PiePlotterWin(object sender, WinnerEventArgs winner)
         {
             winnerVisible = true;
+            PlayStoryBoard("WinnerVisibleStoryBoard", Winner);
             Action action = () =>
             {
-                Winner.Text = winner.Winner;
-                Winner.Visibility = Visibility.Visible;
+                Winner.Text = string.Format("   {0}   ",winner.Winner);
             };
             Winner.Dispatcher.BeginInvoke(action);
+            _participants.Remove(winner.Winner);
+            LogWinner(winner.Winner);
         }
 
         private void RemoveWinnerMouseEnter(object sender, MouseEventArgs e)
         {
             if (!winnerVisible) return;
-            //if(Winner.Dispatcher.)
-            Action action = () => Winner.Visibility = Visibility.Hidden;
-            Winner.Dispatcher.BeginInvoke(action);
+            PlayStoryBoard("WinnerHiddenStoryBoard", Winner);
             winnerVisible = false;
+            InitializeData(_participants);
+        }
+
+        private void PlayStoryBoard(string storyBoard, DependencyObject obj)
+        {
+            var sb = this.FindResource(storyBoard) as Storyboard;
+            if (sb == null) return;
+            Storyboard.SetTarget(sb, obj);
+            sb.Begin();
         }
 
         private void SpinIt()
@@ -163,6 +173,21 @@ namespace Kinect.SpinToWin
                 _kinect.StopKinect();
             }
             _changeResolution.ChangeScreenResolutionBackToOriginal();
+        }
+
+        private void LogWinner(string winner)
+        {
+            try
+            {
+                using (var writer = new StreamWriter("Winnaars.txt",true))
+                {
+                    writer.WriteLine("{0}: {1}", DateTime.Now.ToLongTimeString(), winner);
+                }
+            }
+            catch (Exception)
+            {
+                //Do nothing
+            }
         }
     }
 }
