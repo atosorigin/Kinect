@@ -57,7 +57,7 @@ namespace Kinect.SpinToWin
             _kinect.UserCreated += KinectUserCreated;
             _kinect.UserRemoved += KinectUserRemoved;
             //TODO: Enable when kinect is connected
-            //_kinect.StartKinect();
+            _kinect.StartKinect();
         }
 
         private void KinectUserRemoved(object sender, KinectUserEventArgs e)
