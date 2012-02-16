@@ -26,7 +26,7 @@ namespace Kinect.SpinToWin
         private DateTime _start;
         private double _milliseconds;
         private readonly List<string> _participants = new List<string>();
-        private bool winnerVisible = false;
+        private bool _winnerVisible;
 
         public MainWindow()
         {
@@ -115,7 +115,7 @@ namespace Kinect.SpinToWin
 
         private void PiePlotterWin(object sender, WinnerEventArgs winner)
         {
-            winnerVisible = true;
+            _winnerVisible = true;
             PlayStoryBoard("WinnerVisibleStoryBoard", Winner);
             Action action = () =>
             {
@@ -128,23 +128,33 @@ namespace Kinect.SpinToWin
 
         private void RemoveWinnerMouseEnter(object sender, MouseEventArgs e)
         {
-            if (!winnerVisible) return;
+            if (!_winnerVisible) return;
             PlayStoryBoard("WinnerHiddenStoryBoard", Winner);
-            winnerVisible = false;
-            InitializeData(_participants);
+            PlayStoryBoard("WheelHiddenStoryBoard", piePlotter,
+                () =>
+                {
+                    InitializeData(_participants);
+                    PlayStoryBoard("WheelVisibleStoryBoard", piePlotter);
+                });
+            _winnerVisible = false;
         }
 
-        private void PlayStoryBoard(string storyBoard, DependencyObject obj)
+        private void PlayStoryBoard(string storyBoard, DependencyObject obj, Action action = null)
         {
-            var sb = this.FindResource(storyBoard) as Storyboard;
+            var sb = FindResource(storyBoard) as Storyboard;
             if (sb == null) return;
             Storyboard.SetTarget(sb, obj);
+            if (action != null)
+            {
+                EventHandler completeAction = (sender, args) => action();
+                sb.Completed += completeAction;
+            }
             sb.Begin();
         }
 
         private void SpinIt()
         {
-            if (winnerVisible) return;
+            if (_winnerVisible) return;
             var seconds = (int)(10000 - _milliseconds) / 1000;
             var angle = (int)((1800) - _milliseconds);
             piePlotter.RotatePies(angle, new TimeSpan(0, 0, seconds));
@@ -175,7 +185,7 @@ namespace Kinect.SpinToWin
             _changeResolution.ChangeScreenResolutionBackToOriginal();
         }
 
-        private void LogWinner(string winner)
+        private static void LogWinner(string winner)
         {
             try
             {
@@ -184,10 +194,12 @@ namespace Kinect.SpinToWin
                     writer.WriteLine("{0}: {1}", DateTime.Now.ToLongTimeString(), winner);
                 }
             }
+// ReSharper disable EmptyGeneralCatchClause
             catch (Exception)
             {
                 //Do nothing
             }
+// ReSharper restore EmptyGeneralCatchClause
         }
     }
 }

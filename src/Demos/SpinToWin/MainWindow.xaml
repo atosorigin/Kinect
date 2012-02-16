@@ -26,6 +26,12 @@
         <Storyboard  x:Key="WinnerHiddenStoryBoard" Storyboard.TargetProperty="Opacity">
             <DoubleAnimation From="1.0" To="0.0" Duration="0:0:2" />
         </Storyboard>
+        <Storyboard  x:Key="WheelVisibleStoryBoard" Storyboard.TargetProperty="Opacity">
+            <DoubleAnimation From="0.0" To="1.0" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard  x:Key="WheelHiddenStoryBoard" Storyboard.TargetProperty="Opacity">
+            <DoubleAnimation From="1.0" To="0.0" Duration="0:0:1" />
+        </Storyboard>
     </Window.Resources>
     <Grid Width="900" Height="700" Background="White">
         <Grid.ColumnDefinitions>
