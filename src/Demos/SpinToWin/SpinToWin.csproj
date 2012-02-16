@@ -136,6 +136,12 @@
     <Content Include="Deelnemerslijst.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="media\spin.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="media\spin.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="images\arrow.png" />
     <Resource Include="images\to_small.png" />
     <Resource Include="images\spin.png" />

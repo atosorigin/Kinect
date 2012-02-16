@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -33,6 +34,8 @@ namespace Kinect.SpinToWin.Controls
         private bool DemoRun = true;
 
         public event EventHandler<WinnerEventArgs> Win;
+
+        private SoundPlayer _soundPlayer = new SoundPlayer("./media/spin.wav");
         
 
         #region dependency properties
@@ -183,8 +186,10 @@ namespace Kinect.SpinToWin.Controls
             animation.From = animation.To % 360;
             animation.To = _currentAngle;
             animation.Duration = new Duration(timeSpan);
-            
+
             storyBoard.Begin();
+            _soundPlayer.Stop();
+            _soundPlayer.Play();
         }
 
         #region property change handlers

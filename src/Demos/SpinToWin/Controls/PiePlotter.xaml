@@ -10,7 +10,6 @@
             <Setter Property="Stroke" Value="Black"/>
             <Setter Property="StrokeThickness" Value="1"/>
         </Style>
-
         <!-- http://forums.msdn.microsoft.com/en-US/wpf/thread/4fbf876e-15a9-4581-badc-0277d873366a -->
         <!-- http://blogs.msdn.com/tom_mathews/archive/2006/11/06/binding-a-tooltip-in-xaml.aspx -->
         <!-- http://joshsmithonwpf.wordpress.com/2008/07/22/enable-elementname-bindings-with-elementspy/ -->

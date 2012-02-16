@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Media;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Kinect.Common;
 using Kinect.Core;
@@ -155,9 +158,8 @@ namespace Kinect.SpinToWin
         private void SpinIt()
         {
             if (_winnerVisible) return;
-            var seconds = (int)(10000 - _milliseconds) / 1000;
-            var angle = (int)((1800) - _milliseconds);
-            piePlotter.RotatePies(angle, new TimeSpan(0, 0, seconds));
+            var angle = (int)((2600) - _milliseconds);
+            piePlotter.RotatePies(angle, TimeSpan.FromMilliseconds(16248));
         }
 
         private void WindowKeyUp(object sender, KeyEventArgs e)
