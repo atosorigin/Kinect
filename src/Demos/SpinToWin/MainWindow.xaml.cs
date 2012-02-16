@@ -25,6 +25,7 @@ namespace Kinect.SpinToWin
         private DateTime _start;
         private double _milliseconds;
         private readonly List<string> _participants = new List<string>();
+        private bool winnerVisible = false;
 
         public MainWindow()
         {
@@ -34,6 +35,7 @@ namespace Kinect.SpinToWin
             InitializeComponent();
             InitializeData();
             InitKinect();
+            piePlotter.Win += PiePlotterWin;
         }
 
         private void ReadParticipants()
@@ -50,8 +52,8 @@ namespace Kinect.SpinToWin
             _kinect.ElevationAngleInitialPosition = 10;
             _kinect.UserCreated += KinectUserCreated;
             _kinect.UserRemoved += KinectUserRemoved;
-            //_kinect.KinectStarted += new EventHandler<KinectEventArgs>(_kinect_KinectStarted);
-            _kinect.StartKinect();
+            //TODO: Enable when kinect is connected
+            //_kinect.StartKinect();
         }
 
         private void KinectUserRemoved(object sender, KinectUserEventArgs e)
@@ -95,12 +97,12 @@ namespace Kinect.SpinToWin
             DataContext = _pies;
         }
 
-        private void StartMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void StartMouseLeave(object sender, MouseEventArgs e)
         {
             _start = DateTime.Now;
         }
 
-        private void RotateMouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void RotateMouseEnter(object sender, MouseEventArgs e)
         {
             _milliseconds = (DateTime.Now - _start).TotalMilliseconds;
             _start = DateTime.MinValue;
@@ -110,14 +112,35 @@ namespace Kinect.SpinToWin
             }
         }
 
+        private void PiePlotterWin(object sender, WinnerEventArgs winner)
+        {
+            winnerVisible = true;
+            Action action = () =>
+            {
+                Winner.Text = winner.Winner;
+                Winner.Visibility = Visibility.Visible;
+            };
+            Winner.Dispatcher.BeginInvoke(action);
+        }
+
+        private void RemoveWinnerMouseEnter(object sender, MouseEventArgs e)
+        {
+            if (!winnerVisible) return;
+            //if(Winner.Dispatcher.)
+            Action action = () => Winner.Visibility = Visibility.Hidden;
+            Winner.Dispatcher.BeginInvoke(action);
+            winnerVisible = false;
+        }
+
         private void SpinIt()
         {
+            if (winnerVisible) return;
             var seconds = (int)(10000 - _milliseconds) / 1000;
             var angle = (int)((1800) - _milliseconds);
             piePlotter.RotatePies(angle, new TimeSpan(0, 0, seconds));
         }
 
-        private void WindowKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private void WindowKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {

@@ -51,7 +51,12 @@
                HorizontalAlignment="Center" VerticalAlignment="Top"
                Source="/Kinect.SpinToWin;component/images/arrow.png" Width="50" Height="75"></Image>
         <Rectangle Grid.Column="0" Grid.Row="0" MouseLeave="StartMouseLeave" Fill="Transparent"></Rectangle>
+        <Rectangle Grid.Column="0" Grid.Row="1" Fill="Transparent" Width="150" Height="150"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" MouseEnter="RemoveWinnerMouseEnter"></Rectangle>
         <Rectangle Grid.Column="0" Grid.Row="2" MouseEnter="RotateMouseEnter" Fill="Transparent"></Rectangle>
+        <TextBlock x:Name="Winner" Text="" FontSize="100" FontWeight="Bold" FontFamily="Arial Black"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" 
+                  Grid.Column="0" Grid.Row="1" Foreground="Black" Visibility="Hidden" />
         <Image x:Name="HandImage" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Top" Source="/Kinect.SpinToWin;component/images/hand.gif" Height="60" Width="60"></Image>
     </Grid>
 </Window>

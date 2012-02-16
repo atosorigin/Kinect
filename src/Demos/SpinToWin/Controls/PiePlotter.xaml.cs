@@ -30,6 +30,8 @@ namespace Kinect.SpinToWin.Controls
         private bool _wheelSpinning = true;
 
         private double _currentAngle = -720;
+
+        public event EventHandler<WinnerEventArgs> Win;
         
 
         #region dependency properties
@@ -141,6 +143,10 @@ namespace Kinect.SpinToWin.Controls
             PushPie(piece);
             _currentPie = piece;
             _wheelSpinning = false;
+            if (Win != null)
+            {
+                Win.Invoke(sender, new WinnerEventArgs(piece.NameValue));
+            }
         }
         
         public void RotatePies(int angle, TimeSpan timeSpan)

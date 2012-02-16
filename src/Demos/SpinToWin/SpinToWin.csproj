@@ -65,6 +65,7 @@
     <Compile Include="Controls\PiePlotter.xaml.cs">
       <DependentUpon>PiePlotter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WinnerEventArgs.cs" />
     <Compile Include="MouseSimulator.cs" />
     <Compile Include="Shapes\PiePiece.cs" />
     <Compile Include="Util\FormattingConverter.cs" />
