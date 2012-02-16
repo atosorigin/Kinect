@@ -158,7 +158,7 @@ namespace Kinect.SpinToWin
         private void SpinIt()
         {
             if (_winnerVisible) return;
-            var angle = (int)((2600) - _milliseconds);
+            var angle = (int)((3000) - (_milliseconds * 2));
             piePlotter.RotatePies(angle, TimeSpan.FromMilliseconds(16248));
         }
 
