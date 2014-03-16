@@ -21,7 +21,7 @@ namespace Kinect.SpinToWin
     public partial class MainWindow
     {
         private readonly Size _screenResolution = new Size(SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
-        private readonly ChangeResolution _changeResolution;
+        private readonly ChangeResolution _changeResolution = null;
         private ObservableCollection<PieData> _pies;
         private MyKinect _kinect;
         private User _currentUser;
@@ -34,11 +34,11 @@ namespace Kinect.SpinToWin
         public MainWindow()
         {
             ReadParticipants();
-            _changeResolution = new ChangeResolution();
-            _changeResolution.ChangeScreenResolution(1024, 768);
+            //_changeResolution = new ChangeResolution();
+            //_changeResolution.ChangeScreenResolution(1024, 768);
             InitializeComponent();
             InitializeData(_participants);
-            InitKinect();
+            //InitKinect();
             piePlotter.Win += PiePlotterWin;
         }
 
@@ -184,7 +184,10 @@ namespace Kinect.SpinToWin
             {
                 _kinect.StopKinect();
             }
-            _changeResolution.ChangeScreenResolutionBackToOriginal();
+            if (_changeResolution != null)
+            {
+                _changeResolution.ChangeScreenResolutionBackToOriginal();
+            }
         }
 
         private static void LogWinner(string winner)

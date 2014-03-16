@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using Microsoft.Xna.Framework;
+//using Microsoft.Xna.Framework;
 using Matrix = System.Windows.Media.Matrix;
 using Point = System.Windows.Point;
 
@@ -85,7 +85,7 @@ namespace Kinect.ShowCase
         {
             int tDiv = 64;
             int yDiv = 64;
-            double maxTheta = MathHelper.ToRadians(360);
+            double maxTheta = 360;//MathHelper.ToRadians(360);
             double minY = -1.0;
             double maxY = 1.0;
 
